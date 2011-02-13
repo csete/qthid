@@ -28,7 +28,9 @@ FORMS    += mainwindow.ui
 mac:LIBS += /System/Library/Frameworks/CoreFoundation.framework/CoreFoundation \
     /System/Library/Frameworks/IOKit.framework/Versions/A/IOKit
 win32:LIBS += "C:\\Program Files\\Microsoft SDKs\\Windows\\v6.0A\\Lib\\setupapi.lib"
-linux-g++: LIBS += /lib/libusb-1.0.so.0
 
-# Updated HID API
-linux-g++: INCLUDEPATH += /usr/include/libusb-1.0
+# libusb-1.0 on Linux uses pkg-config
+unix {
+    CONFIG += link_pkgconfig
+    PKGCONFIG += libusb-1.0
+}
