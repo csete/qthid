@@ -6,7 +6,7 @@
 
 QT       += core gui
 
-TARGET = hid002
+TARGET = qthid
 TEMPLATE = app
 
 
