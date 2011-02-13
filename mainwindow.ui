@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>365</width>
-    <height>240</height>
+    <width>388</width>
+    <height>280</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,11 +17,17 @@
    <widget class="QPlainTextEdit" name="plainTextEdit">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>150</y>
-      <width>141</width>
-      <height>21</height>
+      <x>20</x>
+      <y>170</y>
+      <width>151</width>
+      <height>31</height>
      </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
     </property>
     <property name="font">
      <font>
@@ -38,58 +44,6 @@
     </property>
     <property name="readOnly">
      <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButtonAppReset">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>90</y>
-      <width>151</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Switch to bootloader</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButtonBLReset">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>120</y>
-      <width>151</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Switch to application</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButtonUpdateFirmware">
-    <property name="geometry">
-     <rect>
-      <x>170</x>
-      <y>90</y>
-      <width>151</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Update firmware</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButtonVerifyFirmware">
-    <property name="geometry">
-     <rect>
-      <x>170</x>
-      <y>120</y>
-      <width>151</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Verify firmware</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="lineEditFreq">
@@ -190,50 +144,111 @@
      <string>&amp;Down</string>
     </property>
    </widget>
-   <widget class="QSpinBox" name="spinBoxCorr">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>230</x>
-      <y>150</y>
-      <width>61</width>
-      <height>22</height>
+      <x>10</x>
+      <y>90</y>
+      <width>303</width>
+      <height>62</height>
      </rect>
     </property>
-    <property name="alignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-    </property>
-    <property name="minimum">
-     <number>-500</number>
-    </property>
-    <property name="maximum">
-     <number>500</number>
-    </property>
+    <layout class="QGridLayout" name="buttonGridLayout">
+     <item row="0" column="0">
+      <widget class="QPushButton" name="pushButtonAppReset">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Switch to bootloader</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QPushButton" name="pushButtonUpdateFirmware">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Update firmware</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QPushButton" name="pushButtonBLReset">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Switch to application</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QPushButton" name="pushButtonVerifyFirmware">
+       <property name="text">
+        <string>Verify firmware</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
-   <widget class="QLabel" name="labelCorrection">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>170</x>
-      <y>150</y>
-      <width>61</width>
-      <height>21</height>
+      <x>200</x>
+      <y>170</y>
+      <width>181</width>
+      <height>29</height>
      </rect>
     </property>
-    <property name="text">
-     <string>Correction</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="labelCorrection_2">
-    <property name="geometry">
-     <rect>
-      <x>300</x>
-      <y>150</y>
-      <width>21</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>ppm</string>
-    </property>
+    <layout class="QHBoxLayout" name="ppmHLayout">
+     <item>
+      <widget class="QLabel" name="labelCorrection">
+       <property name="text">
+        <string>Correction</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="spinBoxCorr">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="minimum">
+        <number>-500</number>
+       </property>
+       <property name="maximum">
+        <number>500</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="labelCorrection_2">
+       <property name="text">
+        <string>ppm</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -241,8 +256,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>365</width>
-     <height>20</height>
+     <width>388</width>
+     <height>25</height>
     </rect>
    </property>
   </widget>
