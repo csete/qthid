@@ -131,6 +131,17 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDAppReset(void)
     aucBufOut[0]=0; // Report ID, ignored
     aucBufOut[1]=FCDCMDAPPRESET;
     hid_write(phd,aucBufOut,65);
+
+    /** FIXME: hid_read() will occasionally hang due to a pthread_cond_wait() never returning.
+        It seems that the read_callback() in hid-libusb.c will never receive any
+        data during the reconfiguration. Since the same logic works in the native
+        windows application, it could be a libusb thing. Anyhow, since the value
+        returned by this function is not used, we may as well just skip the hid_read()
+        and return FME_NONE.
+        Correct switch from APP to BL mode can be observed in /var/log/messages (linux)
+        (when in bootloader mode the device version includes 'BL')
+    */
+    /*
     memset(aucBufIn,0xCC,65); // Clear out the response buffer
     hid_read(phd,aucBufIn,65);
 
@@ -143,6 +154,13 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDAppReset(void)
     FCDClose(phd);
     phd=NULL;
     return FME_BL;
+    */
+
+    FCDClose(phd);
+    phd=NULL;
+
+    return FME_NONE;
+
 }
 
 EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDAppSetFreqkHz(int nFreq)
@@ -190,10 +208,21 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDBLReset(void)
     {
         return FME_NONE;
     }
-    // Send an App reset command
+    // Send an BL reset command
     aucBufOut[0]=0; // Report ID, ignored
     aucBufOut[1]=FCDCMDBLRESET;
     hid_write(phd,aucBufOut,65);
+
+    /** FIXME: hid_read() will hang due to a pthread_cond_wait() never returning.
+        It seems that the read_callback() in hid-libusb.c will never receive any
+        data during the reconfiguration. Since the same logic works in the native
+        windows application, it could be a libusb thing. Anyhow, since the value
+        returned by this function is not used, we may as well jsut skip the hid_read()
+        and return FME_NONE.
+        Correct switch from BL to APP mode can be observed in /var/log/messages (linux)
+        (when in bootloader mode the device version includes 'BL')
+    */
+    /*
     memset(aucBufIn,0xCC,65); // Clear out the response buffer
     hid_read(phd,aucBufIn,65);
 
@@ -206,6 +235,13 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDBLReset(void)
     FCDClose(phd);
     phd=NULL;
     return FME_APP;
+    */
+
+    FCDClose(phd);
+    phd=NULL;
+
+    return FME_NONE;
+
 }
 
 EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDBLErase(void)
