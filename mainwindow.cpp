@@ -78,7 +78,8 @@ void MainWindow::EnableControls()
 {
     FCDMODEENUM fme;
 
-    ui->plainTextEdit->clear();
+    /* clear status string */
+    ui->fcdStatusLine->clear();
 
 /*
     {
@@ -113,27 +114,27 @@ void MainWindow::EnableControls()
     {
         case FME_APP:
             {
-                QPalette p=ui->plainTextEdit->palette();
+                QPalette p=ui->fcdStatusLine->palette();
                 p.setColor(QPalette::Base, QColor(0,255,0));//green color
-                ui->plainTextEdit->setPalette(p);
+                ui->fcdStatusLine->setPalette(p);
             }
-            ui->plainTextEdit->appendPlainText("FCD active");
+            ui->fcdStatusLine->setText("FCD is active");
             break;
         case FME_BL:
             {
-                QPalette p=ui->plainTextEdit->palette();
+                QPalette p=ui->fcdStatusLine->palette();
                 p.setColor(QPalette::Base, QColor(255,191,0));//amber color
-                ui->plainTextEdit->setPalette(p);
+                ui->fcdStatusLine->setPalette(p);
             }
-            ui->plainTextEdit->appendPlainText("FCD bootloader");
+            ui->fcdStatusLine->setText("FCD bootloader");
             break;
         case FME_NONE:
             {
-                QPalette p=ui->plainTextEdit->palette();
+                QPalette p=ui->fcdStatusLine->palette();
                 p.setColor(QPalette::Base, QColor(255,0,0));//red color
-                ui->plainTextEdit->setPalette(p);
+                ui->fcdStatusLine->setPalette(p);
             }
-            ui->plainTextEdit->appendPlainText("No FCD detected");
+            ui->fcdStatusLine->setText("No FCD detected");
             break;
     }
     ui->pushButtonUpdateFirmware->setEnabled(fme==FME_BL);
