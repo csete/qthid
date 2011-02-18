@@ -149,12 +149,18 @@ void MainWindow::EnableControls()
 
 void MainWindow::on_pushButtonAppReset_clicked()
 {
+    /* stop timeout while FCD is reconfiguring */
+    timer->stop();
     FCDAppReset();
+    timer->start(1000);
 }
 
 void MainWindow::on_pushButtonBLReset_clicked()
 {
+    /* stop timeout while FCD is reconfiguring */
+    timer->stop();
     FCDBLReset();
+    timer->start(1000);
 }
 
 void MainWindow::on_pushButtonUpdateFirmware_clicked()
