@@ -34,3 +34,6 @@ unix {
     CONFIG += link_pkgconfig
     PKGCONFIG += libusb-1.0
 }
+
+RESOURCES += \
+    qthid.qrc
