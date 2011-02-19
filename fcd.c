@@ -25,6 +25,7 @@
 #else
     #include <stdlib.h>
 #endif
+#include <stdio.h>
 #include "hidapi.h"
 #include "fcd.h"
 
@@ -91,10 +92,12 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDGetMode(void)
     unsigned char aucBufOut[65];
     FCDMODEENUM fcd_mode = FME_NONE;
 
+
     phd=FCDOpen();
 
     if (phd==NULL)
     {
+        printf("FCD open FAILED!\n");
         return FME_NONE;
     }
 
@@ -105,6 +108,21 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDGetMode(void)
     memset(aucBufIn,0xCC,65); // Clear out the response buffer
     hid_read(phd,aucBufIn,65);
 
+    // If it's in bootloader mode, we get a sensible response, in app mode the response to this command isn't understood
+    if (aucBufIn[0]==FCDCMDBLQUERY && aucBufIn[1]==1 && strncmp((char *)(aucBufIn+2),"FCDBL",5)==0)
+    {
+        fcd_mode = FME_BL;
+    }
+    else {
+        fcd_mode = FME_APP;
+    }
+
+    FCDClose(phd);
+    phd=NULL;
+
+
+#if 0
+    /** This code will be useful with FW 18f or later **/
     /* first check status bytes then check which mode */
     if (aucBufIn[0]==FCDCMDBLQUERY && aucBufIn[1]==1) {
 
@@ -116,6 +134,7 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDGetMode(void)
         }
         /* In application mode we have "FCDAPP_18.06" where the number is the FW version */
         else if (strncmp((char *)(aucBufIn+2), "FCDAPP", 6) == 0) {
+            printf("Version: %s", (char *)(aucBufIn+8));
             FCDClose(phd);
             phd = NULL;
             fcd_mode = FME_APP;
@@ -123,9 +142,11 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDGetMode(void)
         else {
             FCDClose(phd);
             phd = NULL;
-            fcd_mode = FME_NONE;
+            fcd_mode = FME_APP;
         }
     }
+#endif
+
 
     return fcd_mode;
 }
