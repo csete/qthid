@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/qthid">
+        <file>images/qthid.png</file>
+    </qresource>
+</RCC>
