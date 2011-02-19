@@ -89,6 +89,7 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDGetMode(void)
     hid_device *phd=NULL;
     unsigned char aucBufIn[65];
     unsigned char aucBufOut[65];
+    FCDMODEENUM fcd_mode = FME_NONE;
 
     phd=FCDOpen();
 
@@ -96,6 +97,7 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDGetMode(void)
     {
         return FME_NONE;
     }
+
     // Send a BL Query Command
     aucBufOut[0]=0; // Report ID, ignored
     aucBufOut[1]=FCDCMDBLQUERY;
@@ -103,16 +105,29 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDGetMode(void)
     memset(aucBufIn,0xCC,65); // Clear out the response buffer
     hid_read(phd,aucBufIn,65);
 
-    // If it's in bootloader mode, we get a sensible response, in app mode the response to this command isn't understood
-    if (aucBufIn[0]==FCDCMDBLQUERY && aucBufIn[1]==1 && strncmp((char *)(aucBufIn+2),"FCDBL",5)==0)
-    {
-        FCDClose(phd);
-        phd=NULL;
-        return FME_BL;
+    /* first check status bytes then check which mode */
+    if (aucBufIn[0]==FCDCMDBLQUERY && aucBufIn[1]==1) {
+
+        /* In bootloader mode we have the string "FCDBL" starting at acBufIn[2] **/
+        if (strncmp((char *)(aucBufIn+2), "FCDBL", 5) == 0) {
+            FCDClose(phd);
+            phd = NULL;
+            fcd_mode = FME_BL;
+        }
+        /* In application mode we have "FCDAPP_18.06" where the number is the FW version */
+        else if (strncmp((char *)(aucBufIn+2), "FCDAPP", 6) == 0) {
+            FCDClose(phd);
+            phd = NULL;
+            fcd_mode = FME_APP;
+        }
+        else {
+            FCDClose(phd);
+            phd = NULL;
+            fcd_mode = FME_NONE;
+        }
     }
-    FCDClose(phd);
-    phd=NULL;
-    return FME_APP;
+
+    return fcd_mode;
 }
 
 EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDAppReset(void)
