@@ -1,3 +1,5 @@
+1. INTRODUCTION
+
 Qthid is a Funcube Dongle control application with Qt user interface. It is an
 evolution of the qthid002 package by Howard Long G6LVB.
 
@@ -12,6 +14,55 @@ Qthid uses the HIDAPI cross platform library by Signal 11 Software
 (http://www.signal11.us/oss/hidapi/). All the required files are bundled with 
 qthid and no installation of the library is required.
 
+The current version 2.1 can be used to change frequency and to upgrade the
+firmware that ships in the FCD (18b) to the latest one (18f). This limitation
+is intentional since the full API is only available since firmware 18f. The
+next version of qthid will support the full API but it will only work with
+firmware 18f or later.
+
+
+2. INSTALLATION AND USAGE
+
+2.1 Linux
+
+You can use the precompiled binaries (32 or 64 bit) but you need the Qt runtime
+libraries installed. On Ubuntu these are called libqtcore4 and libqtgui4 and
+their dependencies. You can simply install everything Qt version 4 (not version 3!).
+Qt 4.7 has been tested, Qt 4.6 will probably also work.
+
+In order to use the Funcube Dongle as regular user, you need to create a udev rule.
+Create a udev file /etc/udev/rules.d/20-fcd.rules containing:
+
+  SUBSYTEMS=="usb" ATTRS{idVendor}=="04d8" ATTRS{idProduct}=="fb56" MODE:="0666" SYMLINK+="FCD"
+  
+(hint: open a terminal and type: sudo gedit /etc/udev/rules.d/20-fcd.rules)
+
+Reload the rules using "sudo udevadm control --reload-rules"
+Qthid should now detect your FCD when you plug it in.
+
+
+2.2 Mac OS X (10.6+)
+
+The Mac OS X bundle contains all the necessary Qt libraries and no additional installation
+or configuration is required. Unlinke Linux, the Funcube Dongle will just work.
+
+
+2.3 Windows
+
+Not tested. It is recommended to use the "Fully functional frontend" instead.
+
+
+2.4 Building from source
+
+- Install Qt Creator 2.0.1 or newer and Qt SDK 4.7. On recent linux it is normally
+  sufficient to select Qt Creator and the required Qt libraries will be installed as
+  dependencies.
+- Open the qthid.pro file in Qt Creator. It will say something about setting up a target;
+  say OK or Finish or Done (depends on version and OS).
+- You can now build and execute the project.
+
+
+License
 
 Qthid is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
