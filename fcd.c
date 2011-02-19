@@ -25,7 +25,6 @@
 #else
     #include <stdlib.h>
 #endif
-#include <stdio.h>
 #include "hidapi.h"
 #include "fcd.h"
 
