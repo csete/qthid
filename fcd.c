@@ -97,7 +97,6 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDGetMode(void)
 
     if (phd==NULL)
     {
-        printf("FCD open FAILED!\n");
         return FME_NONE;
     }
 
