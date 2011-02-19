@@ -1,0 +1,13 @@
+Changes in version 2.1:
+
+- Various fixes and workarounds to prevent crash and freeze when switching
+  between application and bootloader mode. The application can now run with or
+  without FCD (hotplug). Upgrade and verify firmware have been tested on Linux
+  (32 and 64 bit) and OSX 10.6.
+- Updated HID API to hidapi/master from 2011-02-17
+- Retrieve libusb configuration on Linux using pkg-config
+- Remove local Qt Creator configuration from distribution
+- Improvements to the UI layout and widgets
+- Added application icon
+- Applied GPL V3 license
+
