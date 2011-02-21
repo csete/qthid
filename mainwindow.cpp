@@ -37,6 +37,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->spinBoxCorr->setValue(settings.value("Correction","-120").toInt());
     EnableControls();
 
+    setUnifiedTitleAndToolBarOnMac(true);
+
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(EnableControls()));
     timer->start(1000);
