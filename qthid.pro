@@ -38,5 +38,17 @@ unix {
 RESOURCES += \
     qthid.qrc
 
-# app icon on OSX
-ICON = images/qthid.icns
+
+win32 {
+    # application icon on Windows
+    RC_FILE = qthid.rc
+} else:macx {
+    # app icon on OSX
+    ICON = images/qthid.icns
+}
+
+OTHER_FILES += \
+    qthid.rc \
+    images/qthid.ico \
+    images/qthid.icns
+
