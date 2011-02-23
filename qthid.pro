@@ -37,3 +37,6 @@ unix {
 
 RESOURCES += \
     qthid.qrc
+
+# app icon on OSX
+ICON = images/qthid.icns
