@@ -47,7 +47,7 @@ win32 {
     ICON = images/qthid.icns
 }
 
-OTHER_FILES += \
+OTHER_FILES += AUTHORS.txt LICENSE.txt NEWS.txt README.txt \
     qthid.rc \
     images/qthid.ico \
     images/qthid.icns
