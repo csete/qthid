@@ -64,7 +64,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>&amp;Up</string>
+     <string>Up</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButtonDown">
@@ -77,7 +77,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>&amp;Down</string>
+     <string>Down</string>
     </property>
    </widget>
    <widget class="QGroupBox" name="groupBox">
@@ -93,28 +93,19 @@
      <string>Firmware</string>
     </property>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="0">
-      <widget class="QPushButton" name="pushButtonAppReset">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
+     <item row="1" column="1">
+      <widget class="QPushButton" name="pushButtonVerifyFirmware">
        <property name="toolTip">
-        <string>Switch to bootloader mode</string>
+        <string>Verify the firmware on the FCD</string>
        </property>
        <property name="statusTip">
-        <string>Switch to bootloader mode</string>
+        <string>Verify the firmware</string>
        </property>
        <property name="whatsThis">
-        <string>This button switches the Funcube Dongle to bootloader mode where you can upload new firmware</string>
+        <string>Verify the firmware in the Funcube Dongle against a firmware on disk</string>
        </property>
        <property name="text">
-        <string>Bootloader</string>
-       </property>
-       <property name="checkable">
-        <bool>false</bool>
+        <string>Verify</string>
        </property>
       </widget>
      </item>
@@ -162,24 +153,32 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
-      <widget class="QPushButton" name="pushButtonVerifyFirmware">
+     <item row="0" column="0">
+      <widget class="QPushButton" name="pushButtonAppReset">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="toolTip">
-        <string>Verify the firmware on the FCD</string>
+        <string>Switch to bootloader mode</string>
        </property>
        <property name="statusTip">
-        <string>Verify the firmware</string>
+        <string>Switch to bootloader mode</string>
        </property>
        <property name="whatsThis">
-        <string>Verify the firmware in the Funcube Dongle against a firmware on disk</string>
+        <string>This button switches the Funcube Dongle to bootloader mode where you can upload new firmware</string>
        </property>
        <property name="text">
-        <string>Verify</string>
+        <string>Bootloader</string>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
     </layout>
-    <zorder></zorder>
     <zorder>pushButtonVerifyFirmware</zorder>
     <zorder>pushButtonUpdateFirmware</zorder>
     <zorder>pushButtonBLReset</zorder>
@@ -207,13 +206,13 @@
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>60</y>
       <width>251</width>
-      <height>61</height>
+      <height>62</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout_2">
@@ -295,7 +294,7 @@
      <x>0</x>
      <y>0</y>
      <width>330</width>
-     <height>22</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>
