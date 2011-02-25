@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include <QtGui>
+#include <QtDebug>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "hidapi.h"
@@ -181,7 +182,7 @@ void MainWindow::on_pushButtonUpdateFirmware_clicked()
         qint64 qn64size=qf.size();
         char *buf=new char[qn64size];
 
-        qDebug( fileName.toAscii() );
+        qDebug() << fileName;
 
         if (buf==NULL)
         {
@@ -273,7 +274,7 @@ void MainWindow::on_pushButtonVerifyFirmware_clicked()
         qint64 qn64size=qf.size();
         char *buf=new char[qn64size];
 
-        qDebug( fileName.toAscii() );
+        qDebug() << fileName;
 
         if (buf==NULL)
         {
