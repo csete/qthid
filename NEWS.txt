@@ -1,3 +1,13 @@
+Changes in version 2.2:
+
+- Use native toolbar and status bar on Mac OS X
+- New application icon based on SVG drawing
+- Correctly set application and bundle icon on Mac OS X and Windows
+- Minor UI tweaks.
+- Fix qthid.pro to allow correct build on Ubuntu 9.04 (thanks EA4FVS).
+- Correct application name in file headers (thanks Andrew Elwell)
+
+
 Changes in version 2.1:
 
 - Various fixes and workarounds to prevent crash and freeze when switching
