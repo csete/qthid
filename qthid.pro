@@ -6,8 +6,14 @@
 
 QT       += core gui
 
-TARGET = qthid
 TEMPLATE = app
+
+macx {
+#    TARGET = "FCD Controller"
+    TARGET = Qthid
+} else {
+    TARGET = qthid
+}
 
 
 SOURCES +=\
