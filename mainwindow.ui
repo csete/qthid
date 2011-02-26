@@ -179,10 +179,6 @@
       </widget>
      </item>
     </layout>
-    <zorder>pushButtonVerifyFirmware</zorder>
-    <zorder>pushButtonUpdateFirmware</zorder>
-    <zorder>pushButtonBLReset</zorder>
-    <zorder>pushButtonAppReset</zorder>
    </widget>
    <widget class="QLineEdit" name="fcdStatusLine">
     <property name="geometry">
@@ -294,9 +290,23 @@
      <x>0</x>
      <y>0</y>
      <width>330</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+    <addaction name="actionAboutQt"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -307,6 +317,22 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+   <property name="toolTip">
+    <string>Information about Qthid</string>
+   </property>
+  </action>
+  <action name="actionAboutQt">
+   <property name="text">
+    <string>About Qt</string>
+   </property>
+   <property name="toolTip">
+    <string>Information about Qt</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>

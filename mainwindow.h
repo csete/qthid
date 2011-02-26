@@ -51,6 +51,10 @@ private slots:
     void on_pushButtonBLReset_clicked();
     void on_pushButtonAppReset_clicked();
     void EnableControls();
+
+    /* actions */
+    void on_actionAbout_triggered();
+    void on_actionAboutQt_triggered();
 };
 
 #endif // MAINWINDOW_H
