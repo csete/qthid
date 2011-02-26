@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>FUNcube Dongle controller</string>
+   <string>FUNcube Dongle Controller</string>
   </property>
   <property name="windowIcon">
    <iconset resource="qthid.qrc">
