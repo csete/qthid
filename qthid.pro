@@ -36,7 +36,7 @@ mac:LIBS += /System/Library/Frameworks/CoreFoundation.framework/CoreFoundation \
 win32:LIBS += "C:\\Program Files\\Microsoft SDKs\\Windows\\v6.0A\\Lib\\setupapi.lib"
 
 # libusb-1.0 on Linux uses pkg-config
-unix {
+linux-g++ {
     CONFIG += link_pkgconfig
     PKGCONFIG += libusb-1.0
 }
