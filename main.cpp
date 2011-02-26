@@ -23,14 +23,14 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    QApplication app(argc, argv);
     QCoreApplication::setOrganizationName("Hanlincrest Ltd");
     QCoreApplication::setOrganizationDomain("hanlincrest.com");
     QCoreApplication::setApplicationName("FUNcube Dongle controller");
-    QCoreApplication::setApplicationVersion("2.1");
+    QCoreApplication::setApplicationVersion("2.2");
 
-    MainWindow w;
-    w.show();
+    MainWindow win;
+    win.show();
 
-    return a.exec();
+    return app.exec();
 }
