@@ -2,6 +2,7 @@ Original work by Howard Long, G6LVB.
 Current maintainer: Alexandru Csete, OZ9AEC.
 
 Contributors:
+- Mario Lorenz DL5MLO
 - Andrew Elwell
 
 
