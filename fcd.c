@@ -27,6 +27,7 @@
 #endif
 #include "hidapi.h"
 #include "fcd.h"
+#include <stdio.h>
 
 const unsigned short _usVID=0x04D8;
 const unsigned short _usPID=0xFB56;
@@ -152,7 +153,7 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDGetMode(void)
 EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDAppReset(void)
 {
     hid_device *phd=NULL;
-    unsigned char aucBufIn[65];
+    //unsigned char aucBufIn[65];
     unsigned char aucBufOut[65];
 
     phd=FCDOpen();
@@ -233,7 +234,7 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDAppSetFreqkHz(int nFreq)
 EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDBLReset(void)
 {
     hid_device *phd=NULL;
-    unsigned char aucBufIn[65];
+//    unsigned char aucBufIn[65];
     unsigned char aucBufOut[65];
 
     phd=FCDOpen();
@@ -484,3 +485,55 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDBLVerifyFirmware(char *pc,int6
     phd=NULL;
     return FME_BL;
 }
+
+/* Below is the unofficial port of the "backdoor api" as used in the windows full featured client */
+EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCD_WriteCommand(uint8_t u8Cmd, uint8_t *pu8Data, uint8_t u8len)
+{
+        hid_device *phd=NULL;
+        unsigned char aucBufOut[65];
+        //printf("Write: %i %i %i\n",u8Cmd, u8len,pu8Data[0]);
+        fflush(stdout);
+        phd=FCDOpen();
+
+        if (phd==NULL)
+        {
+            return FME_NONE;
+        }
+
+        aucBufOut[0]=0; // Report ID, ignored
+        aucBufOut[1]=u8Cmd;
+        memcpy(aucBufOut+2, pu8Data,u8len);
+        hid_write(phd,aucBufOut,65);
+
+
+        FCDClose(phd);
+        phd=NULL;
+
+        return FME_NONE;
+}
+EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCD_ReadCommand(uint8_t u8Cmd, uint8_t *pu8Data, uint8_t u8len)
+{
+        hid_device *phd=NULL;
+        unsigned char aucBufOut[65];
+        unsigned char aucBufIn[65];
+        phd=FCDOpen();
+        if (phd==NULL)
+        {
+            return FME_NONE;
+        }
+        aucBufOut[0]=0; // Report ID, ignored
+        aucBufOut[1]=u8Cmd;
+        hid_write(phd,aucBufOut,65);
+        memset(aucBufIn,0xCC,65); // Clear out the response buffer
+        hid_read(phd,aucBufIn,65);
+        memcpy(pu8Data,aucBufIn+2,u8len);
+        FCDClose(phd);
+        //printf("Read %i %i %i  \n",u8Cmd, u8len,pu8Data[0]);
+        fflush(stdout);
+        phd=NULL;
+
+        return FME_NONE;
+//        return au8BufIn[2])
+}
+
+

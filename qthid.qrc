@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/qthid">
         <file>images/qthid.png</file>
+        <file>images/rfchain.png</file>
     </qresource>
 </RCC>

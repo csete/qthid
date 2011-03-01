@@ -49,6 +49,9 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDBLErase(void);
 EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDBLWriteFirmware(char *pc,int64_t n64Size);
 EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDBLVerifyFirmware(char *pc,int64_t n64Size);
 
+EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCD_WriteCommand(uint8_t u8Cmd, uint8_t *pu8Data, uint8_t u8len);
+EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCD_ReadCommand(uint8_t u8Cmd, uint8_t *pu8Data, uint8_t u8len);
+
 #ifdef __cplusplus
 }
 #endif
