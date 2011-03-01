@@ -27,6 +27,7 @@ linux-g++: SOURCES +=hid-libusb.c
 
 HEADERS  += mainwindow.h \
     hidapi.h \
+    FCDHidCmd.h \
     fcd.h
 
 FORMS    += mainwindow.ui
