@@ -701,7 +701,7 @@ void MainWindow::on_pushButtonVerifyFirmware_clicked()
 
 }
 
-void MainWindow::on_lineEditFreq_textEdited(QString s)
+void MainWindow::on_lineEditFreq_textChanged(QString s)
 {
     double d=StrToDouble(s);
     int nCursor=ui->lineEditFreq->cursorPosition();
@@ -728,7 +728,7 @@ void MainWindow::on_lineEditFreq_textEdited(QString s)
     d*=1.0+ui->spinBoxCorr->value()/1000000.0;
 
     FCDAppSetFreqkHz((int)(d/1000.0));
-    ReadDevice();
+    //ReadDevice();
 }
 
 void MainWindow::on_lineEditStep_textChanged(QString s)
