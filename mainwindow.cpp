@@ -701,6 +701,13 @@ void MainWindow::on_pushButtonVerifyFirmware_clicked()
 
 }
 
+
+/** \brief Frequency entry text changed.
+  * \param s New frequency string.
+  *
+  * This slot is called when new text is entered into the frequency editor. The
+  * function is also called when the UP and DOWN buttons are clicked.
+  */
 void MainWindow::on_lineEditFreq_textChanged(QString s)
 {
     double d=StrToDouble(s);
@@ -731,6 +738,13 @@ void MainWindow::on_lineEditFreq_textChanged(QString s)
     //ReadDevice();
 }
 
+
+/** \brief Frequency step entry text changed.
+  * \param s New frequency step.
+  *
+  * This slot is called when new text is entered into the frequency step
+  * editor.
+  */
 void MainWindow::on_lineEditStep_textChanged(QString s)
 {
     double d=StrToDouble(s);
@@ -756,6 +770,14 @@ void MainWindow::on_lineEditStep_textChanged(QString s)
     }
 }
 
+
+/** \brief Frequency up button clicked.
+  *
+  * This slot is called when the frequency UP button is clicked.
+  * It increments the current frequency with the step and calls the
+  * textChanged() slot of the frequency editor, which in turn will also set
+  * the frequency of the FCD.
+  */
 void MainWindow::on_pushButtonUp_clicked()
 {
     double dStep=StrToDouble(ui->lineEditStep->text());
@@ -774,6 +796,14 @@ void MainWindow::on_pushButtonUp_clicked()
     ui->lineEditFreq->setText(QLocale(QLocale()).toString(dFreq,'f',0));
 }
 
+
+/** \brief Frequency down button clicked.
+  *
+  * This slot is called when the frequency DOWN button is clicked.
+  * It increments the current frequency with the step and calls the
+  * textChanged() slot of the frequency editor, which in turn will also set
+  * the frequency of the FCD.
+  */
 void MainWindow::on_pushButtonDown_clicked()
 {
     double dStep=StrToDouble(ui->lineEditStep->text());
@@ -792,6 +822,13 @@ void MainWindow::on_pushButtonDown_clicked()
     ui->lineEditFreq->setText(QLocale(QLocale()).toString(dFreq,'f',0));
 }
 
+
+/** \brief Frequency correction changed.
+  * \param n New correction value in ppm.
+  *
+  * This slot is called when the value of the frequency correction spin button
+  * is changed.
+  */
 void MainWindow::on_spinBoxCorr_valueChanged(int n)
 {
     double d=StrToDouble(ui->lineEditFreq->text());
