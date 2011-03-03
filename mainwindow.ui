@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>990</width>
-    <height>364</height>
+    <width>1106</width>
+    <height>431</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,83 +22,107 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="spacing">
+     <number>10</number>
+    </property>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
-       <widget class="QLineEdit" name="lineEditFreq">
-        <property name="font">
-         <font>
-          <pointsize>18</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="labelFreqHz">
-        <property name="text">
-         <string>Hz</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButtonDown">
-        <property name="text">
-         <string>Down</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButtonUp">
-        <property name="text">
-         <string>Up</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="0">
-         <widget class="QLabel" name="labelStep">
-          <property name="text">
-           <string>Frequency step:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="lineEditStep">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
+        <item row="0" column="0" colspan="3">
+         <widget class="QLineEdit" name="lineEditFreq">
+          <property name="font">
+           <font>
+            <pointsize>24</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
-        <item row="0" column="2">
-         <widget class="QLabel" name="labelStepHz">
+        <item row="0" column="3">
+         <widget class="QLabel" name="labelFreqHz">
+          <property name="font">
+           <font>
+            <pointsize>20</pointsize>
+           </font>
+          </property>
           <property name="text">
            <string>Hz</string>
           </property>
          </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QLabel" name="labelCorrection">
+         <widget class="QPushButton" name="pushButtonDown">
+          <property name="toolTip">
+           <string>Frequency down</string>
+          </property>
+          <property name="statusTip">
+           <string>Move frequency down</string>
+          </property>
           <property name="text">
-           <string>Correction:</string>
+           <string>&lt;</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="lineEditStep">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Frequency step (Hz)</string>
+          </property>
+          <property name="maxLength">
+           <number>10</number>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
+        <item row="1" column="2">
+         <widget class="QPushButton" name="pushButtonUp">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Frequency up</string>
+          </property>
+          <property name="statusTip">
+           <string>Move frequency up </string>
+          </property>
+          <property name="text">
+           <string>&gt;</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="labelCorrection">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Corr</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
          <widget class="QSpinBox" name="spinBoxCorr">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -123,7 +147,7 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="2">
+        <item row="2" column="2">
          <widget class="QLabel" name="labelCorrection_2">
           <property name="text">
            <string>ppm</string>
@@ -133,9 +157,148 @@
        </layout>
       </item>
       <item>
-       <widget class="QGroupBox" name="groupBox">
+       <spacer name="horizontalSpacer_5">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBoxFreqCorr">
+        <property name="title">
+         <string>Correction</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_5">
+         <item row="0" column="0">
+          <widget class="QLabel" name="labelDCI">
+           <property name="text">
+            <string>DC I</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QDoubleSpinBox" name="doubleSpinBoxDCI">
+           <property name="decimals">
+            <number>5</number>
+           </property>
+           <property name="minimum">
+            <double>-1.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>1.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.000030000000000</double>
+           </property>
+           <property name="value">
+            <double>0.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QLabel" name="labelGain">
+           <property name="text">
+            <string>Gain</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="3">
+          <widget class="QDoubleSpinBox" name="doubleSpinBoxGain">
+           <property name="readOnly">
+            <bool>false</bool>
+           </property>
+           <property name="decimals">
+            <number>5</number>
+           </property>
+           <property name="minimum">
+            <double>-1.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>1.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.000030000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="labelDCQ">
+           <property name="text">
+            <string>DC Q</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QDoubleSpinBox" name="doubleSpinBoxDCQ">
+           <property name="decimals">
+            <number>5</number>
+           </property>
+           <property name="minimum">
+            <double>-1.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>1.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.000030000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QLabel" name="labelPhase">
+           <property name="text">
+            <string>Phase</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="3">
+          <widget class="QDoubleSpinBox" name="doubleSpinBoxPhase">
+           <property name="decimals">
+            <number>5</number>
+           </property>
+           <property name="minimum">
+            <double>-1.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>1.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.000030000000000</double>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_4">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBoxFw">
         <property name="title">
          <string>Firmware</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
         <layout class="QGridLayout" name="gridLayout">
          <item row="1" column="1">
@@ -231,104 +394,6 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QLabel" name="labelDCI">
-        <property name="text">
-         <string>Correction DC I</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QDoubleSpinBox" name="doubleSpinBoxDCI">
-        <property name="decimals">
-         <number>5</number>
-        </property>
-        <property name="minimum">
-         <double>-1.000000000000000</double>
-        </property>
-        <property name="maximum">
-         <double>1.000000000000000</double>
-        </property>
-        <property name="singleStep">
-         <double>0.000030000000000</double>
-        </property>
-        <property name="value">
-         <double>0.000000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="labelDCQ">
-        <property name="text">
-         <string>DC Q</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QDoubleSpinBox" name="doubleSpinBoxDCQ">
-        <property name="decimals">
-         <number>5</number>
-        </property>
-        <property name="minimum">
-         <double>-1.000000000000000</double>
-        </property>
-        <property name="maximum">
-         <double>1.000000000000000</double>
-        </property>
-        <property name="singleStep">
-         <double>0.000030000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="labelGain">
-        <property name="text">
-         <string>Gain</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QDoubleSpinBox" name="doubleSpinBoxGain">
-        <property name="readOnly">
-         <bool>false</bool>
-        </property>
-        <property name="decimals">
-         <number>5</number>
-        </property>
-        <property name="minimum">
-         <double>-1.000000000000000</double>
-        </property>
-        <property name="maximum">
-         <double>1.000000000000000</double>
-        </property>
-        <property name="singleStep">
-         <double>0.000030000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="labelPhase">
-        <property name="text">
-         <string>Phase</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QDoubleSpinBox" name="doubleSpinBoxPhase">
-        <property name="decimals">
-         <number>5</number>
-        </property>
-        <property name="minimum">
-         <double>-1.000000000000000</double>
-        </property>
-        <property name="maximum">
-         <double>1.000000000000000</double>
-        </property>
-        <property name="singleStep">
-         <double>0.000030000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QLabel" name="labelPLLlock">
         <property name="text">
          <string>PLL Locked</string>
@@ -377,6 +442,19 @@
         </property>
        </widget>
       </item>
+      <item>
+       <spacer name="horizontalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
      </layout>
     </item>
     <item>
@@ -401,13 +479,6 @@
        <widget class="QLabel" name="labelLNAGain">
         <property name="text">
          <string>LNA gain</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLabel" name="labelRFFilter">
-        <property name="text">
-         <string>RF Filter</string>
         </property>
        </widget>
       </item>
@@ -517,19 +588,19 @@
       <item row="1" column="11">
        <widget class="QComboBox" name="comboBoxIFGain6"/>
       </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="labelRFFilter">
+        <property name="text">
+         <string>RF Filter</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
        <layout class="QGridLayout" name="gridLayout_3">
-        <item row="0" column="0">
-         <widget class="QLabel" name="labelLNAEnhance">
-          <property name="text">
-           <string>LNA enhance</string>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="1">
          <widget class="QLabel" name="labelBand">
           <property name="text">
@@ -567,6 +638,13 @@
         <item row="1" column="3">
          <widget class="QComboBox" name="comboBoxIFGainMode"/>
         </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="labelLNAEnhance">
+          <property name="text">
+           <string>LNA enhance</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
       <item>
@@ -584,15 +662,34 @@
       </item>
       <item>
        <widget class="QPushButton" name="pushButtonDefaults">
+        <property name="toolTip">
+         <string>Reset FCD to default settings</string>
+        </property>
+        <property name="statusTip">
+         <string>Load defaults</string>
+        </property>
         <property name="text">
          <string>Defaults</string>
         </property>
        </widget>
       </item>
       <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
        <widget class="QLineEdit" name="fcdStatusLine">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -614,8 +711,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>990</width>
-     <height>21</height>
+     <width>1106</width>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
