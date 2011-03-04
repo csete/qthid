@@ -35,22 +35,35 @@
 #endif
 
 #include <inttypes.h>
-typedef enum {FME_NONE,FME_BL,FME_APP} FCDMODEENUM; // The current mode of the FCD: none inserted, in bootloader mode or in normal application mode
+
+
+/** \brief FCD mode enumeration. */
+typedef enum {
+    FCD_MODE_NONE,  /*!< No FCD detected. */
+    FCD_MODE_BL,    /*!< FCD present in bootloader mode. */
+    FCD_MODE_APP    /*!< FCD present in aplpication mode. */
+} FCD_MODE_ENUM; // The current mode of the FCD: none inserted, in bootloader mode or in normal application mode
+
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDGetMode(void);
-EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDAppReset(void);
-EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDAppSetFreqkHz(int nFreq);
-EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDBLReset(void);
-EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDBLErase(void);
-EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDBLWriteFirmware(char *pc,int64_t n64Size);
-EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDBLVerifyFirmware(char *pc,int64_t n64Size);
+/* Application functions */
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdGetMode(void);
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppReset(void);
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetFreqkHz(int nFreq);
 
-EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCD_WriteCommand(uint8_t u8Cmd, uint8_t *pu8Data, uint8_t u8len);
-EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCD_ReadCommand(uint8_t u8Cmd, uint8_t *pu8Data, uint8_t u8len);
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetParam(uint8_t u8Cmd, uint8_t *pu8Data, uint8_t u8len);
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppGetParam(uint8_t u8Cmd, uint8_t *pu8Data, uint8_t u8len);
+
+
+/* Bootloader functions */
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdBlReset(void);
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdBlErase(void);
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdBlWriteFirmware(char *pc, int64_t n64Size);
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdBlVerifyFirmware(char *pc, int64_t n64Size);
+
 
 #ifdef __cplusplus
 }

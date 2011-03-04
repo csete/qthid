@@ -50,7 +50,14 @@ const unsigned short _usPID=0xFB56;
 
 typedef int BOOL;
 
-static hid_device *FCDOpen(void)
+
+/** \brief Open FCD device.
+  * \return Pointer to the FCD HID device or NULL if none found
+  *
+  * This function looks for FCD devices connected to the computer and
+  * opens the first one found.
+  */
+static hid_device *fcdOpen(void)
 {
     struct hid_device_info *phdi=NULL;
     hid_device *phd=NULL;
@@ -61,48 +68,60 @@ static hid_device *FCDOpen(void)
     {
         return NULL; // No FCD device found
     }
+
     pszPath=strdup(phdi->path);
     if (pszPath==NULL)
     {
         return NULL;
     }
+
     hid_free_enumeration(phdi);
     phdi=NULL;
 
-    if ((phd=hid_open_path(pszPath))==NULL)
+    if ((phd=hid_open_path(pszPath)) == NULL)
     {
         free(pszPath);
         pszPath=NULL;
+
         return NULL;
     }
+
     free(pszPath);
     pszPath=NULL;
+
     return phd;
 }
 
-static void FCDClose(hid_device *phd)
+
+/** \brief Close FCD HID device. */
+static void fcdClose(hid_device *phd)
 {
     hid_close(phd);
 }
 
-EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDGetMode(void)
+
+/** \brief Get FCd mode.
+  * \return The current FCD mode.
+  * \sa FCD_MODE_ENUM
+  */
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdGetMode(void)
 {
     hid_device *phd=NULL;
     unsigned char aucBufIn[65];
     unsigned char aucBufOut[65];
-    FCDMODEENUM fcd_mode = FME_NONE;
+    FCD_MODE_ENUM fcd_mode = FCD_MODE_NONE;
 
 
-    phd=FCDOpen();
+    phd = fcdOpen();
 
-    if (phd==NULL)
+    if (phd == NULL)
     {
-        return FME_NONE;
+        return FCD_MODE_NONE;
     }
 
     // Send a BL Query Command
     aucBufOut[0]=0; // Report ID, ignored
-    aucBufOut[1]=FCDCMDBLQUERY;
+    aucBufOut[1]=FCDCMDBLQUERY; /** FIXME **/
     hid_write(phd,aucBufOut,65);
     memset(aucBufIn,0xCC,65); // Clear out the response buffer
     hid_read(phd,aucBufIn,65);
@@ -110,14 +129,14 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDGetMode(void)
     // If it's in bootloader mode, we get a sensible response, in app mode the response to this command isn't understood
     if (aucBufIn[0]==FCDCMDBLQUERY && aucBufIn[1]==1 && strncmp((char *)(aucBufIn+2),"FCDBL",5)==0)
     {
-        fcd_mode = FME_BL;
+        fcd_mode = FCD_MODE_BL;
     }
     else {
-        fcd_mode = FME_APP;
+        fcd_mode = FCD_MODE_APP;
     }
 
-    FCDClose(phd);
-    phd=NULL;
+    fcdClose(phd);
+    phd = NULL;
 
 
 #if 0
@@ -150,21 +169,29 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDGetMode(void)
     return fcd_mode;
 }
 
-EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDAppReset(void)
+
+/** \brief Reset FCD to bootloader mode.
+  * \return FCD_MODE_NONE
+  *
+  * This function is used to switch the FCD into bootloader mode in which
+  * various firmware operations can be performed.
+  */
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppReset(void)
 {
     hid_device *phd=NULL;
     //unsigned char aucBufIn[65];
     unsigned char aucBufOut[65];
 
-    phd=FCDOpen();
+    phd = fcdOpen();
 
-    if (phd==NULL)
+    if (phd == NULL)
     {
-        return FME_NONE;
+        return FCD_MODE_NONE;
     }
+
     // Send an App reset command
     aucBufOut[0]=0; // Report ID, ignored
-    aucBufOut[1]=FCDCMDAPPRESET;
+    aucBufOut[1]=FCDCMDAPPRESET; /** FIXME **/
     hid_write(phd,aucBufOut,65);
 
     /** FIXME: hid_read() will occasionally hang due to a pthread_cond_wait() never returning.
@@ -191,28 +218,39 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDAppReset(void)
     return FME_BL;
     */
 
-    FCDClose(phd);
-    phd=NULL;
+    fcdClose(phd);
+    phd = NULL;
 
-    return FME_NONE;
+    return FCD_MODE_NONE;
 
 }
 
-EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDAppSetFreqkHz(int nFreq)
+
+/** \brief Set FCD frequency with kHz resolution.
+  * \param nFreq The new frequency in kHz.
+  * \return The FCD mode.
+  *
+  * This function sets the frequency of the FCD with 1 kHz resolution. The parameter
+  * nFreq must already contain any necessary frequency corrention.
+  *
+  * \sa fcdAppSetFreq
+  */
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetFreqkHz(int nFreq)
 {
     hid_device *phd=NULL;
     unsigned char aucBufIn[65];
     unsigned char aucBufOut[65];
 
-    phd=FCDOpen();
+    phd = fcdOpen();
 
-    if (phd==NULL)
+    if (phd == NULL)
     {
-        return FME_NONE;
+        return FCD_MODE_NONE;
     }
+
     // Send an App reset command
     aucBufOut[0]=0; // Report ID, ignored
-    aucBufOut[1]=FCDCMDAPPSETFREQKHZ;
+    aucBufOut[1]=FCDCMDAPPSETFREQKHZ;  /** FIXME **/
     aucBufOut[2]=(unsigned char)nFreq;
     aucBufOut[3]=(unsigned char)(nFreq>>8);
     aucBufOut[4]=(unsigned char)(nFreq>>16);
@@ -222,30 +260,41 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDAppSetFreqkHz(int nFreq)
 
     if (aucBufIn[0]==FCDCMDAPPSETFREQKHZ && aucBufIn[1]==1)
     {
-        FCDClose(phd);
-        phd=NULL;
-        return FME_APP;
+        fcdClose(phd);
+        phd = NULL;
+
+        return FCD_MODE_APP;
     }
-    FCDClose(phd);
-    phd=NULL;
-    return FME_BL;
+
+    fcdClose(phd);
+    phd = NULL;
+
+    return FCD_MODE_BL;
 }
 
-EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDBLReset(void)
+
+/** \brief Reset FCD to application mode.
+  * \return FCD_MODE_NONE
+  *
+  * This function is used to switch the FCD from bootloader mode
+  * into application mode.
+  */
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdBlReset(void)
 {
     hid_device *phd=NULL;
 //    unsigned char aucBufIn[65];
     unsigned char aucBufOut[65];
 
-    phd=FCDOpen();
+    phd = fcdOpen();
 
-    if (phd==NULL)
+    if (phd == NULL)
     {
-        return FME_NONE;
+        return FCD_MODE_NONE;
     }
+
     // Send an BL reset command
     aucBufOut[0]=0; // Report ID, ignored
-    aucBufOut[1]=FCDCMDBLRESET;
+    aucBufOut[1]=FCDCMDBLRESET;  /** FIXME **/
     hid_write(phd,aucBufOut,65);
 
     /** FIXME: hid_read() will hang due to a pthread_cond_wait() never returning.
@@ -272,44 +321,67 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDBLReset(void)
     return FME_APP;
     */
 
-    FCDClose(phd);
-    phd=NULL;
+    fcdClose(phd);
+    phd = NULL;
 
-    return FME_NONE;
+    return FCD_MODE_NONE;
 
 }
 
-EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDBLErase(void)
+
+/** \brief Erase firmware from FCD.
+  * \return The FCD mode
+  *
+  * This function deletes the firmware from the FCD. This is required
+  * before writing new firmware into the FCD.
+  *
+  * \sa fcdBlWriteFirmware
+  */
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdBlErase(void)
 {
     hid_device *phd=NULL;
     unsigned char aucBufIn[65];
     unsigned char aucBufOut[65];
 
-    phd=FCDOpen();
+    phd = fcdOpen();
 
-    if (phd==NULL)
+    if (phd == NULL)
     {
-        return FME_NONE;
+        return FCD_MODE_NONE;
     }
+
     // Send an App reset command
     aucBufOut[0]=0; // Report ID, ignored
-    aucBufOut[1]=FCDCMDBLERASE;
+    aucBufOut[1]=FCDCMDBLERASE;  /** FIXME **/
     hid_write(phd,aucBufOut,65);
     memset(aucBufIn,0xCC,65); // Clear out the response buffer
     hid_read(phd,aucBufIn,65);
 
     if (aucBufIn[0]==FCDCMDBLERASE && aucBufIn[1]==1)
     {
-        FCDClose(phd);
-        phd=NULL;
-        return FME_BL;
+        fcdClose(phd);
+        phd = NULL;
+
+        return FCD_MODE_BL;
     }
-    FCDClose(phd);
-    phd=NULL;
-    return FME_APP;
+
+    fcdClose(phd);
+    phd = NULL;
+
+    return FCD_MODE_APP;
 }
 
-EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDBLWriteFirmware(char *pc,int64_t n64Size)
+
+/** \brief Write new firmware into the FCD.
+  * \param pc Pointer to the new firmware data
+  * \param n64size The number of bytes in the data
+  * \return The FCD mode
+  *
+  * This function is used to upload new firmware into the FCD flash.
+  *
+  * \sa fcdBlErase
+  */
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdBlWriteFirmware(char *pc, int64_t n64Size)
 {
     hid_device *phd=NULL;
     unsigned char aucBufIn[65];
@@ -319,27 +391,28 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDBLWriteFirmware(char *pc,int64
     uint32_t u32Addr;
     BOOL bFinished=FALSE;
 
-    phd=FCDOpen();
+    phd = fcdOpen();
 
     if (phd==NULL)
     {
-        return FME_NONE;
+        return FCD_MODE_NONE;
     }
 
     // Get the valid flash address range
     aucBufOut[0]=0; // Report ID, ignored
-    aucBufOut[1]=FCDCMDBLGETBYTEADDRRANGE;
+    aucBufOut[1]=FCDCMDBLGETBYTEADDRRANGE;   /** FIXME **/
     hid_write(phd,aucBufOut,65);
     memset(aucBufIn,0xCC,65); // Clear out the response buffer
     hid_read(phd,aucBufIn,65);
 
     if (aucBufIn[0]!=FCDCMDBLGETBYTEADDRRANGE || aucBufIn[1]!=1)
     {
+        fcdClose(phd);
+        phd = NULL;
 
-        FCDClose(phd);
-        phd=NULL;
-        return FME_APP;
+        return FCD_MODE_APP;
     }
+
     u32AddrStart=
         aucBufIn[2]+
         (((uint32_t)aucBufIn[3])<<8)+
@@ -353,7 +426,7 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDBLWriteFirmware(char *pc,int64
 
     // Set start address for flash
     aucBufOut[0]=0; // Report ID, ignored
-    aucBufOut[1]=FCDCMDBLSETBYTEADDR;
+    aucBufOut[1]=FCDCMDBLSETBYTEADDR;  /** FIXME **/
     aucBufOut[2]=((unsigned char)u32AddrStart);
     aucBufOut[3]=((unsigned char)(u32AddrStart>>8));
     aucBufOut[4]=((unsigned char)(u32AddrStart>>16));
@@ -364,15 +437,15 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDBLWriteFirmware(char *pc,int64
 
     if (aucBufIn[0]!=FCDCMDBLSETBYTEADDR || aucBufIn[1]!=1)
     {
+        fcdClose(phd);
+        phd = NULL;
 
-        FCDClose(phd);
-        phd=NULL;
-        return FME_APP;
+        return FCD_MODE_APP;
     }
 
     // Write blocks
     aucBufOut[0]=0; // Report ID, ignored
-    aucBufOut[1]=FCDCMDBLWRITEFLASHBLOCK;
+    aucBufOut[1]=FCDCMDBLWRITEFLASHBLOCK;  /** FIXME **/
     for (u32Addr=u32AddrStart;u32Addr+47<u32AddrEnd && u32Addr+47<n64Size && !bFinished;u32Addr+=48)
     {
         memcpy(&aucBufOut[3],&pc[u32Addr],48);
@@ -383,19 +456,31 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDBLWriteFirmware(char *pc,int64
 
         if (aucBufIn[0]!=FCDCMDBLWRITEFLASHBLOCK || aucBufIn[1]!=1)
         {
-            bFinished=TRUE;
-            FCDClose(phd);
-            phd=NULL;
-            return FME_APP;
+            bFinished = TRUE;
+            fcdClose(phd);
+            phd = NULL;
+
+            return FCD_MODE_APP;
         }
     }
 
-    FCDClose(phd);
-    phd=NULL;
-    return FME_BL;
+    fcdClose(phd);
+    phd = NULL;
+
+    return FCD_MODE_BL;
 }
 
-EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDBLVerifyFirmware(char *pc,int64_t n64Size)
+
+/** \brief Verify firmware in FCd flash.
+  * \param pc Pointer to firmware data to verify against.
+  * \param n64Size Size of the data in pc.
+  * \return The FCD_MODE_BL if verification was succesful.
+  *
+  * This function verifies the firmware currently in the FCd flash against the firmware
+  * image pointed to by pc. The function return FCD_MODE_BL if the verification is OK and
+  * FCD_MODE_APP otherwise.
+  */
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdBlVerifyFirmware(char *pc, int64_t n64Size)
 {
     hid_device *phd=NULL;
     unsigned char aucBufIn[65];
@@ -405,32 +490,34 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDBLVerifyFirmware(char *pc,int6
     uint32_t u32Addr;
     BOOL bFinished=FALSE;
 
-    phd=FCDOpen();
+    phd = fcdOpen();
 
     if (phd==NULL)
     {
-        return FME_NONE;
+        return FCD_MODE_NONE;
     }
 
     // Get the valid flash address range
     aucBufOut[0]=0; // Report ID, ignored
-    aucBufOut[1]=FCDCMDBLGETBYTEADDRRANGE;
+    aucBufOut[1]=FCDCMDBLGETBYTEADDRRANGE; /** FIXME **/
     hid_write(phd,aucBufOut,65);
     memset(aucBufIn,0xCC,65); // Clear out the response buffer
     hid_read(phd,aucBufIn,65);
 
     if (aucBufIn[0]!=FCDCMDBLGETBYTEADDRRANGE || aucBufIn[1]!=1)
     {
+        fcdClose(phd);
+        phd = NULL;
 
-        FCDClose(phd);
-        phd=NULL;
-        return FME_APP;
+        return FCD_MODE_APP;
     }
+
     u32AddrStart=
         aucBufIn[2]+
         (((uint32_t)aucBufIn[3])<<8)+
         (((uint32_t)aucBufIn[4])<<16)+
         (((uint32_t)aucBufIn[5])<<24);
+
     u32AddrEnd=
         aucBufIn[6]+
         (((uint32_t)aucBufIn[7])<<8)+
@@ -439,7 +526,7 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDBLVerifyFirmware(char *pc,int6
 
     // Set start address for flash
     aucBufOut[0]=0; // Report ID, ignored
-    aucBufOut[1]=FCDCMDBLSETBYTEADDR;
+    aucBufOut[1]=FCDCMDBLSETBYTEADDR;  /** FIXME **/
     aucBufOut[2]=((unsigned char)u32AddrStart);
     aucBufOut[3]=((unsigned char)(u32AddrStart>>8));
     aucBufOut[4]=((unsigned char)(u32AddrStart>>16));
@@ -450,15 +537,15 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDBLVerifyFirmware(char *pc,int6
 
     if (aucBufIn[0]!=FCDCMDBLSETBYTEADDR || aucBufIn[1]!=1)
     {
+        fcdClose(phd);
+        phd = NULL;
 
-        FCDClose(phd);
-        phd=NULL;
-        return FME_APP;
+        return FCD_MODE_APP;
     }
 
     // Read blocks
     aucBufOut[0]=0; // Report ID, ignored
-    aucBufOut[1]=FCDCMDBLREADFLASHBLOCK;
+    aucBufOut[1]=FCDCMDBLREADFLASHBLOCK;  /** FIXME **/
     for (u32Addr=u32AddrStart;u32Addr+47<u32AddrEnd && u32Addr+47<n64Size && !bFinished;u32Addr+=48)
     {
         hid_write(phd,aucBufOut,65);
@@ -467,73 +554,95 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCDBLVerifyFirmware(char *pc,int6
 
         if (aucBufIn[0]!=FCDCMDBLREADFLASHBLOCK || aucBufIn[1]!=1)
         {
-            bFinished=TRUE;
-            FCDClose(phd);
-            phd=NULL;
-            return FME_APP;
+            bFinished = TRUE;
+            fcdClose(phd);
+            phd = NULL;
+
+            return FCD_MODE_APP;
         }
+
         if (memcmp(&aucBufIn[2],&pc[u32Addr],48)!=0)
         {
-            bFinished=TRUE;
-            FCDClose(phd);
-            phd=NULL;
-            return FME_APP;
+            bFinished = TRUE;
+            fcdClose(phd);
+            phd = NULL;
+
+            return FCD_MODE_APP;
         }
     }
 
-    FCDClose(phd);
-    phd=NULL;
-    return FME_BL;
+    fcdClose(phd);
+    phd = NULL;
+
+    return FCD_MODE_BL;
 }
+
 
 /* Below is the unofficial port of the "backdoor api" as used in the windows full featured client */
-EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCD_WriteCommand(uint8_t u8Cmd, uint8_t *pu8Data, uint8_t u8len)
+
+/** \brief Set gain or filter parameter.
+  * \param u8Cmd The command byte
+  * \param pu8Data TBD
+  * \param u8len TBD
+  * \return FCD_MODE_NONE
+  *
+  */
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetParam(uint8_t u8Cmd, uint8_t *pu8Data, uint8_t u8len)
 {
-        hid_device *phd=NULL;
-        unsigned char aucBufOut[65];
-        //printf("Write: %i %i %i\n",u8Cmd, u8len,pu8Data[0]);
-        fflush(stdout);
-        phd=FCDOpen();
+    hid_device *phd=NULL;
+    unsigned char aucBufOut[65];
 
-        if (phd==NULL)
-        {
-            return FME_NONE;
-        }
+    //printf("Write: %i %i %i\n",u8Cmd, u8len,pu8Data[0]);
+    //fflush(stdout);
+    phd = fcdOpen();
+    if (phd == NULL)
+    {
+        return FCD_MODE_NONE;
+    }
 
-        aucBufOut[0]=0; // Report ID, ignored
-        aucBufOut[1]=u8Cmd;
-        memcpy(aucBufOut+2, pu8Data,u8len);
-        hid_write(phd,aucBufOut,65);
+    aucBufOut[0]=0; // Report ID, ignored
+    aucBufOut[1]=u8Cmd;
+    memcpy(aucBufOut+2, pu8Data,u8len);
+    hid_write(phd,aucBufOut,65);
 
+    fcdClose(phd);
+    phd=NULL;
 
-        FCDClose(phd);
-        phd=NULL;
-
-        return FME_NONE;
-}
-EXTERN FCD_API_EXPORT FCD_API_CALL FCDMODEENUM FCD_ReadCommand(uint8_t u8Cmd, uint8_t *pu8Data, uint8_t u8len)
-{
-        hid_device *phd=NULL;
-        unsigned char aucBufOut[65];
-        unsigned char aucBufIn[65];
-        phd=FCDOpen();
-        if (phd==NULL)
-        {
-            return FME_NONE;
-        }
-        aucBufOut[0]=0; // Report ID, ignored
-        aucBufOut[1]=u8Cmd;
-        hid_write(phd,aucBufOut,65);
-        memset(aucBufIn,0xCC,65); // Clear out the response buffer
-        hid_read(phd,aucBufIn,65);
-        memcpy(pu8Data,aucBufIn+2,u8len);
-        FCDClose(phd);
-        //printf("Read %i %i %i  \n",u8Cmd, u8len,pu8Data[0]);
-        fflush(stdout);
-        phd=NULL;
-
-        return FME_NONE;
-//        return au8BufIn[2])
+    return FCD_MODE_NONE;
 }
 
+
+/** \brief Read gain or filter parameter from the FCD
+  * \param u8Cmd The parameter to read
+  * \param pu8Data TBD
+  * \param u8len
+  *
+  */
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppGetParam(uint8_t u8Cmd, uint8_t *pu8Data, uint8_t u8len)
+{
+    hid_device *phd=NULL;
+    unsigned char aucBufOut[65];
+    unsigned char aucBufIn[65];
+
+    phd = fcdOpen();
+    if (phd == NULL)
+    {
+        return FCD_MODE_NONE;
+    }
+
+    aucBufOut[0]=0; // Report ID, ignored
+    aucBufOut[1]=u8Cmd;
+    hid_write(phd,aucBufOut,65);
+    memset(aucBufIn,0xCC,65); // Clear out the response buffer
+    hid_read(phd,aucBufIn,65);
+    memcpy(pu8Data,aucBufIn+2,u8len);
+
+    fcdClose(phd);
+    //printf("Read %i %i %i  \n",u8Cmd, u8len,pu8Data[0]);
+    //fflush(stdout);
+    phd = NULL;
+
+    return FCD_MODE_NONE;
+//   return au8BufIn[2])
+}
 

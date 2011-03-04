@@ -382,7 +382,7 @@ void MainWindow::ReadDevice()
         int nIdx=0;
 
         /* read FCD value for this combo box */
-        FCD_ReadCommand(pcs->u8CommandGet, &u8, 1);
+        fcdAppGetParam(pcs->u8CommandGet, &u8, 1);
 
 
         //Try to find the index to the register field value
@@ -433,7 +433,7 @@ double MainWindow::StrToDouble(QString s)
 
 void MainWindow::EnableControls()
 {
-    FCDMODEENUM fme;
+    FCD_MODE_ENUM fme;
     quint8 u8;
 
     /* clear status string */
@@ -467,10 +467,11 @@ void MainWindow::EnableControls()
 */
 
 
-    fme=FCDGetMode();
+    fme = fcdGetMode();
+
     switch (fme)
     {
-        case FME_APP:
+        case FCD_MODE_APP:
             {
                 QPalette p=ui->fcdStatusLine->palette();
                 p.setColor(QPalette::Base, QColor(0,255,0));//green color
@@ -479,13 +480,15 @@ void MainWindow::EnableControls()
             ui->fcdStatusLine->setText("FCD is active");
 
             u8=0;
-            FCD_ReadCommand(FCD_HID_CMD_GET_PLL_LOCK,&u8,1);
+            fcdAppGetParam(FCD_HID_CMD_GET_PLL_LOCK, &u8, 1);
             ui->checkBoxPLLLock->setChecked(u8==1);
-            FCD_ReadCommand(FCD_HID_CMD_GET_IF_RSSI,&u8,1);
+
+            fcdAppGetParam(FCD_HID_CMD_GET_IF_RSSI, &u8, 1);
             ui->progressBarIFRSSI->setValue(u8);
 
             break;
-        case FME_BL:
+
+        case FCD_MODE_BL:
             {
                 QPalette p=ui->fcdStatusLine->palette();
                 p.setColor(QPalette::Base, QColor(255,191,0));//amber color
@@ -493,7 +496,8 @@ void MainWindow::EnableControls()
             }
             ui->fcdStatusLine->setText("FCD bootloader");
             break;
-        case FME_NONE:
+
+        case FCD_MODE_NONE:
             {
                 QPalette p=ui->fcdStatusLine->palette();
                 p.setColor(QPalette::Base, QColor(255,0,0));//red color
@@ -502,22 +506,23 @@ void MainWindow::EnableControls()
             ui->fcdStatusLine->setText("No FCD detected");
             break;
     }
-    ui->pushButtonUpdateFirmware->setEnabled(fme==FME_BL);
-    ui->pushButtonVerifyFirmware->setEnabled(fme==FME_BL);
-    ui->pushButtonBLReset->setEnabled(fme==FME_BL);
-    ui->pushButtonAppReset->setEnabled(fme==FME_APP);
-    ui->lineEditFreq->setEnabled(fme==FME_APP);
-    ui->lineEditStep->setEnabled(fme==FME_APP);
-    ui->pushButtonUp->setEnabled(fme==FME_APP);
-    ui->pushButtonDown->setEnabled(fme==FME_APP);
-    ui->spinBoxCorr->setEnabled(fme==FME_APP);
+
+    ui->pushButtonUpdateFirmware->setEnabled(fme==FCD_MODE_BL);
+    ui->pushButtonVerifyFirmware->setEnabled(fme==FCD_MODE_BL);
+    ui->pushButtonBLReset->setEnabled(fme==FCD_MODE_BL);
+    ui->pushButtonAppReset->setEnabled(fme==FCD_MODE_APP);
+    ui->lineEditFreq->setEnabled(fme==FCD_MODE_APP);
+    ui->lineEditStep->setEnabled(fme==FCD_MODE_APP);
+    ui->pushButtonUp->setEnabled(fme==FCD_MODE_APP);
+    ui->pushButtonDown->setEnabled(fme==FCD_MODE_APP);
+    ui->spinBoxCorr->setEnabled(fme==FCD_MODE_APP);
 }
 
 void MainWindow::on_pushButtonAppReset_clicked()
 {
     /* stop timeout while FCD is reconfiguring */
     timer->stop();
-    FCDAppReset();
+    fcdAppReset();
     timer->start(1000);
 }
 
@@ -525,20 +530,18 @@ void MainWindow::on_pushButtonBLReset_clicked()
 {
     /* stop timeout while FCD is reconfiguring */
     timer->stop();
-    FCDBLReset();
+    fcdBlReset();
     timer->start(1000);
 }
 
 void MainWindow::on_pushButtonUpdateFirmware_clicked()
 {
-    QString fileName = QFileDialog::getOpenFileName
-    (
-        this,
-        tr("Open FCD firmware"),
-        QDir::currentPath(),
-        tr("FCD firmware files (*.bin)")
-    );
-    if( !fileName.isNull() )
+    QString fileName = QFileDialog::getOpenFileName(this,
+                                                    tr("Open FCD firmware"),
+                                                    QDir::currentPath(),
+                                                    tr("FCD firmware files (*.bin)"));
+
+    if (!fileName.isNull())
     {
         QFile qf(fileName);
         qint64 qn64size=qf.size();
@@ -548,155 +551,109 @@ void MainWindow::on_pushButtonUpdateFirmware_clicked()
 
         if (buf==NULL)
         {
-            QMessageBox::critical
-            (
-                this,
-                tr("FCD"),
-                tr("Unable to allocate memory for firmware image")
-            );
+            QMessageBox::critical(this,
+                                  tr("FCD"),
+                                  tr("Unable to allocate memory for firmware image"));
+
             return;
         }
 
         if (!qf.open(QIODevice::ReadOnly))
         {
-            QMessageBox::critical
-            (
-                this,
-                tr("FCD"),
-                tr("Unable to open file")
-            );
+            QMessageBox::critical(this, tr("FCD"), tr("Unable to open file"));
             delete buf;
+
             return;
         }
         else
         {
             if (qf.read(buf,qn64size)!=qn64size)
             {
-                QMessageBox::critical
-                (
-                    this,
-                    tr("FCD"),
-                    tr("Unable to read file")
-                );
+                QMessageBox::critical(this, tr("FCD"), tr("Unable to read file"));
                 delete buf;
                 qf.close();
-                return;
 
+                return;
             }
         }
+
         qf.close();
 
-        if (FCDBLErase()!=FME_BL)
+        if (fcdBlErase() != FCD_MODE_BL)
         {
-            QMessageBox::critical
-            (
-                this,
-                tr("FCD"),
-                tr("Flash erase failed")
-            );
+            QMessageBox::critical(this, tr("FCD"), tr("Flash erase failed"));
             delete buf;
-            return;
 
+            return;
         }
 
-        if (FCDBLWriteFirmware(buf,(int64_t)qn64size)!=FME_BL)
+        if (fcdBlWriteFirmware(buf,(int64_t)qn64size) != FCD_MODE_BL)
         {
-            QMessageBox::critical
-            (
-                this,
-                tr("FCD"),
-                tr("Write firmware failed")
-            );
+            QMessageBox::critical(this, tr("FCD"), tr("Write firmware failed"));
             delete buf;
+
             return;
         }
 
         delete buf;
-        QMessageBox::information
-        (
-            this,
-            tr("FCD"),
-            tr("Firmware successfully written!")
-        );
+
+        QMessageBox::information(this, tr("FCD"), tr("Firmware successfully written!"));
     }
 }
 
 void MainWindow::on_pushButtonVerifyFirmware_clicked()
 {
-    QString fileName = QFileDialog::getOpenFileName
-    (
-        this,
-        tr("Open FCD firmware"),
-        QDir::currentPath(),
-        tr("FCD firmware files (*.bin)")
-    );
-    if( !fileName.isNull() )
+    QString fileName = QFileDialog::getOpenFileName(this,
+                                                    tr("Open FCD firmware"),
+                                                    QDir::currentPath(),
+                                                    tr("FCD firmware files (*.bin)"));
+
+    if (!fileName.isNull())
     {
         QFile qf(fileName);
-        qint64 qn64size=qf.size();
+        qint64 qn64size = qf.size();
         char *buf=new char[qn64size];
 
         qDebug() << fileName;
 
         if (buf==NULL)
         {
-            QMessageBox::critical
-            (
-                this,
-                tr("FCD"),
-                tr("Unable to allocate memory for firmware image")
-            );
+            QMessageBox::critical(this, tr("FCD"), tr("Unable to allocate memory for firmware image"));
             return;
         }
 
         if (!qf.open(QIODevice::ReadOnly))
         {
-            QMessageBox::critical
-            (
-                this,
-                tr("FCD"),
-                tr("Unable to open file")
-            );
+            QMessageBox::critical(this, tr("FCD"), tr("Unable to open file"));
             delete buf;
+
             return;
         }
         else
         {
-            if (qf.read(buf,qn64size)!=qn64size)
+            if (qf.read(buf,qn64size) != qn64size)
             {
-                QMessageBox::critical
-                (
-                    this,
-                    tr("FCD"),
-                    tr("Unable to read file")
-                );
+                QMessageBox::critical(this, tr("FCD"), tr("Unable to read file"));
                 delete buf;
                 qf.close();
-                return;
 
+                return;
             }
         }
+
         qf.close();
 
-        if (FCDBLVerifyFirmware(buf,(int64_t)qn64size)!=FME_BL)
+        if (fcdBlVerifyFirmware(buf,(int64_t)qn64size) != FCD_MODE_BL)
         {
-            QMessageBox::critical
-            (
-                this,
-                tr("FCD"),
-                tr("Verify firmware failed")
-            );
+            QMessageBox::critical(this, tr("FCD"), tr("Verify firmware failed"));
             delete buf;
+
             return;
         }
 
         delete buf;
-        QMessageBox::information
-        (
-            this,
-            tr("FCD"),
-            tr("Firmware successfully verified!")
-        );
+
+        QMessageBox::information(this, tr("FCD"), tr("Firmware successfully verified!"));
     }
 
 }
@@ -710,31 +667,31 @@ void MainWindow::on_pushButtonVerifyFirmware_clicked()
   */
 void MainWindow::on_lineEditFreq_textChanged(QString s)
 {
-    double d=StrToDouble(s);
-    int nCursor=ui->lineEditFreq->cursorPosition();
-    QString s2=QLocale(QLocale()).toString(d,'f',0);
+    double d = StrToDouble(s);
+    int nCursor = ui->lineEditFreq->cursorPosition();
+    QString s2 = QLocale(QLocale()).toString(d,'f',0);
 
-    nCursor-=s.mid(0,nCursor).count(QLocale().groupSeparator());
-    nCursor+=s2.mid(0,nCursor).count(QLocale().groupSeparator());
+    nCursor -= s.mid(0,nCursor).count(QLocale().groupSeparator());
+    nCursor += s2.mid(0,nCursor).count(QLocale().groupSeparator());
 
     ui->lineEditFreq->setText(s2);
     ui->lineEditFreq->setCursorPosition(nCursor);
     if (d<50000000.0 || d>2100000000.0)
     {
-        QPalette p=ui->lineEditFreq->palette();
+        QPalette p = ui->lineEditFreq->palette();
         p.setColor(QPalette::Base, QColor(255,0,0));//red color
         ui->lineEditFreq->setPalette(p);
     }
     else
     {
-        QPalette p=ui->lineEditFreq->palette();
+        QPalette p = ui->lineEditFreq->palette();
         p.setColor(QPalette::Base, QColor(0,255,0));//green color
         ui->lineEditFreq->setPalette(p);
     }
 
-    d*=1.0+ui->spinBoxCorr->value()/1000000.0;
+    d *= 1.0 + ui->spinBoxCorr->value()/1000000.0;
 
-    FCDAppSetFreqkHz((int)(d/1000.0));
+    fcdAppSetFreqkHz((int)(d/1000.0));
     //ReadDevice();
 }
 
@@ -747,24 +704,24 @@ void MainWindow::on_lineEditFreq_textChanged(QString s)
   */
 void MainWindow::on_lineEditStep_textChanged(QString s)
 {
-    double d=StrToDouble(s);
-    int nCursor=ui->lineEditStep->cursorPosition();
-    QString s2=QLocale(QLocale()).toString(d,'f',0);
+    double d = StrToDouble(s);
+    int nCursor = ui->lineEditStep->cursorPosition();
+    QString s2 = QLocale(QLocale()).toString(d,'f',0);
 
-    nCursor-=s.mid(0,nCursor).count(QLocale().groupSeparator());
-    nCursor+=s2.mid(0,nCursor).count(QLocale().groupSeparator());
+    nCursor -= s.mid(0,nCursor).count(QLocale().groupSeparator());
+    nCursor += s2.mid(0,nCursor).count(QLocale().groupSeparator());
 
     ui->lineEditStep->setText(s2);
     ui->lineEditStep->setCursorPosition(nCursor);
     if (d<1.0 || d>1000000000.0)
     {
-        QPalette p=ui->lineEditStep->palette();
+        QPalette p = ui->lineEditStep->palette();
         p.setColor(QPalette::Base, QColor(255,0,0));//red color
         ui->lineEditStep->setPalette(p);
     }
     else
     {
-        QPalette p=ui->lineEditStep->palette();
+        QPalette p = ui->lineEditStep->palette();
         p.setColor(QPalette::Base, QColor(0,255,0));//green color
         ui->lineEditStep->setPalette(p);
     }
@@ -780,19 +737,21 @@ void MainWindow::on_lineEditStep_textChanged(QString s)
   */
 void MainWindow::on_pushButtonUp_clicked()
 {
-    double dStep=StrToDouble(ui->lineEditStep->text());
-    double dFreq=StrToDouble(ui->lineEditFreq->text());
+    double dStep = StrToDouble(ui->lineEditStep->text());
+    double dFreq = StrToDouble(ui->lineEditFreq->text());
 
-    dFreq+=dStep;
+    dFreq += dStep;
 
     if (dFreq<0.0)
     {
-        dFreq=0.0;
+        dFreq = 0.0;
     }
+
     if (dFreq>2000000000.0)
     {
-        dFreq=2000000000.0;
+        dFreq = 2000000000.0;
     }
+
     ui->lineEditFreq->setText(QLocale(QLocale()).toString(dFreq,'f',0));
 }
 
@@ -806,19 +765,21 @@ void MainWindow::on_pushButtonUp_clicked()
   */
 void MainWindow::on_pushButtonDown_clicked()
 {
-    double dStep=StrToDouble(ui->lineEditStep->text());
-    double dFreq=StrToDouble(ui->lineEditFreq->text());
+    double dStep = StrToDouble(ui->lineEditStep->text());
+    double dFreq = StrToDouble(ui->lineEditFreq->text());
 
-    dFreq-=dStep;
+    dFreq -= dStep;
 
     if (dFreq<0.0)
     {
-        dFreq=0.0;
+        dFreq = 0.0;
     }
+
     if (dFreq>2000000000.0)
     {
-        dFreq=2000000000.0;
+        dFreq = 2000000000.0;
     }
+
     ui->lineEditFreq->setText(QLocale(QLocale()).toString(dFreq,'f',0));
 }
 
@@ -831,11 +792,11 @@ void MainWindow::on_pushButtonDown_clicked()
   */
 void MainWindow::on_spinBoxCorr_valueChanged(int n)
 {
-    double d=StrToDouble(ui->lineEditFreq->text());
+    double d = StrToDouble(ui->lineEditFreq->text());
 
-    d*=1.0+n/1000000.0;
+    d *= 1.0 + n/1000000.0;
 
-    FCDAppSetFreqkHz((int)(d/1000.0));
+    fcdAppSetFreqkHz((int)(d/1000.0));
 }
 
 
@@ -875,79 +836,91 @@ void MainWindow::on_actionAboutQt_triggered()
 void MainWindow::on_comboBoxLNAGain_activated(int index)
 {
     quint8 u8Write = _acs[0].pacis[index].u8Val;
-    FCD_WriteCommand(_acs[0].u8CommandSet,&u8Write,1);
+    fcdAppSetParam(_acs[0].u8CommandSet, &u8Write, 1);
 }
+
 void MainWindow::on_comboBoxLNAEnhance_activated(int index)
 {
     quint8 u8Write = _acs[1].pacis[index].u8Val;
-    FCD_WriteCommand(_acs[1].u8CommandSet,&u8Write,1);
+    fcdAppSetParam(_acs[1].u8CommandSet, &u8Write, 1);
 }
+
 void MainWindow::on_comboBoxRfFilter_activated(int index)
 {
     quint8 u8Write = _acs[3].pacis[index].u8Val;
-    FCD_WriteCommand(_acs[3].u8CommandSet,&u8Write,1);
+    fcdAppSetParam(_acs[3].u8CommandSet, &u8Write, 1);
 }
 
 void MainWindow::on_comboBoxMixerGain_activated(int index)
 {
     quint8 u8Write = _acs[4].pacis[index].u8Val;
-    FCD_WriteCommand(_acs[4].u8CommandSet,&u8Write,1);
+    fcdAppSetParam(_acs[4].u8CommandSet, &u8Write, 1);
 }
+
 void MainWindow::on_comboBoxBiasCurrent_activated(int index)
 {
     quint8 u8Write = _acs[5].pacis[index].u8Val;
-    FCD_WriteCommand(_acs[5].u8CommandSet,&u8Write,1);
+    fcdAppSetParam(_acs[5].u8CommandSet, &u8Write, 1);
 }
+
 void MainWindow::on_comboBoxMixerFilter_activated(int index)
 {
     quint8 u8Write = _acs[6].pacis[index].u8Val;
-    FCD_WriteCommand(_acs[6].u8CommandSet,&u8Write,1);
+    fcdAppSetParam(_acs[6].u8CommandSet, &u8Write, 1);
 }
+
 void MainWindow::on_comboBoxIFGain1_activated(int index)
 {
     quint8 u8Write = _acs[7].pacis[index].u8Val;
-    FCD_WriteCommand(_acs[7].u8CommandSet,&u8Write,1);
+    fcdAppSetParam(_acs[7].u8CommandSet, &u8Write, 1);
 }
+
 void MainWindow::on_comboBoxIFGainMode_activated(int index)
 {
     quint8 u8Write = _acs[8].pacis[index].u8Val;
-    FCD_WriteCommand(_acs[8].u8CommandSet,&u8Write,1);
+    fcdAppSetParam(_acs[8].u8CommandSet, &u8Write, 1);
 }
+
 void MainWindow::on_comboBoxIFRCFilter_activated(int index)
 {
     quint8 u8Write = _acs[9].pacis[index].u8Val;
-    FCD_WriteCommand(_acs[9].u8CommandSet,&u8Write,1);
+    fcdAppSetParam(_acs[9].u8CommandSet, &u8Write, 1);
 }
+
 void MainWindow::on_comboBoxIFGain2_activated(int index)
 {
     quint8 u8Write = _acs[10].pacis[index].u8Val;
-    FCD_WriteCommand(_acs[10].u8CommandSet,&u8Write,1);
+    fcdAppSetParam(_acs[10].u8CommandSet, &u8Write, 1);
 }
+
 void MainWindow::on_comboBoxIFGain3_activated(int index)
 {
     quint8 u8Write = _acs[11].pacis[index].u8Val;
-    FCD_WriteCommand(_acs[11].u8CommandSet,&u8Write,1);
+    fcdAppSetParam(_acs[11].u8CommandSet, &u8Write, 1);
 }
 
 void MainWindow::on_comboBoxIFGain4_activated(int index)
 {
     quint8 u8Write = _acs[12].pacis[index].u8Val;
-    FCD_WriteCommand(_acs[12].u8CommandSet,&u8Write,1);
+    fcdAppSetParam(_acs[12].u8CommandSet, &u8Write, 1);
 }
+
 void MainWindow::on_comboBoxIFFilter_activated(int index)
 {
     quint8 u8Write = _acs[13].pacis[index].u8Val;
-    FCD_WriteCommand(_acs[13].u8CommandSet,&u8Write,1);
+    fcdAppSetParam(_acs[13].u8CommandSet, &u8Write, 1);
 }
+
 void MainWindow::on_comboBoxIFGain5_activated(int index)
 {
     quint8 u8Write = _acs[14].pacis[index].u8Val;
-    FCD_WriteCommand(_acs[14].u8CommandSet,&u8Write,1);
+    fcdAppSetParam(_acs[14].u8CommandSet, &u8Write, 1);
 }
+
 void MainWindow::on_comboBoxIFGain6_activated(int index)
 {
     quint8 u8Write = _acs[15].pacis[index].u8Val;
-    FCD_WriteCommand(_acs[15].u8CommandSet,&u8Write,1);
+    fcdAppSetParam(_acs[15].u8CommandSet,&u8Write,1);
 }
 
 void MainWindow::on_pushButtonDefaults_clicked()
@@ -957,9 +930,10 @@ void MainWindow::on_pushButtonDefaults_clicked()
     while (pcs->pacis!=NULL)
     {
         quint8 u8Write = pcs->pacis[pcs->nIdxDefault].u8Val;
-        FCD_WriteCommand(pcs->u8CommandSet,&u8Write,1);
+        fcdAppSetParam(pcs->u8CommandSet, &u8Write, 1);
         pcs++;
     }
+
     ReadDevice();
 }
 
@@ -972,10 +946,13 @@ void MainWindow::on_doubleSpinBoxDCI_valueChanged(double value)
             qint16 dcq;
         };
     } dcinfo;
-    dcinfo.dci=static_cast<signed short>(value*32768.0);
-    dcinfo.dcq=static_cast<signed short>(ui->doubleSpinBoxDCQ->value()*32768.0);
-    FCD_WriteCommand(FCD_HID_CMD_SET_DC_CORR,dcinfo.auc,4);
+
+    dcinfo.dci = static_cast<signed short>(value*32768.0);
+    dcinfo.dcq = static_cast<signed short>(ui->doubleSpinBoxDCQ->value()*32768.0);
+
+    fcdAppSetParam(FCD_HID_CMD_SET_DC_CORR, dcinfo.auc, 4);
 }
+
 void MainWindow::on_doubleSpinBoxDCQ_valueChanged(double value)
 {
     union {
@@ -985,10 +962,13 @@ void MainWindow::on_doubleSpinBoxDCQ_valueChanged(double value)
             qint16 dcq;
         };
     } dcinfo;
-    dcinfo.dci=static_cast<signed short>(ui->doubleSpinBoxDCI->value()*32768.0);
-    dcinfo.dcq=static_cast<signed short>(value*32768.0);
-    FCD_WriteCommand(FCD_HID_CMD_SET_DC_CORR,dcinfo.auc,4);
+
+    dcinfo.dci = static_cast<signed short>(ui->doubleSpinBoxDCI->value()*32768.0);
+    dcinfo.dcq = static_cast<signed short>(value*32768.0);
+
+    fcdAppSetParam(FCD_HID_CMD_SET_DC_CORR, dcinfo.auc, 4);
 }
+
 void MainWindow::on_doubleSpinBoxPhase_valueChanged(double value)
 {
     union {
@@ -998,10 +978,13 @@ void MainWindow::on_doubleSpinBoxPhase_valueChanged(double value)
             qint16 gain;
         };
     } iqinfo;
-    iqinfo.phase=static_cast<signed short>(value*32768.0);
-    iqinfo.gain=static_cast<signed short>(ui->doubleSpinBoxGain->value()*32768.0);
-    FCD_WriteCommand(FCD_HID_CMD_SET_DC_CORR,iqinfo.auc,4);
+
+    iqinfo.phase = static_cast<signed short>(value*32768.0);
+    iqinfo.gain = static_cast<signed short>(ui->doubleSpinBoxGain->value()*32768.0);
+
+    fcdAppSetParam(FCD_HID_CMD_SET_DC_CORR, iqinfo.auc, 4);
 }
+
 void MainWindow::on_doubleSpinBoxGain_valueChanged(double value)
 {
     union {
@@ -1011,7 +994,9 @@ void MainWindow::on_doubleSpinBoxGain_valueChanged(double value)
             qint16 gain;
         };
     } iqinfo;
-    iqinfo.phase=static_cast<signed short>(ui->doubleSpinBoxPhase->value()*32768.0);
-    iqinfo.gain=static_cast<signed short>(value*32768.0);
-    FCD_WriteCommand(FCD_HID_CMD_SET_IQ_CORR,iqinfo.auc,4);
+
+    iqinfo.phase = static_cast<signed short>(ui->doubleSpinBoxPhase->value()*32768.0);
+    iqinfo.gain = static_cast<signed short>(value*32768.0);
+
+    fcdAppSetParam(FCD_HID_CMD_SET_IQ_CORR, iqinfo.auc, 4);
 }
