@@ -27,8 +27,7 @@ linux-g++: SOURCES +=hid-libusb.c
 
 HEADERS  += mainwindow.h \
     hidapi.h \
-    FCDHidCmd.h \
-    fcd.h
+    fcd.h fcdhidcmd.h
 
 FORMS    += mainwindow.ui
 
@@ -58,4 +57,3 @@ OTHER_FILES += AUTHORS.txt LICENSE.txt NEWS.txt README.txt \
     qthid.rc \
     images/qthid.ico \
     images/qthid.icns
-

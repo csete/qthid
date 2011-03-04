@@ -24,7 +24,7 @@
 #include "ui_mainwindow.h"
 #include "hidapi.h"
 #include "fcd.h"
-#include "FCDHidCmd.h"
+#include "fcdhidcmd.h"
 
 
 static const COMBOITEMSTRUCT _cisLNAGain[]=
