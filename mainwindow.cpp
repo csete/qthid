@@ -309,7 +309,7 @@ static COMBO_STRUCT _acs[] =
     {FCD_CMD_APP_SET_IF_FILTER,    FCD_CMD_APP_GET_IF_FILTER,    0, NULL, _cisIFFilter},
     {FCD_CMD_APP_SET_IF_GAIN5,     FCD_CMD_APP_GET_IF_GAIN5,     0, NULL, _cisIFGain5},
     {FCD_CMD_APP_SET_IF_GAIN6,     FCD_CMD_APP_GET_IF_GAIN6,     0, NULL, _cisIFGain6},
-    {0,0,0,NULL, NULL}
+    {0, 0, 0, NULL, NULL}
 };
 
 
@@ -381,9 +381,13 @@ MainWindow::~MainWindow()
 
     delete ui;
 }
-/**
- * Populates a combo box with all its items, and sets default index
- */
+
+
+/** \brief Populates a combo box with all its items and selects the default item
+  * \param box Pointer to the QComboBox to populate.
+  * \param nIdxDefault Index of the default item.
+  * \param pcis Pointer to the array containing the data for the combo box items
+  */
 void MainWindow::PopulateCombo(QComboBox *box, int nIdxDefault, const COMBO_ITEM_STRUCT *pcis)
 {
     box->clear();
@@ -394,6 +398,10 @@ void MainWindow::PopulateCombo(QComboBox *box, int nIdxDefault, const COMBO_ITEM
     box->setCurrentIndex(nIdxDefault);
 }
 
+
+/** \brief Populate combo boxes
+  *
+  */
 void MainWindow::PopulateCombos()
 {
     COMBO_STRUCT *pcs = _acs;
@@ -407,6 +415,10 @@ void MainWindow::PopulateCombos()
     }
 }
 
+
+/** \brief Read all parameters from FCD.
+  * \note "All" refers tothe combo box settings and we shoul fix that.
+  */
 void MainWindow::ReadDevice()
 {
     COMBO_STRUCT *pcs=_acs;
@@ -423,24 +435,31 @@ void MainWindow::ReadDevice()
 
 
         //Try to find the index to the register field value
-        while(pcis->pszDesc!=NULL && pcis->u8Val!=u8)
+        while (pcis->pszDesc!=NULL && pcis->u8Val!=u8)
         {
             nIdx++;
             pcis++;
         }
-        if(pcis->pszDesc!=NULL)
-        {
+
+        if (pcis->pszDesc!=NULL) {
             pcs->pComboBox->setCurrentIndex(nIdx);
-        } else
-        {
+        } else {
             pcs->pComboBox->setCurrentIndex(0);
         }
+
         BandChange();
         pcs++;
     }
 }
 
 
+/** \brief Band change event
+  *
+  * TBD.
+  * When the frequency changes to a different band the RF filter combo must be updated.
+  * I am not sure how much is done by application and how much happens automatically in the FCD.
+  * I suspect the FCD changes the filters automatically.
+  */
 void MainWindow::BandChange()
 {
     static const COMBO_ITEM_STRUCT *apcis[4] = {_cisRFFilter0,_cisRFFilter1,_cisRFFilter2,_cisRFFilter3};
@@ -451,7 +470,7 @@ void MainWindow::BandChange()
 }
 
 
-
+/** \brief Convert a string to double */
 double MainWindow::StrToDouble(QString s)
 {
     int i;
@@ -470,6 +489,11 @@ double MainWindow::StrToDouble(QString s)
     return s2.toDouble();
 }
 
+/** \brief Eanble/disable controls depending on FCD mode.
+  *
+  * This function reads the FCD mode and enables or disables the UI controls accordingly.
+  * \todo Combo boxes.
+  */
 void MainWindow::EnableControls()
 {
     FCD_MODE_ENUM fme;

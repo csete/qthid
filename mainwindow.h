@@ -51,7 +51,7 @@ typedef struct {
 typedef struct {
     qint8 u8CommandSet;   /*!< The command for setting the parameter in the FCD. */
     qint8 u8CommandGet;   /*!< The command for retrieveing the parameter from the FCD. */
-    qint8 nIdxDefault;    /*!< Index pointing to the default value for this parameter. */
+    qint8 nIdxDefault;    /*!< Index pointing to the default value for this parameter in the pacis array. */
     QComboBox *pComboBox; /*!< Pointer to the combo box. */
     const COMBO_ITEM_STRUCT *pacis; /*!< Pointer to the array if items. */
 } COMBO_STRUCT;
