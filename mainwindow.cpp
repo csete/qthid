@@ -352,7 +352,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     PopulateCombos();
 
-    ReadDevice();
+    //ReadDevice(); /* disabled until it can properly set default values in case of error */
 
     EnableControls();
 
@@ -441,10 +441,10 @@ void MainWindow::ReadDevice()
             pcis++;
         }
 
-        if (pcis->pszDesc!=NULL) {
+        if (pcis->pszDesc != NULL) {
             pcs->pComboBox->setCurrentIndex(nIdx);
         } else {
-            pcs->pComboBox->setCurrentIndex(0);
+            pcs->pComboBox->setCurrentIndex(pcs->nIdxDefault);
         }
 
         BandChange();
