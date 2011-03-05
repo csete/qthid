@@ -350,11 +350,11 @@ MainWindow::MainWindow(QWidget *parent) :
     _acs[14].pComboBox=ui->comboBoxIFGain5;
     _acs[15].pComboBox=ui->comboBoxIFGain6;
 
-    PopulateCombos();
+    populateCombos();
 
     //ReadDevice(); /* disabled until it can properly set default values in case of error */
 
-    EnableControls();
+    enableControls();
 
 
     setUnifiedTitleAndToolBarOnMac(true);
@@ -388,7 +388,7 @@ MainWindow::~MainWindow()
   * \param nIdxDefault Index of the default item.
   * \param pcis Pointer to the array containing the data for the combo box items
   */
-void MainWindow::PopulateCombo(QComboBox *box, int nIdxDefault, const COMBO_ITEM_STRUCT *pcis)
+void MainWindow::populateCombo(QComboBox *box, int nIdxDefault, const COMBO_ITEM_STRUCT *pcis)
 {
     box->clear();
     while(pcis->pszDesc != NULL){
@@ -402,7 +402,7 @@ void MainWindow::PopulateCombo(QComboBox *box, int nIdxDefault, const COMBO_ITEM
 /** \brief Populate combo boxes
   *
   */
-void MainWindow::PopulateCombos()
+void MainWindow::populateCombos()
 {
     COMBO_STRUCT *pcs = _acs;
 
@@ -410,7 +410,7 @@ void MainWindow::PopulateCombos()
     while (pcs->pacis!=NULL)
     {
         const COMBO_ITEM_STRUCT *pcis = pcs->pacis;
-        PopulateCombo(pcs->pComboBox, pcs->nIdxDefault, pcis);
+        populateCombo(pcs->pComboBox, pcs->nIdxDefault, pcis);
         pcs++;
     }
 }
@@ -419,7 +419,7 @@ void MainWindow::PopulateCombos()
 /** \brief Read all parameters from FCD.
   * \note "All" refers tothe combo box settings and we shoul fix that.
   */
-void MainWindow::ReadDevice()
+void MainWindow::readDevice()
 {
     COMBO_STRUCT *pcs=_acs;
 
@@ -447,7 +447,7 @@ void MainWindow::ReadDevice()
             pcs->pComboBox->setCurrentIndex(pcs->nIdxDefault);
         }
 
-        BandChange();
+        bandChange();
         pcs++;
     }
 }
@@ -460,13 +460,13 @@ void MainWindow::ReadDevice()
   * I am not sure how much is done by application and how much happens automatically in the FCD.
   * I suspect the FCD changes the filters automatically.
   */
-void MainWindow::BandChange()
+void MainWindow::bandChange()
 {
     static const COMBO_ITEM_STRUCT *apcis[4] = {_cisRFFilter0,_cisRFFilter1,_cisRFFilter2,_cisRFFilter3};
     int nIdx = ui->comboBoxBand->currentIndex();
     int nIdxOrg = ui->comboBoxRfFilter->currentIndex();
 
-    PopulateCombo(ui->comboBoxRfFilter, nIdxOrg, apcis[nIdx]);
+    populateCombo(ui->comboBoxRfFilter, nIdxOrg, apcis[nIdx]);
 }
 
 
@@ -494,7 +494,7 @@ double MainWindow::StrToDouble(QString s)
   * This function reads the FCD mode and enables or disables the UI controls accordingly.
   * \todo Combo boxes.
   */
-void MainWindow::EnableControls()
+void MainWindow::enableControls()
 {
     FCD_MODE_ENUM fme;
     quint8 u8;
@@ -997,7 +997,7 @@ void MainWindow::on_pushButtonDefaults_clicked()
         pcs++;
     }
 
-    ReadDevice();
+    readDevice();
 }
 
 void MainWindow::on_doubleSpinBoxDCI_valueChanged(double value)

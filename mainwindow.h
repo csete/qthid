@@ -69,10 +69,11 @@ private:
     Ui::MainWindow *ui;
     QTimer *timer;
     double StrToDouble(QString s);
-    void PopulateCombo(QComboBox *box, int nIdxDefault, const COMBO_ITEM_STRUCT *pcis);
-    void PopulateCombos();
-    void ReadDevice();
-    void BandChange();
+
+    void populateCombo(QComboBox *box, int nIdxDefault, const COMBO_ITEM_STRUCT *pcis);
+    void populateCombos();
+    void readDevice();
+    void bandChange();
 
 
 private slots:
@@ -108,7 +109,7 @@ private slots:
     void on_pushButtonDefaults_clicked();
 
 
-    void EnableControls();
+    void enableControls();
 
     /* actions */
     void on_actionAbout_triggered();
