@@ -25,6 +25,7 @@
 
 #include <QMainWindow>
 #include <QComboBox>
+#include "fcd.h"
 
 namespace Ui {
     class MainWindow;
@@ -68,6 +69,8 @@ public:
 private:
     Ui::MainWindow *ui;
     QTimer *timer;
+    FCD_MODE_ENUM prevMode;
+
     double StrToDouble(QString s);
 
     void populateCombo(QComboBox *box, int nIdxDefault, const COMBO_ITEM_STRUCT *pcis);

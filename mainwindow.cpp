@@ -316,7 +316,8 @@ static COMBO_STRUCT _acs[] =
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    prevMode(FCD_MODE_NONE)
 {
     QSettings settings;
 
@@ -427,8 +428,7 @@ void MainWindow::enableCombos(bool enabled)
     /* iterate trough all combo boxes */
     while (pcs->pacis!=NULL)
     {
-        //const COMBO_ITEM_STRUCT *pcis = pcs->pacis;
-        pcs->pComboBox->setEnabled(enabled);
+        pcs->pComboBox->setEnabled(enabled);  /** FIXME: Band selector should be disabled? */
         pcs++;
     }
 }
@@ -520,7 +520,6 @@ void MainWindow::enableControls()
     quint8 u8;
 
     /* clear status string */
-    ui->fcdStatusLine->clear();
 
 /*
     {
@@ -551,6 +550,8 @@ void MainWindow::enableControls()
 
 
     fme = fcdGetMode();
+
+    ui->fcdStatusLine->clear();
 
     switch (fme)
     {
@@ -594,13 +595,29 @@ void MainWindow::enableControls()
     ui->pushButtonVerifyFirmware->setEnabled(fme==FCD_MODE_BL);
     ui->pushButtonBLReset->setEnabled(fme==FCD_MODE_BL);
     ui->pushButtonAppReset->setEnabled(fme==FCD_MODE_APP);
+
     ui->lineEditFreq->setEnabled(fme==FCD_MODE_APP);
     ui->lineEditStep->setEnabled(fme==FCD_MODE_APP);
+
     ui->pushButtonUp->setEnabled(fme==FCD_MODE_APP);
     ui->pushButtonDown->setEnabled(fme==FCD_MODE_APP);
+
     ui->spinBoxCorr->setEnabled(fme==FCD_MODE_APP);
+    ui->doubleSpinBoxDCI->setEnabled(fme==FCD_MODE_APP);
+    ui->doubleSpinBoxDCQ->setEnabled(fme==FCD_MODE_APP);
+    ui->doubleSpinBoxGain->setEnabled(fme==FCD_MODE_APP);
+    ui->doubleSpinBoxPhase->setEnabled(fme==FCD_MODE_APP);
+
+    ui->pushButtonDefaults->setEnabled(fme==FCD_MODE_APP);
 
     enableCombos(fme==FCD_MODE_APP);
+
+    /* manage FCD mode transitions */
+    if (fme == FCD_MODE_APP) {
+        /* if previous mode was different read settings from device */
+        /** TODO: should we read from FCD or write to FCD? **/
+    }
+    prevMode = fme;
 }
 
 void MainWindow::on_pushButtonAppReset_clicked()
