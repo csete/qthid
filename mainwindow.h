@@ -72,6 +72,7 @@ private:
 
     void populateCombo(QComboBox *box, int nIdxDefault, const COMBO_ITEM_STRUCT *pcis);
     void populateCombos();
+    void enableCombos(bool enabled);
     void readDevice();
     void bandChange();
 

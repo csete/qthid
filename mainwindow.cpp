@@ -360,7 +360,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setUnifiedTitleAndToolBarOnMac(true);
 
     timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(EnableControls()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(enableControls()));
     timer->start(1000);
 }
 
@@ -414,6 +414,26 @@ void MainWindow::populateCombos()
         pcs++;
     }
 }
+
+
+/** \brief Enable or disable combo boxes
+  * \param enabled Flag indicating whether combo boxes should be enabled or disabled
+  *
+  */
+void MainWindow::enableCombos(bool enabled)
+{
+    COMBO_STRUCT *pcs = _acs;
+
+    /* iterate trough all combo boxes */
+    while (pcs->pacis!=NULL)
+    {
+        //const COMBO_ITEM_STRUCT *pcis = pcs->pacis;
+        pcs->pComboBox->setEnabled(enabled);
+        pcs++;
+    }
+}
+
+
 
 
 /** \brief Read all parameters from FCD.
@@ -579,6 +599,8 @@ void MainWindow::enableControls()
     ui->pushButtonUp->setEnabled(fme==FCD_MODE_APP);
     ui->pushButtonDown->setEnabled(fme==FCD_MODE_APP);
     ui->spinBoxCorr->setEnabled(fme==FCD_MODE_APP);
+
+    enableCombos(fme==FCD_MODE_APP);
 }
 
 void MainWindow::on_pushButtonAppReset_clicked()
