@@ -1,8 +1,10 @@
 /***************************************************************************
  *  This file is part of Qthid.
- * 
+ *
  *  Copyright (C) 2010  Howard Long, G6LVB
- * 
+ *  CopyRight (C) 2011  Alexandru Csete, OZ9AEC
+ *                      Mario Lorenz, DL5MLO
+ *
  *  Qthid is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -27,7 +29,7 @@
 #include "fcdhidcmd.h"
 
 
-static const COMBOITEMSTRUCT _cisLNAGain[]=
+static const COMBO_ITEM_STRUCT _cisLNAGain[]=
 {
     {QT_TR_NOOP("-5.0dB"),TLGE_N5_0DB},
     {QT_TR_NOOP("-2.5dB"),TLGE_N2_5DB},
@@ -44,7 +46,8 @@ static const COMBOITEMSTRUCT _cisLNAGain[]=
     {QT_TR_NOOP("+30.0dB"),TLGE_P30_0DB},
     {NULL,0}
 };
-static const COMBOITEMSTRUCT _cisLNAEnhance[]=
+
+static const COMBO_ITEM_STRUCT _cisLNAEnhance[]=
 {
         {QT_TR_NOOP("Off"),TLEE_OFF},
         {QT_TR_NOOP("0"),TLEE_0},
@@ -54,7 +57,7 @@ static const COMBOITEMSTRUCT _cisLNAEnhance[]=
         {NULL,0}
 };
 
-static const COMBOITEMSTRUCT _cisBand[]=
+static const COMBO_ITEM_STRUCT _cisBand[]=
 {
         {QT_TR_NOOP("VHF II"),TBE_VHF2},
         {QT_TR_NOOP("VHF III"),TBE_VHF3},
@@ -62,20 +65,22 @@ static const COMBOITEMSTRUCT _cisBand[]=
         {QT_TR_NOOP("L band"),TBE_LBAND},
         {NULL,0}
 };
-static const COMBOITEMSTRUCT _cisRFFilter0[]=
+
+static const COMBO_ITEM_STRUCT _cisRFFilter0[]=
 {
         {QT_TR_NOOP("268MHz LPF"),TRFE_LPF268MHZ},
         {QT_TR_NOOP("299MHz LPF"),TRFE_LPF268MHZ},
         {NULL,0}
 };
 
-static const COMBOITEMSTRUCT _cisRFFilter1[]=
+static const COMBO_ITEM_STRUCT _cisRFFilter1[]=
 {
         {QT_TR_NOOP("509MHz LPF"),TRFE_LPF509MHZ},
         {QT_TR_NOOP("656MHz LPF"),TRFE_LPF656MHZ},
         {NULL,0}
 };
-static const COMBOITEMSTRUCT _cisRFFilter2[]=
+
+static const COMBO_ITEM_STRUCT _cisRFFilter2[]=
 {
         {QT_TR_NOOP("360MHz BPF"),TRFE_BPF360MHZ},
         {QT_TR_NOOP("380MHz BPF"),TRFE_BPF380MHZ},
@@ -94,7 +99,9 @@ static const COMBOITEMSTRUCT _cisRFFilter2[]=
         {QT_TR_NOOP("890MHz BPF"),TRFE_BPF890MHZ},
         {QT_TR_NOOP("970MHz BPF"),TRFE_BPF970MHZ},
         {NULL,0}
-};static const COMBOITEMSTRUCT _cisRFFilter3[]=
+};
+
+static const COMBO_ITEM_STRUCT _cisRFFilter3[]=
 {
         {QT_TR_NOOP("1300MHz BPF"),TRFE_BPF1300MHZ},
         {QT_TR_NOOP("1320MHz BPF"),TRFE_BPF1320MHZ},
@@ -115,13 +122,14 @@ static const COMBOITEMSTRUCT _cisRFFilter2[]=
         {NULL,0}
 };
 
-static const COMBOITEMSTRUCT _cisMixerGain[]=
+static const COMBO_ITEM_STRUCT _cisMixerGain[]=
 {
         {QT_TR_NOOP("4dB"),TMGE_P4_0DB},
         {QT_TR_NOOP("12dB"),TMGE_P12_0DB},
         {NULL,0}
 };
-static const COMBOITEMSTRUCT _cisBiasCurrent[]=
+
+static const COMBO_ITEM_STRUCT _cisBiasCurrent[]=
 {
         {QT_TR_NOOP("00 L band"),TBCE_LBAND},
         {QT_TR_NOOP("01"),TBCE_1},
@@ -130,7 +138,7 @@ static const COMBOITEMSTRUCT _cisBiasCurrent[]=
         {NULL,0}
 };
 
-static const COMBOITEMSTRUCT _cisMixerFilter[]=
+static const COMBO_ITEM_STRUCT _cisMixerFilter[]=
 {
         {QT_TR_NOOP("1.9MHz"),TMFE_1_9MHZ},
         {QT_TR_NOOP("2.3MHz"),TMFE_2_3MHZ},
@@ -143,20 +151,22 @@ static const COMBOITEMSTRUCT _cisMixerFilter[]=
         {QT_TR_NOOP("27MHz"),TMFE_27_0MHZ},
         {NULL,0}
 };
-static const COMBOITEMSTRUCT _cisIFGain1[]=
+
+static const COMBO_ITEM_STRUCT _cisIFGain1[]=
 {
         {QT_TR_NOOP("-3dB"),TIG1E_N3_0DB},
         {QT_TR_NOOP("+6dB"),TIG1E_P6_0DB},
         {NULL,0}
 };
 
-static const COMBOITEMSTRUCT _cisIFGainMode[]=
+static const COMBO_ITEM_STRUCT _cisIFGainMode[]=
 {
         {QT_TR_NOOP("Linearity"),TIGME_LINEARITY},
         {QT_TR_NOOP("Sensitivity"),TIGME_SENSITIVITY},
         {NULL,0}
 };
-static const COMBOITEMSTRUCT _cisIFRCFilter[]=
+
+static const COMBO_ITEM_STRUCT _cisIFRCFilter[]=
 {
         {QT_TR_NOOP("1.0MHz"),TIRFE_1_0MHZ},
         {QT_TR_NOOP("1.2MHz"),TIRFE_1_2MHZ},
@@ -176,7 +186,8 @@ static const COMBOITEMSTRUCT _cisIFRCFilter[]=
         {QT_TR_NOOP("21.4MHz"),TIRFE_21_4MHZ},
         {NULL,0}
 };
-static const COMBOITEMSTRUCT _cisIFGain2[]=
+
+static const COMBO_ITEM_STRUCT _cisIFGain2[]=
 {
         {QT_TR_NOOP("0dB"),TIG2E_P0_0DB},
         {QT_TR_NOOP("+3dB"),TIG2E_P3_0DB},
@@ -185,7 +196,7 @@ static const COMBOITEMSTRUCT _cisIFGain2[]=
         {NULL,0}
 };
 
-static const COMBOITEMSTRUCT _cisIFGain3[]=
+static const COMBO_ITEM_STRUCT _cisIFGain3[]=
 {
         {QT_TR_NOOP("0dB"),TIG3E_P0_0DB},
         {QT_TR_NOOP("+3dB"),TIG3E_P3_0DB},
@@ -194,13 +205,15 @@ static const COMBOITEMSTRUCT _cisIFGain3[]=
         {NULL,0}
 };
 
-static const COMBOITEMSTRUCT _cisIFGain4[]=
+static const COMBO_ITEM_STRUCT _cisIFGain4[]=
 {
         {QT_TR_NOOP("0dB"),TIG4E_P0_0DB},
         {QT_TR_NOOP("+1dB"),TIG4E_P1_0DB},
         {QT_TR_NOOP("+2dB"),TIG4E_P2_0DB},
         {NULL,0}
-};static const COMBOITEMSTRUCT _cisIFFilter[]=
+};
+
+static const COMBO_ITEM_STRUCT _cisIFFilter[]=
 {
         {QT_TR_NOOP("2.15MHz"),TIFE_2_15MHZ},
         {QT_TR_NOOP("2.20MHz"),TIFE_2_20MHZ},
@@ -235,7 +248,9 @@ static const COMBOITEMSTRUCT _cisIFGain4[]=
         {QT_TR_NOOP("5.30MHz"),TIFE_5_30MHZ},
         {QT_TR_NOOP("5.50MHz"),TIFE_5_50MHZ},
         {NULL,0}
-};static const COMBOITEMSTRUCT _cisIFGain5[]=
+};
+
+static const COMBO_ITEM_STRUCT _cisIFGain5[]=
 {
         {QT_TR_NOOP("+3dB"),TIG5E_P3_0DB},
         {QT_TR_NOOP("+6dB"),TIG5E_P6_0DB},
@@ -245,7 +260,7 @@ static const COMBOITEMSTRUCT _cisIFGain4[]=
         {NULL,0}
 };
 
-static const COMBOITEMSTRUCT _cisIFGain6[]=
+static const COMBO_ITEM_STRUCT _cisIFGain6[]=
 {
         {QT_TR_NOOP("+3dB"),TIG6E_P3_0DB},
         {QT_TR_NOOP("+6dB"),TIG6E_P6_0DB},
@@ -255,24 +270,24 @@ static const COMBOITEMSTRUCT _cisIFGain6[]=
         {NULL,0}
 };
 
-static COMBOSTRUCT _acs[]=
+static COMBO_STRUCT _acs[]=
 {
-    {FCD_HID_CMD_SET_LNA_GAIN,    FCD_HID_CMD_GET_LNA_GAIN,    10, NULL, _cisLNAGain},
-    {FCD_HID_CMD_SET_LNA_ENHANCE, FCD_HID_CMD_GET_LNA_ENHANCE,  0, NULL, _cisLNAEnhance},
-    {FCD_HID_CMD_SET_BAND,        FCD_HID_CMD_GET_BAND,         0, NULL, _cisBand},
-    {FCD_HID_CMD_SET_RF_FILTER,   FCD_HID_CMD_GET_RF_FILTER,    0, NULL, _cisRFFilter1},
-    { FCD_HID_CMD_SET_MIXER_GAIN,  FCD_HID_CMD_GET_MIXER_GAIN,   1, NULL, _cisMixerGain},
-    {FCD_HID_CMD_SET_BIAS_CURRENT,FCD_HID_CMD_GET_BIAS_CURRENT, 3, NULL, _cisBiasCurrent},
-    {FCD_HID_CMD_SET_MIXER_FILTER,FCD_HID_CMD_GET_MIXER_FILTER, 0, NULL, _cisMixerFilter},
-    {FCD_HID_CMD_SET_IF_GAIN1,    FCD_HID_CMD_GET_IF_GAIN1,     1, NULL, _cisIFGain1},
-    {FCD_HID_CMD_SET_IF_GAIN_MODE,FCD_HID_CMD_GET_IF_GAIN_MODE, 0, NULL, _cisIFGainMode},
-    {FCD_HID_CMD_SET_IF_RC_FILTER,FCD_HID_CMD_GET_IF_RC_FILTER, 0, NULL, _cisIFRCFilter},
-    {FCD_HID_CMD_SET_IF_GAIN2,    FCD_HID_CMD_GET_IF_GAIN2,     0, NULL, _cisIFGain2},
-    {FCD_HID_CMD_SET_IF_GAIN3,    FCD_HID_CMD_GET_IF_GAIN3,     0, NULL, _cisIFGain3},
-    {FCD_HID_CMD_SET_IF_GAIN4,    FCD_HID_CMD_GET_IF_GAIN4,     0, NULL, _cisIFGain4},
-    {FCD_HID_CMD_SET_IF_FILTER,   FCD_HID_CMD_GET_IF_FILTER,    0, NULL, _cisIFFilter},
-    {FCD_HID_CMD_SET_IF_GAIN5,    FCD_HID_CMD_GET_IF_GAIN5,     0, NULL, _cisIFGain5},
-    {FCD_HID_CMD_SET_IF_GAIN6,    FCD_HID_CMD_GET_IF_GAIN6,     0, NULL, _cisIFGain6},
+    {FCD_CMD_APP_SET_LNA_GAIN,     FCD_CMD_APP_GET_LNA_GAIN,    10, NULL, _cisLNAGain},
+    {FCD_CMD_APP_SET_LNA_ENHANCE,  FCD_CMD_APP_GET_LNA_ENHANCE,  0, NULL, _cisLNAEnhance},
+    {FCD_CMD_APP_SET_BAND,         FCD_CMD_APP_GET_BAND,         0, NULL, _cisBand},
+    {FCD_CMD_APP_SET_RF_FILTER,    FCD_CMD_APP_GET_RF_FILTER,    0, NULL, _cisRFFilter1},
+    {FCD_CMD_APP_SET_MIXER_GAIN,   FCD_CMD_APP_GET_MIXER_GAIN,   1, NULL, _cisMixerGain},
+    {FCD_CMD_APP_SET_BIAS_CURRENT, FCD_CMD_APP_GET_BIAS_CURRENT, 3, NULL, _cisBiasCurrent},
+    {FCD_CMD_APP_SET_MIXER_FILTER, FCD_CMD_APP_GET_MIXER_FILTER, 0, NULL, _cisMixerFilter},
+    {FCD_CMD_APP_SET_IF_GAIN1,     FCD_CMD_APP_GET_IF_GAIN1,     1, NULL, _cisIFGain1},
+    {FCD_CMD_APP_SET_IF_GAIN_MODE, FCD_CMD_APP_GET_IF_GAIN_MODE, 0, NULL, _cisIFGainMode},
+    {FCD_CMD_APP_SET_IF_RC_FILTER, FCD_CMD_APP_GET_IF_RC_FILTER, 0, NULL, _cisIFRCFilter},
+    {FCD_CMD_APP_SET_IF_GAIN2,     FCD_CMD_APP_GET_IF_GAIN2,     0, NULL, _cisIFGain2},
+    {FCD_CMD_APP_SET_IF_GAIN3,     FCD_CMD_APP_GET_IF_GAIN3,     0, NULL, _cisIFGain3},
+    {FCD_CMD_APP_SET_IF_GAIN4,     FCD_CMD_APP_GET_IF_GAIN4,     0, NULL, _cisIFGain4},
+    {FCD_CMD_APP_SET_IF_FILTER,    FCD_CMD_APP_GET_IF_FILTER,    0, NULL, _cisIFFilter},
+    {FCD_CMD_APP_SET_IF_GAIN5,     FCD_CMD_APP_GET_IF_GAIN5,     0, NULL, _cisIFGain5},
+    {FCD_CMD_APP_SET_IF_GAIN6,     FCD_CMD_APP_GET_IF_GAIN6,     0, NULL, _cisIFGain6},
     {0,0,0,NULL, NULL}
 };
 
@@ -348,7 +363,7 @@ MainWindow::~MainWindow()
 /**
  * Populates a combo box with all its items, and sets default index
  */
-void MainWindow::PopulateCombo(QComboBox *box, int nIdxDefault, const COMBOITEMSTRUCT *pcis)
+void MainWindow::PopulateCombo(QComboBox *box, int nIdxDefault, const COMBO_ITEM_STRUCT *pcis)
 {
     box->clear();
     while(pcis->pszDesc != NULL){
@@ -360,25 +375,26 @@ void MainWindow::PopulateCombo(QComboBox *box, int nIdxDefault, const COMBOITEMS
 
 void MainWindow::PopulateCombos()
 {
-    COMBOSTRUCT *pcs = _acs;
+    COMBO_STRUCT *pcs = _acs;
+
     /* iterate trough all combo boxes */
-    while(pcs->pacis!=NULL)
+    while (pcs->pacis!=NULL)
     {
-        const COMBOITEMSTRUCT *pcis=pcs->pacis;
-        PopulateCombo(pcs->pComboBox,pcs->nIdxDefault,pcis);
+        const COMBO_ITEM_STRUCT *pcis = pcs->pacis;
+        PopulateCombo(pcs->pComboBox, pcs->nIdxDefault, pcis);
         pcs++;
     }
 }
 
 void MainWindow::ReadDevice()
 {
-    COMBOSTRUCT *pcs=_acs;
+    COMBO_STRUCT *pcs=_acs;
 
     /* iterate through all combo boxes */
     while (pcs->pacis!=NULL)
     {
         quint8 u8;
-        const COMBOITEMSTRUCT *pcis=pcs->pacis;
+        const COMBO_ITEM_STRUCT *pcis = pcs->pacis;
         int nIdx=0;
 
         /* read FCD value for this combo box */
@@ -402,13 +418,15 @@ void MainWindow::ReadDevice()
         pcs++;
     }
 }
+
+
 void MainWindow::BandChange()
 {
-    static const COMBOITEMSTRUCT *apcis[4]={_cisRFFilter0,_cisRFFilter1,_cisRFFilter2,_cisRFFilter3};
-    int nIdx=ui->comboBoxBand->currentIndex();
-    int nIdxOrg=ui->comboBoxRfFilter->currentIndex();
-    PopulateCombo(ui->comboBoxRfFilter,nIdxOrg,apcis[nIdx]);
+    static const COMBO_ITEM_STRUCT *apcis[4] = {_cisRFFilter0,_cisRFFilter1,_cisRFFilter2,_cisRFFilter3};
+    int nIdx = ui->comboBoxBand->currentIndex();
+    int nIdxOrg = ui->comboBoxRfFilter->currentIndex();
 
+    PopulateCombo(ui->comboBoxRfFilter, nIdxOrg, apcis[nIdx]);
 }
 
 
@@ -480,10 +498,10 @@ void MainWindow::EnableControls()
             ui->fcdStatusLine->setText("FCD is active");
 
             u8=0;
-            fcdAppGetParam(FCD_HID_CMD_GET_PLL_LOCK, &u8, 1);
+            fcdAppGetParam(FCD_CMD_APP_GET_PLL_LOCK, &u8, 1);
             ui->checkBoxPLLLock->setChecked(u8==1);
 
-            fcdAppGetParam(FCD_HID_CMD_GET_IF_RSSI, &u8, 1);
+            fcdAppGetParam(FCD_CMD_APP_GET_IF_RSSI, &u8, 1);
             ui->progressBarIFRSSI->setValue(u8);
 
             break;
@@ -925,7 +943,7 @@ void MainWindow::on_comboBoxIFGain6_activated(int index)
 
 void MainWindow::on_pushButtonDefaults_clicked()
 {
-    COMBOSTRUCT *pcs=_acs;
+    COMBO_STRUCT *pcs=_acs;
 
     while (pcs->pacis!=NULL)
     {
@@ -950,7 +968,7 @@ void MainWindow::on_doubleSpinBoxDCI_valueChanged(double value)
     dcinfo.dci = static_cast<signed short>(value*32768.0);
     dcinfo.dcq = static_cast<signed short>(ui->doubleSpinBoxDCQ->value()*32768.0);
 
-    fcdAppSetParam(FCD_HID_CMD_SET_DC_CORR, dcinfo.auc, 4);
+    fcdAppSetParam(FCD_CMD_APP_SET_DC_CORR, dcinfo.auc, 4);
 }
 
 void MainWindow::on_doubleSpinBoxDCQ_valueChanged(double value)
@@ -966,7 +984,7 @@ void MainWindow::on_doubleSpinBoxDCQ_valueChanged(double value)
     dcinfo.dci = static_cast<signed short>(ui->doubleSpinBoxDCI->value()*32768.0);
     dcinfo.dcq = static_cast<signed short>(value*32768.0);
 
-    fcdAppSetParam(FCD_HID_CMD_SET_DC_CORR, dcinfo.auc, 4);
+    fcdAppSetParam(FCD_CMD_APP_SET_DC_CORR, dcinfo.auc, 4);
 }
 
 void MainWindow::on_doubleSpinBoxPhase_valueChanged(double value)
@@ -982,7 +1000,7 @@ void MainWindow::on_doubleSpinBoxPhase_valueChanged(double value)
     iqinfo.phase = static_cast<signed short>(value*32768.0);
     iqinfo.gain = static_cast<signed short>(ui->doubleSpinBoxGain->value()*32768.0);
 
-    fcdAppSetParam(FCD_HID_CMD_SET_DC_CORR, iqinfo.auc, 4);
+    fcdAppSetParam(FCD_CMD_APP_SET_DC_CORR, iqinfo.auc, 4);
 }
 
 void MainWindow::on_doubleSpinBoxGain_valueChanged(double value)
@@ -998,5 +1016,5 @@ void MainWindow::on_doubleSpinBoxGain_valueChanged(double value)
     iqinfo.phase = static_cast<signed short>(ui->doubleSpinBoxPhase->value()*32768.0);
     iqinfo.gain = static_cast<signed short>(value*32768.0);
 
-    fcdAppSetParam(FCD_HID_CMD_SET_IQ_CORR, iqinfo.auc, 4);
+    fcdAppSetParam(FCD_CMD_APP_SET_IQ_CORR, iqinfo.auc, 4);
 }

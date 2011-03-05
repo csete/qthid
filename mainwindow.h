@@ -1,8 +1,10 @@
 /***************************************************************************
  *  This file is part of Qthid.
- * 
+ *
  *  Copyright (C) 2010  Howard Long, G6LVB
- * 
+ *  CopyRight (C) 2011  Alexandru Csete, OZ9AEC
+ *                      Mario Lorenz, DL5MLO
+ *
  *  Qthid is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -27,11 +29,14 @@
 namespace Ui {
     class MainWindow;
 }
+
+
 typedef struct
 {
     const char *pszDesc;
     qint8 u8Val;
-} COMBOITEMSTRUCT;
+} COMBO_ITEM_STRUCT;
+
 
 typedef struct
 {
@@ -39,8 +44,8 @@ typedef struct
     qint8 u8CommandGet;
     qint8 nIdxDefault;
     QComboBox *pComboBox;
-    const COMBOITEMSTRUCT *pacis;
-} COMBOSTRUCT;
+    const COMBO_ITEM_STRUCT *pacis;
+} COMBO_STRUCT;
 
 class MainWindow : public QMainWindow
 {
@@ -54,7 +59,7 @@ private:
     Ui::MainWindow *ui;
     QTimer *timer;
     double StrToDouble(QString s);
-    void PopulateCombo(QComboBox *box, int nIdxDefault, const COMBOITEMSTRUCT *pcis);
+    void PopulateCombo(QComboBox *box, int nIdxDefault, const COMBO_ITEM_STRUCT *pcis);
     void PopulateCombos();
     void ReadDevice();
     void BandChange();

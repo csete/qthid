@@ -1,55 +1,87 @@
-#define FCD_HID_CMD_QUERY              1 // Returns string with "FCDAPP version"
+/***************************************************************************
+ *  This file is part of Qthid.
+ *
+ *  Copyright (C) 2010  Howard Long, G6LVB
+ *  CopyRight (C) 2011  Alexandru Csete, OZ9AEC
+ *                      Mario Lorenz, DL5MLO
+ *
+ *  Qthid is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  Qthid is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with Qthid.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ ***************************************************************************/
 
-#define FCD_HID_CMD_SET_FREQUENCY    100 // Send with 3 byte unsigned little endian frequency in kHz.
-#define FCD_HID_CMD_SET_FREQUENCY_HZ 101 // Send with 4 byte unsigned little endian frequency in Hz, returns wit actual frequency set in Hz
-#define FCD_HID_CMD_GET_FREQUENCY_HZ 102 // Returns 4 byte unsigned little endian frequency in Hz.
 
-#define FCD_HID_CMD_GET_IF_RSSI      104 // Returns 1 byte unsigned IF RSSI, -35dBm ~=0, -10dBm ~=70.
-#define FCD_HID_CMD_GET_PLL_LOCK     105 // Returns 1 bit, true if locked
+/* Commands applicable in bootloader mode */
+#define FCD_CMD_BL_QUERY                1  /*!< Returns string with "FCDAPP version". */
+#define FCD_CMD_BL_RESET                8  /*!< Reset to application mode. */
+#define FCD_CMD_BL_ERASE               24  /*!< Erase firmware from FCD flash. */
+#define FCD_CMD_BL_SET_BYTE_ADDR       25  /*!< TBD */
+#define FCD_CMD_BL_GET_BYTE_ADDR_RANGE 26  /*!< Get address range. */
+#define FCD_CMD_BL_WRITE_FLASH_BLOCK   27  /*!< Write flash block. */
+#define FCD_CMD_BL_READ_FLASH_BLOCK    28  /*!< Read flash block. */
 
-#define FCD_HID_CMD_SET_DC_CORR      106 // Send with 2 byte unsigned I DC correction followed by 2 byte unsigned Q DC correction. 32768 is the default centre value.
-#define FCD_HID_CMD_GET_DC_CORR      107 // Returns 2 byte unsigned I DC correction followed by 2 byte unsigned Q DC correction. 32768 is the default centre value.
-#define FCD_HID_CMD_SET_IQ_CORR      108 // Send with 2 byte signed phase correction followed by 2 byte unsigned gain correction. 0 is the default centre value for phase correction, 32768 is the default centre value for gain.
-#define FCD_HID_CMD_GET_IQ_CORR      109 // Returns 2 byte signed phase correction followed by 2 byte unsigned gain correction. 0 is the default centre value for phase correction, 32768 is the default centre value for gain.
+/* Commands applicable in application mode */
+#define FCD_CMD_APP_SET_FREQ_KHZ     100 /*!< Send with 3 byte unsigned little endian frequency in kHz. */
+#define FCD_CMD_APP_SET_FREQ_HZ      101 /*!< Send with 4 byte unsigned little endian frequency in Hz, returns wit actual frequency set in Hz */
+#define FCD_CMD_APP_GET_FREQ_HZ      102 /*!< Returns 4 byte unsigned little endian frequency in Hz. */
 
-#define FCD_HID_CMD_SET_LNA_GAIN     110 // Send a 1 byte value, see enums for reference
-#define FCD_HID_CMD_SET_LNA_ENHANCE  111
-#define FCD_HID_CMD_SET_BAND         112
-#define FCD_HID_CMD_SET_RF_FILTER    113
-#define FCD_HID_CMD_SET_MIXER_GAIN   114
-#define FCD_HID_CMD_SET_BIAS_CURRENT 115
-#define FCD_HID_CMD_SET_MIXER_FILTER 116
-#define FCD_HID_CMD_SET_IF_GAIN1     117
-#define FCD_HID_CMD_SET_IF_GAIN_MODE 118
-#define FCD_HID_CMD_SET_IF_RC_FILTER 119
-#define FCD_HID_CMD_SET_IF_GAIN2     120
-#define FCD_HID_CMD_SET_IF_GAIN3     121
-#define FCD_HID_CMD_SET_IF_FILTER    122
-#define FCD_HID_CMD_SET_IF_GAIN4     123
-#define FCD_HID_CMD_SET_IF_GAIN5     124
-#define FCD_HID_CMD_SET_IF_GAIN6     125
+#define FCD_CMD_APP_GET_IF_RSSI      104 /*!< Returns 1 byte unsigned IF RSSI, -35dBm ~=0, -10dBm ~=70. */
+#define FCD_CMD_APP_GET_PLL_LOCK     105 /*!< Returns 1 bit, true if locked. */
 
-#define FCD_HID_CMD_GET_LNA_GAIN     150 // Retrieve a 1 byte value, see enums for reference
-#define FCD_HID_CMD_GET_LNA_ENHANCE  151
-#define FCD_HID_CMD_GET_BAND         152
-#define FCD_HID_CMD_GET_RF_FILTER    153
-#define FCD_HID_CMD_GET_MIXER_GAIN   154
-#define FCD_HID_CMD_GET_BIAS_CURRENT 155
-#define FCD_HID_CMD_GET_MIXER_FILTER 156
-#define FCD_HID_CMD_GET_IF_GAIN1     157
-#define FCD_HID_CMD_GET_IF_GAIN_MODE 158
-#define FCD_HID_CMD_GET_IF_RC_FILTER 159
-#define FCD_HID_CMD_GET_IF_GAIN2     160
-#define FCD_HID_CMD_GET_IF_GAIN3     161
-#define FCD_HID_CMD_GET_IF_FILTER    162
-#define FCD_HID_CMD_GET_IF_GAIN4     163
-#define FCD_HID_CMD_GET_IF_GAIN5     164
-#define FCD_HID_CMD_GET_IF_GAIN6     165
+#define FCD_CMD_APP_SET_DC_CORR      106 /*!< Send with 2 byte unsigned I DC correction followed by 2 byte unsigned Q DC correction. 32768 is the default centre value. */
+#define FCD_CMD_APP_GET_DC_CORR      107 /*!< Returns 2 byte unsigned I DC correction followed by 2 byte unsigned Q DC correction. 32768 is the default centre value. */
+#define FCD_CMD_APP_SET_IQ_CORR      108 /*!< Send with 2 byte signed phase correction followed by 2 byte unsigned gain correction. 0 is the default centre value for phase correction, 32768 is the default centre value for gain. */
+#define FCD_CMD_APP_GET_IQ_CORR      109 /*!< Returns 2 byte signed phase correction followed by 2 byte unsigned gain correction. 0 is the default centre value for phase correction, 32768 is the default centre value for gain. */
 
-#define FCD_HID_CMD_I2C_SEND_BYTE    200
-#define FCD_HID_CMD_I2C_RECEIVE_BYTE 201
+#define FCD_CMD_APP_SET_LNA_GAIN     110 /*!< Send a 1 byte value, see enums for reference. */
+#define FCD_CMD_APP_SET_LNA_ENHANCE  111
+#define FCD_CMD_APP_SET_BAND         112
+#define FCD_CMD_APP_SET_RF_FILTER    113
+#define FCD_CMD_APP_SET_MIXER_GAIN   114
+#define FCD_CMD_APP_SET_BIAS_CURRENT 115
+#define FCD_CMD_APP_SET_MIXER_FILTER 116
+#define FCD_CMD_APP_SET_IF_GAIN1     117
+#define FCD_CMD_APP_SET_IF_GAIN_MODE 118
+#define FCD_CMD_APP_SET_IF_RC_FILTER 119
+#define FCD_CMD_APP_SET_IF_GAIN2     120
+#define FCD_CMD_APP_SET_IF_GAIN3     121
+#define FCD_CMD_APP_SET_IF_FILTER    122
+#define FCD_CMD_APP_SET_IF_GAIN4     123
+#define FCD_CMD_APP_SET_IF_GAIN5     124
+#define FCD_CMD_APP_SET_IF_GAIN6     125
 
-#define FCD_RESET                    255 // Reset to bootloader
+#define FCD_CMD_APP_GET_LNA_GAIN     150 // Retrieve a 1 byte value, see enums for reference
+#define FCD_CMD_APP_GET_LNA_ENHANCE  151
+#define FCD_CMD_APP_GET_BAND         152
+#define FCD_CMD_APP_GET_RF_FILTER    153
+#define FCD_CMD_APP_GET_MIXER_GAIN   154
+#define FCD_CMD_APP_GET_BIAS_CURRENT 155
+#define FCD_CMD_APP_GET_MIXER_FILTER 156
+#define FCD_CMD_APP_GET_IF_GAIN1     157
+#define FCD_CMD_APP_GET_IF_GAIN_MODE 158
+#define FCD_CMD_APP_GET_IF_RC_FILTER 159
+#define FCD_CMD_APP_GET_IF_GAIN2     160
+#define FCD_CMD_APP_GET_IF_GAIN3     161
+#define FCD_CMD_APP_GET_IF_FILTER    162
+#define FCD_CMD_APP_GET_IF_GAIN4     163
+#define FCD_CMD_APP_GET_IF_GAIN5     164
+#define FCD_CMD_APP_GET_IF_GAIN6     165
+
+#define FCD_CMD_APP_SEND_I2C_BYTE    200
+#define FCD_CMD_APP_RECV_I2C_BYTE    201
+
+#define FCD_CMD_APP_RESET            255 // Reset to bootloader
+
 
 typedef enum 
 {
@@ -66,7 +98,7 @@ typedef enum
 	TLGE_P20_0DB=12,
 	TLGE_P25_0DB=13,
 	TLGE_P30_0DB=14
-} TUNERLNAGAINENUM;
+} TUNER_LNA_GAIN_ENUM;
 
 typedef enum
 {
@@ -75,7 +107,7 @@ typedef enum
   TLEE_1=3,
   TLEE_2=5,
   TLEE_3=7
-} TUNERLNAENHANCEENUM;  
+} TUNER_LNA_ENHANCE_ENUM;
 
 typedef enum
 {
@@ -83,7 +115,7 @@ typedef enum
   TBE_VHF3,
   TBE_UHF,
   TBE_LBAND
-} TUNERBANDENUM;  
+} TUNER_BAND_ENUM;
 
 typedef enum
 {
@@ -127,13 +159,13 @@ typedef enum
   TRFE_BPF1700MHZ=13,
   TRFE_BPF1720MHZ=14,
   TRFE_BPF1750MHZ=15
-} TUNERRFFILTERENUM;
+} TUNER_RF_FILTER_ENUM;
 
 typedef enum
 {
   TMGE_P4_0DB=0,
   TMGE_P12_0DB=1
-} TUNERMIXERGAINENUM;
+} TUNER_MIXER_GAIN_ENUM;
 
 typedef enum
 {
@@ -141,7 +173,7 @@ typedef enum
   TBCE_1=1,
   TBCE_2=2,
   TBCE_VUBAND=3
-} TUNERBIASCURRENTENUM; 
+} TUNER_BIAS_CURRENT_ENUM;
 
 typedef enum
 {
@@ -154,19 +186,19 @@ typedef enum
   TMFE_2_7MHZ=13,
   TMFE_2_3MHZ=14,
   TMFE_1_9MHZ=15
-} TUNERMIXERFILTERENUM;  
+} TUNER_MIXER_FILTER_ENUM;
 
 typedef enum
 {
   TIG1E_N3_0DB=0,
   TIG1E_P6_0DB=1
-} TUNERIFGAIN1ENUM;  
+} TUNER_IF_GAIN1_ENUM;
 
 typedef enum
 {
   TIGME_LINEARITY=0,
   TIGME_SENSITIVITY=1
-} TUNERIFGAINMODEENUM;
+} TUNER_IF_GAIN_MODE_ENUM;
 
 typedef enum
 {
@@ -186,7 +218,7 @@ typedef enum
   TIRFE_1_8MHZ=13,
   TIRFE_1_2MHZ=14,
   TIRFE_1_0MHZ=15
-} TUNERIFRCFILTERENUM; 
+} TUNER_IF_RC_FILTER_ENUM;
 
 typedef enum
 {
@@ -194,7 +226,7 @@ typedef enum
   TIG2E_P3_0DB=1,
   TIG2E_P6_0DB=2,
   TIG2E_P9_0DB=3
-} TUNERIFGAIN2ENUM;  
+} TUNER_IF_GAIN2_ENUM;
 
 typedef enum
 {
@@ -202,14 +234,14 @@ typedef enum
   TIG3E_P3_0DB=1,
   TIG3E_P6_0DB=2,
   TIG3E_P9_0DB=3
-} TUNERIFGAIN3ENUM;  
+} TUNER_IF_GAIN3_ENUM;
 
 typedef enum
 {
   TIG4E_P0_0DB=0,
   TIG4E_P1_0DB=1,
   TIG4E_P2_0DB=2
-} TUNERIFGAIN4ENUM;  
+} TUNER_IF_GAIN4_ENUM;
 
 typedef enum
 {
@@ -245,7 +277,7 @@ typedef enum
   TIFE_2_24MHZ=29,
   TIFE_2_20MHZ=30,
   TIFE_2_15MHZ=31
-} TUNERIFFILTERENUM;  
+} TUNER_IF_FILTER_ENUM;
 
 typedef enum
 {
@@ -254,7 +286,7 @@ typedef enum
   TIG5E_P9_0DB=2,
   TIG5E_P12_0DB=3,
   TIG5E_P15_0DB=4
-} TUNERIFGAIN5ENUM;  
+} TUNER_IF_GAIN5_ENUM;
 
 typedef enum
 {
@@ -263,5 +295,5 @@ typedef enum
   TIG6E_P9_0DB=2,
   TIG6E_P12_0DB=3,
   TIG6E_P15_0DB=4
-} TUNERIFGAIN6ENUM;  
+} TUNER_IF_GAIN6_ENUM;
 
