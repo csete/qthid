@@ -29,6 +29,7 @@
 #include "fcdhidcmd.h"
 
 
+/** \brief LNA gain options */
 static const COMBO_ITEM_STRUCT _cisLNAGain[]=
 {
     {QT_TR_NOOP("-5.0dB"),TLGE_N5_0DB},
@@ -47,6 +48,7 @@ static const COMBO_ITEM_STRUCT _cisLNAGain[]=
     {NULL,0}
 };
 
+/** \brief LNA enhance options */
 static const COMBO_ITEM_STRUCT _cisLNAEnhance[]=
 {
         {QT_TR_NOOP("Off"),TLEE_OFF},
@@ -57,6 +59,7 @@ static const COMBO_ITEM_STRUCT _cisLNAEnhance[]=
         {NULL,0}
 };
 
+/** \brief Band selector options */
 static const COMBO_ITEM_STRUCT _cisBand[]=
 {
         {QT_TR_NOOP("VHF II"),TBE_VHF2},
@@ -66,13 +69,15 @@ static const COMBO_ITEM_STRUCT _cisBand[]=
         {NULL,0}
 };
 
+/** \brief RF filter band 0 options */
 static const COMBO_ITEM_STRUCT _cisRFFilter0[]=
 {
         {QT_TR_NOOP("268MHz LPF"),TRFE_LPF268MHZ},
-        {QT_TR_NOOP("299MHz LPF"),TRFE_LPF268MHZ},
+        {QT_TR_NOOP("299MHz LPF"),TRFE_LPF299MHZ},
         {NULL,0}
 };
 
+/** \brief RF filter band 1 options */
 static const COMBO_ITEM_STRUCT _cisRFFilter1[]=
 {
         {QT_TR_NOOP("509MHz LPF"),TRFE_LPF509MHZ},
@@ -80,6 +85,7 @@ static const COMBO_ITEM_STRUCT _cisRFFilter1[]=
         {NULL,0}
 };
 
+/** \brief RF filter band 2 options */
 static const COMBO_ITEM_STRUCT _cisRFFilter2[]=
 {
         {QT_TR_NOOP("360MHz BPF"),TRFE_BPF360MHZ},
@@ -101,6 +107,7 @@ static const COMBO_ITEM_STRUCT _cisRFFilter2[]=
         {NULL,0}
 };
 
+/** \brief RF filter band 3 options */
 static const COMBO_ITEM_STRUCT _cisRFFilter3[]=
 {
         {QT_TR_NOOP("1300MHz BPF"),TRFE_BPF1300MHZ},
@@ -122,6 +129,7 @@ static const COMBO_ITEM_STRUCT _cisRFFilter3[]=
         {NULL,0}
 };
 
+/** \brief Mixer gain options */
 static const COMBO_ITEM_STRUCT _cisMixerGain[]=
 {
         {QT_TR_NOOP("4dB"),TMGE_P4_0DB},
@@ -129,6 +137,7 @@ static const COMBO_ITEM_STRUCT _cisMixerGain[]=
         {NULL,0}
 };
 
+/** \brief Bias options */
 static const COMBO_ITEM_STRUCT _cisBiasCurrent[]=
 {
         {QT_TR_NOOP("00 L band"),TBCE_LBAND},
@@ -138,6 +147,7 @@ static const COMBO_ITEM_STRUCT _cisBiasCurrent[]=
         {NULL,0}
 };
 
+/** \brief Mixer filter options */
 static const COMBO_ITEM_STRUCT _cisMixerFilter[]=
 {
         {QT_TR_NOOP("1.9MHz"),TMFE_1_9MHZ},
@@ -152,6 +162,7 @@ static const COMBO_ITEM_STRUCT _cisMixerFilter[]=
         {NULL,0}
 };
 
+/** \brief IF gain 1 options */
 static const COMBO_ITEM_STRUCT _cisIFGain1[]=
 {
         {QT_TR_NOOP("-3dB"),TIG1E_N3_0DB},
@@ -159,6 +170,7 @@ static const COMBO_ITEM_STRUCT _cisIFGain1[]=
         {NULL,0}
 };
 
+/** \brief IF gain mode options */
 static const COMBO_ITEM_STRUCT _cisIFGainMode[]=
 {
         {QT_TR_NOOP("Linearity"),TIGME_LINEARITY},
@@ -166,6 +178,7 @@ static const COMBO_ITEM_STRUCT _cisIFGainMode[]=
         {NULL,0}
 };
 
+/** \brief IF RC filter options */
 static const COMBO_ITEM_STRUCT _cisIFRCFilter[]=
 {
         {QT_TR_NOOP("1.0MHz"),TIRFE_1_0MHZ},
@@ -187,6 +200,7 @@ static const COMBO_ITEM_STRUCT _cisIFRCFilter[]=
         {NULL,0}
 };
 
+/** \brief IF gain 2 options */
 static const COMBO_ITEM_STRUCT _cisIFGain2[]=
 {
         {QT_TR_NOOP("0dB"),TIG2E_P0_0DB},
@@ -196,6 +210,7 @@ static const COMBO_ITEM_STRUCT _cisIFGain2[]=
         {NULL,0}
 };
 
+/** \brief IF gain 3 options */
 static const COMBO_ITEM_STRUCT _cisIFGain3[]=
 {
         {QT_TR_NOOP("0dB"),TIG3E_P0_0DB},
@@ -205,6 +220,7 @@ static const COMBO_ITEM_STRUCT _cisIFGain3[]=
         {NULL,0}
 };
 
+/** \brief IF gain 4 options */
 static const COMBO_ITEM_STRUCT _cisIFGain4[]=
 {
         {QT_TR_NOOP("0dB"),TIG4E_P0_0DB},
@@ -213,6 +229,7 @@ static const COMBO_ITEM_STRUCT _cisIFGain4[]=
         {NULL,0}
 };
 
+/** \brief IF filter options */
 static const COMBO_ITEM_STRUCT _cisIFFilter[]=
 {
         {QT_TR_NOOP("2.15MHz"),TIFE_2_15MHZ},
@@ -250,6 +267,7 @@ static const COMBO_ITEM_STRUCT _cisIFFilter[]=
         {NULL,0}
 };
 
+/** \brief IF gain 5 options */
 static const COMBO_ITEM_STRUCT _cisIFGain5[]=
 {
         {QT_TR_NOOP("+3dB"),TIG5E_P3_0DB},
@@ -260,6 +278,7 @@ static const COMBO_ITEM_STRUCT _cisIFGain5[]=
         {NULL,0}
 };
 
+/** \brief IF gain 6 options */
 static const COMBO_ITEM_STRUCT _cisIFGain6[]=
 {
         {QT_TR_NOOP("+3dB"),TIG6E_P3_0DB},
@@ -270,7 +289,9 @@ static const COMBO_ITEM_STRUCT _cisIFGain6[]=
         {NULL,0}
 };
 
-static COMBO_STRUCT _acs[]=
+
+/** \brief List of all combo boxes. */    /** FIXME: Review defaults */
+static COMBO_STRUCT _acs[] =
 {
     {FCD_CMD_APP_SET_LNA_GAIN,     FCD_CMD_APP_GET_LNA_GAIN,    10, NULL, _cisLNAGain},
     {FCD_CMD_APP_SET_LNA_ENHANCE,  FCD_CMD_APP_GET_LNA_ENHANCE,  0, NULL, _cisLNAEnhance},

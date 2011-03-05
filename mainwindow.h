@@ -31,21 +31,31 @@ namespace Ui {
 }
 
 
-typedef struct
-{
-    const char *pszDesc;
-    qint8 u8Val;
+/** \brief Data definition for combo box items.
+  * This data structure represents an item in a combo box used for
+  * gain and filter parameters. Each combo box has an array of these
+  * data defining the set of options.
+  */
+typedef struct {
+    const char *pszDesc;  /*!< The display name of the item. */
+    qint8 u8Val;          /*!< The numerical value of the item. */
 } COMBO_ITEM_STRUCT;
 
 
-typedef struct
-{
-    qint8 u8CommandSet;
-    qint8 u8CommandGet;
-    qint8 nIdxDefault;
-    QComboBox *pComboBox;
-    const COMBO_ITEM_STRUCT *pacis;
+/** \brief Data definition for a combo box.
+  * This data structure represents a combo box that is used for gain and
+  * filter parameters. Each such parameter has a 'set' and 'get' command
+  * as well as a list of options (COMBO_ITEM_STRUCT[]).
+  * \sa _acs
+  */
+typedef struct {
+    qint8 u8CommandSet;   /*!< The command for setting the parameter in the FCD. */
+    qint8 u8CommandGet;   /*!< The command for retrieveing the parameter from the FCD. */
+    qint8 nIdxDefault;    /*!< Index pointing to the default value for this parameter. */
+    QComboBox *pComboBox; /*!< Pointer to the combo box. */
+    const COMBO_ITEM_STRUCT *pacis; /*!< Pointer to the array if items. */
 } COMBO_STRUCT;
+
 
 class MainWindow : public QMainWindow
 {
