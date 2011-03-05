@@ -20,6 +20,10 @@
  *
  ***************************************************************************/
 
+#ifndef FCD_H
+#define FCD_H 1
+
+
 #ifdef FCD
 #define EXTERN
 #define ASSIGN (x) =x
@@ -71,3 +75,4 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdBlVerifyFirmware(char *pc, i
 }
 #endif
 
+#endif // FCD_H
