@@ -613,6 +613,11 @@ void MainWindow::enableControls()
     enableCombos(fme==FCD_MODE_APP);
 
     /* manage FCD mode transitions */
+    if (fme != prevMode) {
+        qDebug() << "FCD mode change:" << prevMode << "->" << fme;
+        ui->statusBar->showMessage(tr("FCD mode change detected"), 2000);
+    }
+
     if (fme == FCD_MODE_APP) {
         /* if previous mode was different read settings from device */
         /** TODO: should we read from FCD or write to FCD? **/
