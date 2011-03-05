@@ -16,6 +16,16 @@ macx {
 }
 
 
+# disable debug messages in release
+CONFIG(debug, debug|release) {
+
+} else {
+    DEFINES += QT_NO_DEBUG
+    DEFINES += QT_NO_DEBUG_OUTPUT
+}
+
+
+
 SOURCES +=\
         mainwindow.cpp \
     main.cpp \
