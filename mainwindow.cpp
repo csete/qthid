@@ -563,12 +563,12 @@ void MainWindow::enableControls()
             }
             ui->fcdStatusLine->setText("FCD is active");
 
-            u8=0;
-            fcdAppGetParam(FCD_CMD_APP_GET_PLL_LOCK, &u8, 1);
-            ui->checkBoxPLLLock->setChecked(u8==1);
+            u8=0;  /** TODO **/
+            //fcdAppGetParam(FCD_CMD_APP_GET_PLL_LOCK, &u8, 1);
+            //ui->checkBoxPLLLock->setChecked(u8==1);
 
-            fcdAppGetParam(FCD_CMD_APP_GET_IF_RSSI, &u8, 1);
-            ui->progressBarIFRSSI->setValue(u8);
+            //fcdAppGetParam(FCD_CMD_APP_GET_IF_RSSI, &u8, 1);
+            //ui->progressBarIFRSSI->setValue(u8);
 
             break;
 
@@ -616,12 +616,15 @@ void MainWindow::enableControls()
     if (fme != prevMode) {
         qDebug() << "FCD mode change:" << prevMode << "->" << fme;
         ui->statusBar->showMessage(tr("FCD mode change detected"), 2000);
+
+        if (fme == FCD_MODE_APP) {
+            /* if previous mode was different read settings from device */
+            /** TODO: should we read from FCD or write to FCD? **/
+            readDevice();
+        }
     }
 
-    if (fme == FCD_MODE_APP) {
-        /* if previous mode was different read settings from device */
-        /** TODO: should we read from FCD or write to FCD? **/
-    }
+
     prevMode = fme;
 }
 
@@ -800,6 +803,16 @@ void MainWindow::on_lineEditFreq_textChanged(QString s)
 
     fcdAppSetFreqkHz((int)(d/1000.0));
     //ReadDevice();
+
+    /** TODO **/
+    //quint8 readVal[4];
+    //quint32 freq = 0;
+    //fcdAppGetParam(FCD_CMD_APP_GET_FREQ_HZ, readVal,4);
+    //freq += readVal[0];
+    //freq += readVal[1] << 8;
+    //freq += readVal[2] << 16;
+    //freq += readVal[3] << 24;
+    //qDebug() << readVal[0] << readVal[1] << readVal[2] << readVal[3] << " / " << freq;
 }
 
 
