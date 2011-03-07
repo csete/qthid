@@ -573,20 +573,21 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdBlVerifyFirmware(char *pc, i
 /* Below is the unofficial port of the "backdoor api" as used in the windows full featured client */
 
 /** \brief Set gain or filter parameter.
-  * \param u8Cmd The command byte
-  * \param pu8Data TBD
-  * \param u8len TBD
-  * \return FCD_MODE_NONE
+  * \param u8Cmd The command byte / parameter ID, see FCD_CMD_APP_SET_*
+  * \param pu8Data The parameter value to be written
+  * \param u8len Length of pu8Daat in bytes
+  * \return FCD_MODE_NONE (which could be improved)
   *
   */
 EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetParam(uint8_t u8Cmd, uint8_t *pu8Data, uint8_t u8len)
 {
     hid_device *phd=NULL;
     unsigned char aucBufOut[65];
+    unsigned char aucBufIn[65];
 
-    //printf("Write: %i %i %i\n",u8Cmd, u8len,pu8Data[0]);
-    //fflush(stdout);
+
     phd = fcdOpen();
+
     if (phd == NULL)
     {
         return FCD_MODE_NONE;
@@ -597,6 +598,11 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetParam(uint8_t u8Cmd, u
     memcpy(aucBufOut+2, pu8Data,u8len);
     hid_write(phd,aucBufOut,65);
 
+    /* we must read after each write in order to empty FCD/HID buffer */
+    memset(aucBufIn,0xCC,65); // Clear out the response buffer
+    hid_read(phd,aucBufIn,65);
+    /** TODO: we could check that aucBufIn[0]=u8Cmd, aucBufIn[1]=1 and aucBufIn[2+]=pu8Data */
+
     fcdClose(phd);
     phd=NULL;
 
@@ -605,10 +611,10 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetParam(uint8_t u8Cmd, u
 
 
 /** \brief Read gain or filter parameter from the FCD
-  * \param u8Cmd The parameter to read
-  * \param pu8Data TBD
-  * \param u8len
-  *
+  * \param u8Cmd The parameter to read, see FCD_CMD_APP_GET_*
+  * \param pu8Data Pointer to buffer where the parameter value(s) will be written
+  * \param u8len The number of bytes that should be copied into pu8Data
+  * \param return FCD_MODE_NONE (which could be improved)
   */
 EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppGetParam(uint8_t u8Cmd, uint8_t *pu8Data, uint8_t u8len)
 {
@@ -625,16 +631,15 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppGetParam(uint8_t u8Cmd, u
     aucBufOut[0]=0; // Report ID, ignored
     aucBufOut[1]=u8Cmd;
     hid_write(phd,aucBufOut,65);
+
     memset(aucBufIn,0xCC,65); // Clear out the response buffer
     hid_read(phd,aucBufIn,65);
+    /** TODO: Chekc that aucBufIn[0]=u8Cmd and aucBufIn[1]=1 **/
     memcpy(pu8Data,aucBufIn+2,u8len);
 
     fcdClose(phd);
-    //printf("Read %i %i %i  \n",u8Cmd, u8len,pu8Data[0]);
-    //fflush(stdout);
     phd = NULL;
 
     return FCD_MODE_NONE;
-//   return au8BufIn[2])
 }
 
