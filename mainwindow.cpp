@@ -540,39 +540,11 @@ void MainWindow::enableControls()
     FCD_MODE_ENUM fme;
     quint8 u8;
 
+
     /* clear status string */
-
-/*
-    {
-        struct hid_device_info *devs,*cur_dev;
-
-        devs=hid_enumerate(0x04D8,0xFB56);
-        cur_dev=devs;
-        while (cur_dev)
-        {
-            ui->plainTextEdit->appendPlainText(QString::number(cur_dev->vendor_id,16));
-            ui->plainTextEdit->appendPlainText(QString::number(cur_dev->product_id,16));
-            ui->plainTextEdit->appendPlainText(QString::fromAscii(cur_dev->path));
-            if (cur_dev->serial_number==NULL)
-            {
-                ui->plainTextEdit->appendPlainText("NULL");
-            }
-            else
-            {
-                ui->plainTextEdit->appendPlainText(QString::fromWCharArray(cur_dev->serial_number));
-            }
-            ui->plainTextEdit->appendPlainText(QString::fromWCharArray(cur_dev->manufacturer_string));
-            ui->plainTextEdit->appendPlainText(QString::fromWCharArray(cur_dev->product_string));
-            cur_dev=cur_dev->next;
-        }
-        hid_free_enumeration(devs);
-    }
-*/
-
+    ui->fcdStatusLine->clear();
 
     fme = fcdGetMode();
-
-    ui->fcdStatusLine->clear();
 
     switch (fme)
     {
