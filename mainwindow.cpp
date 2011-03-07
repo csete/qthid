@@ -584,12 +584,12 @@ void MainWindow::enableControls()
             }
             ui->fcdStatusLine->setText("FCD is active");
 
-            u8=0;  /** TODO **/
-            //fcdAppGetParam(FCD_CMD_APP_GET_PLL_LOCK, &u8, 1);
-            //ui->checkBoxPLLLock->setChecked(u8==1);
+            u8=0;
+            fcdAppGetParam(FCD_CMD_APP_GET_PLL_LOCK, &u8, 1);
+            ui->checkBoxPLLLock->setChecked(u8==1);
 
-            //fcdAppGetParam(FCD_CMD_APP_GET_IF_RSSI, &u8, 1);
-            //ui->progressBarIFRSSI->setValue(u8);
+            fcdAppGetParam(FCD_CMD_APP_GET_IF_RSSI, &u8, 1); /** FIXME: scale to dBm **/
+            ui->progressBarIFRSSI->setValue(u8);
 
             break;
 
@@ -642,6 +642,9 @@ void MainWindow::enableControls()
             /* if previous mode was different read settings from device */
             /** TODO: should we read from FCD or write to FCD? **/
             readDevice();
+
+            /* Set frequency since FCD does not remember anything */
+            on_lineEditFreq_textChanged(ui->lineEditFreq->text());
         }
     }
 
