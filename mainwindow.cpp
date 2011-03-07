@@ -437,11 +437,14 @@ void MainWindow::enableCombos(bool enabled)
 
 
 /** \brief Read all parameters from FCD.
-  * \note "All" refers tothe combo box settings and we shoul fix that.
+  * \note "All" refers to the combo box settings and we should probably fix that.
   */
 void MainWindow::readDevice()
 {
     COMBO_STRUCT *pcs=_acs;
+    FCD_MODE_ENUM fme;
+    bool error = false;
+
 
     /* iterate through all combo boxes */
     while (pcs->pacis!=NULL)
@@ -451,24 +454,42 @@ void MainWindow::readDevice()
         int nIdx=0;
 
         /* read FCD value for this combo box */
-        fcdAppGetParam(pcs->u8CommandGet, &u8, 1);
+        fme = fcdAppGetParam(pcs->u8CommandGet, &u8, 1);
 
+        /* if read was successful try to use read value */
+        if (fme == FCD_MODE_APP) {
 
-        //Try to find the index to the register field value
-        while (pcis->pszDesc!=NULL && pcis->u8Val!=u8)
-        {
-            nIdx++;
-            pcis++;
-        }
+            /* Try to find the index to the register field value */
+            while (pcis->pszDesc!=NULL && pcis->u8Val!=u8)
+            {
+                nIdx++;
+                pcis++;
+            }
 
-        if (pcis->pszDesc != NULL) {
-            pcs->pComboBox->setCurrentIndex(nIdx);
+            if (pcis->pszDesc != NULL) {
+                pcs->pComboBox->setCurrentIndex(nIdx);
+            } else {
+                pcs->pComboBox->setCurrentIndex(pcs->nIdxDefault);
+            }
         } else {
+            /* use default value to display */
             pcs->pComboBox->setCurrentIndex(pcs->nIdxDefault);
+
+            error = true;
         }
 
         bandChange();
         pcs++;
+    }
+
+    /* push a message to the status bar */
+    if (error) {
+        qDebug() << "There were errors while reading settings from FCD";
+        ui->statusBar->showMessage(tr("There were errors while reading settings from FCD"), 4000);
+    }
+    else {
+        qDebug() << "Successfully read settings from FCD";
+        ui->statusBar->showMessage(tr("Successfully read settings from FCD"), 4000);
     }
 }
 
