@@ -570,14 +570,22 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdBlVerifyFirmware(char *pc, i
 }
 
 
-/* Below is the unofficial port of the "backdoor api" as used in the windows full featured client */
 
-/** \brief Set gain or filter parameter.
+/** \brief Write FCD parameter (e.g. gain or filter)
   * \param u8Cmd The command byte / parameter ID, see FCD_CMD_APP_SET_*
   * \param pu8Data The parameter value to be written
-  * \param u8len Length of pu8Daat in bytes
-  * \return FCD_MODE_NONE (which could be improved)
+  * \param u8len Length of pu8Data in bytes
+  * \return One of FCD_MODE_NONE, FCD_MODE_APP or FCD_MODE_BL (see description)
   *
+  * This function can be used to set the value of a parameter in the FCD for which there is no
+  * high level API call. It gives access to the low level API of the FCD and the caller is expected
+  * to be aware of the various FCD commands, since they are required to be supplied as parameter
+  * to this function.
+  *
+  * The return value can be used to determine the success or failure of the command execution:
+  * - FCD_MODE_APP : Reply from FCD was as expected (nominal case).
+  * - FCD_MODE_BL : Reply from FCD was not as expected.
+  * - FCD_MODE_NONE : No FCD was found
   */
 EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetParam(uint8_t u8Cmd, uint8_t *pu8Data, uint8_t u8len)
 {
@@ -601,20 +609,39 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetParam(uint8_t u8Cmd, u
     /* we must read after each write in order to empty FCD/HID buffer */
     memset(aucBufIn,0xCC,65); // Clear out the response buffer
     hid_read(phd,aucBufIn,65);
-    /** TODO: we could check that aucBufIn[0]=u8Cmd, aucBufIn[1]=1 and aucBufIn[2+]=pu8Data */
 
+    /* Check the response, if OK return FCD_MODE_APP */
+    if (aucBufIn[0]==u8Cmd && aucBufIn[1]==1) {
+        fcdClose(phd);
+        phd = NULL;
+
+        return FCD_MODE_APP;
+    }
+
+    /* Response did not contain the expected bytes */
     fcdClose(phd);
-    phd=NULL;
+    phd = NULL;
 
-    return FCD_MODE_NONE;
+    return FCD_MODE_BL;
+
 }
 
 
-/** \brief Read gain or filter parameter from the FCD
-  * \param u8Cmd The parameter to read, see FCD_CMD_APP_GET_*
-  * \param pu8Data Pointer to buffer where the parameter value(s) will be written
-  * \param u8len The number of bytes that should be copied into pu8Data
-  * \param return FCD_MODE_NONE (which could be improved)
+/** \brief Read FCD parameter (e.g. gain or filter)
+  * \param u8Cmd The command byte / parameter ID, see FCD_CMD_APP_GET_*
+  * \param pu8Data TPointer to buffer where the parameter value(s) will be written
+  * \param u8len Length of pu8Data in bytes
+  * \return One of FCD_MODE_NONE, FCD_MODE_APP or FCD_MODE_BL (see description)
+  *
+  * This function can be used to read the value of a parameter in the FCD for which there is no
+  * high level API call. It gives access to the low level API of the FCD and the caller is expected
+  * to be aware of the various FCD commands, since they are required to be supplied as parameter
+  * to this function.
+  *
+  * The return value can be used to determine the success or failure of the command execution:
+  * - FCD_MODE_APP : Reply from FCD was as expected (nominal case).
+  * - FCD_MODE_BL : Reply from FCD was not as expected.
+  * - FCD_MODE_NONE : No FCD was found
   */
 EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppGetParam(uint8_t u8Cmd, uint8_t *pu8Data, uint8_t u8len)
 {
@@ -634,12 +661,21 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppGetParam(uint8_t u8Cmd, u
 
     memset(aucBufIn,0xCC,65); // Clear out the response buffer
     hid_read(phd,aucBufIn,65);
-    /** TODO: Chekc that aucBufIn[0]=u8Cmd and aucBufIn[1]=1 **/
+    /* Copy return data to output buffer (even if cmd exec failed) */
     memcpy(pu8Data,aucBufIn+2,u8len);
 
+    /* Check status bytes in returned data */
+    if (aucBufIn[0]==u8Cmd && aucBufIn[1]==1) {
+        fcdClose(phd);
+        phd = NULL;
+
+        return FCD_MODE_APP;
+    }
+
+    /* Response did not contain the expected bytes */
     fcdClose(phd);
     phd = NULL;
 
-    return FCD_MODE_NONE;
+    return FCD_MODE_BL;
 }
 
