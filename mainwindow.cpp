@@ -323,17 +323,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->setupUi(this);
 
-    ui->lineEditFreq->setText(settings.value("Frequency","97,300.000").toString());
-    ui->lineEditStep->setText(settings.value("Step","25,000").toString());
-    ui->spinBoxCorr->setValue(settings.value("Correction","-120").toInt());
-
-    ui->doubleSpinBoxDCI->setValue(settings.value("DCICorr","0.0").toDouble());
-    ui->doubleSpinBoxDCQ->setValue(settings.value("DCQCorr","0.0").toDouble());
-    ui->doubleSpinBoxPhase->setValue(settings.value("PhaseCorr","0.0").toDouble());
-    ui->doubleSpinBoxGain->setValue(settings.value("GaunCorr","0.0").toDouble());
-
-
-    /* Populate Combo Box list structure - unlike windows API, we dont have fixed ids... */
+    /* Populate Combo Box list structure */
     _acs[0].pComboBox=ui->comboBoxLNAGain;
     _acs[1].pComboBox=ui->comboBoxLNAEnhance;
     _acs[2].pComboBox=ui->comboBoxBand;
@@ -352,6 +342,16 @@ MainWindow::MainWindow(QWidget *parent) :
     _acs[15].pComboBox=ui->comboBoxIFGain6;
 
     populateCombos();
+
+    ui->lineEditFreq->setText(settings.value("Frequency","97,300.000").toString());
+    ui->lineEditStep->setText(settings.value("Step","25,000").toString());
+    ui->spinBoxCorr->setValue(settings.value("Correction","-120").toInt());
+
+    ui->doubleSpinBoxDCI->setValue(settings.value("DCICorr","0.0").toDouble());
+    ui->doubleSpinBoxDCQ->setValue(settings.value("DCQCorr","0.0").toDouble());
+    ui->doubleSpinBoxPhase->setValue(settings.value("PhaseCorr","0.0").toDouble());
+    ui->doubleSpinBoxGain->setValue(settings.value("GaunCorr","0.0").toDouble());
+
 
     //ReadDevice(); /* disabled until it can properly set default values in case of error */
 
@@ -428,9 +428,13 @@ void MainWindow::enableCombos(bool enabled)
     /* iterate trough all combo boxes */
     while (pcs->pacis!=NULL)
     {
-        pcs->pComboBox->setEnabled(enabled);  /** FIXME: Band selector should be disabled? */
+        pcs->pComboBox->setEnabled(enabled);
         pcs++;
     }
+
+    /* Band selection happens automatically; ensure band selector is disabled */
+    if (enabled)
+        ui->comboBoxBand->setEnabled(false);
 }
 
 
@@ -494,12 +498,12 @@ void MainWindow::readDevice()
 }
 
 
-/** \brief Band change event
+/** \brief Switch to new frequency band.
   *
-  * TBD.
-  * When the frequency changes to a different band the RF filter combo must be updated.
-  * I am not sure how much is done by application and how much happens automatically in the FCD.
-  * I suspect the FCD changes the filters automatically.
+  * This function will update the RF filter combo according to the active selection in the
+  * Band combo box (different bands have different set of filters). Band selection happens
+  * automatically by the FCD when we change the frequency adn we must update the UI when
+  * such events occur.
   */
 void MainWindow::bandChange()
 {
@@ -508,6 +512,8 @@ void MainWindow::bandChange()
     int nIdxOrg = ui->comboBoxRfFilter->currentIndex();
 
     populateCombo(ui->comboBoxRfFilter, nIdxOrg, apcis[nIdx]);
+
+    /** TODO: check FCD for filter selction **/
 }
 
 
@@ -773,6 +779,7 @@ void MainWindow::on_pushButtonVerifyFirmware_clicked()
   */
 void MainWindow::on_lineEditFreq_textChanged(QString s)
 {
+    FCD_MODE_ENUM fme;
     double d = StrToDouble(s);
     int nCursor = ui->lineEditFreq->cursorPosition();
     QString s2 = QLocale(QLocale()).toString(d,'f',0);
@@ -797,8 +804,11 @@ void MainWindow::on_lineEditFreq_textChanged(QString s)
 
     d *= 1.0 + ui->spinBoxCorr->value()/1000000.0;
 
-    fcdAppSetFreqkHz((int)(d/1000.0));
-    //ReadDevice();
+    fme = fcdAppSetFreqkHz((int)(d/1000.0));
+    if (fme != FCD_MODE_APP) {
+        qWarning() << "Failed to set frequency";
+        ui->statusBar->showMessage(tr("Failed to set frequency"), 3000);
+    }
 
     /** TODO **/
     //quint8 readVal[4];
@@ -809,6 +819,40 @@ void MainWindow::on_lineEditFreq_textChanged(QString s)
     //freq += readVal[2] << 16;
     //freq += readVal[3] << 24;
     //qDebug() << readVal[0] << readVal[1] << readVal[2] << readVal[3] << " / " << freq;
+
+
+    /* band changes occur automatically in FCD when we change frequency */
+    quint8 u8;
+
+    /* read band selection form FCD */
+    fme = fcdAppGetParam(FCD_CMD_APP_GET_BAND, &u8, 1);
+    if (fme == FCD_MODE_APP) {
+        if (u8 != ui->comboBoxBand->currentIndex()) {
+            qDebug() << "Band change detected:" << u8;
+            ui->comboBoxBand->setCurrentIndex(u8);
+            bandChange();
+        }
+    }
+    /* else we ignore it */
+
+    /* filter */
+    fme = fcdAppGetParam(FCD_CMD_APP_GET_RF_FILTER, &u8, 1);
+    if (fme == FCD_MODE_APP) {
+        if (u8 != ui->comboBoxRfFilter->currentIndex()) {
+            qDebug() << "RF filter change detected:" << u8;
+            ui->comboBoxRfFilter->setCurrentIndex(u8);
+        }
+    }
+
+    /* bias current */
+    fme = fcdAppGetParam(FCD_CMD_APP_GET_BIAS_CURRENT, &u8, 1);
+    if (fme == FCD_MODE_APP) {
+        if (u8 != ui->comboBoxBiasCurrent->currentIndex()) {
+            qDebug() << "Bias current change detected:" << u8;
+            ui->comboBoxBiasCurrent->setCurrentIndex(u8);
+        }
+    }
+
 }
 
 
