@@ -647,16 +647,26 @@ void MainWindow::on_pushButtonBLReset_clicked()
 
 void MainWindow::on_pushButtonUpdateFirmware_clicked()
 {
+    /* retrieve last used folder */
+    QSettings settings;
+    QString path = settings.value("LastFwFolder", QDir::currentPath()).toString();
+
+    /* execute modal file selector and get FW file name */
     QString fileName = QFileDialog::getOpenFileName(this,
                                                     tr("Open FCD firmware"),
-                                                    QDir::currentPath(),
+                                                    path,
                                                     tr("FCD firmware files (*.bin)"));
 
     if (!fileName.isNull())
     {
+        /* store selected folder */
+        QFileInfo fileInfo(fileName);
+        qDebug() << "FW folder:" << fileInfo.absolutePath();
+        settings.setValue("LastFwFolder", fileInfo.absolutePath());
+
         QFile qf(fileName);
-        qint64 qn64size=qf.size();
-        char *buf=new char[qn64size];
+        qint64 qn64size = qf.size();
+        char *buf = new char[qn64size];
 
         qDebug() << fileName;
 
@@ -714,13 +724,21 @@ void MainWindow::on_pushButtonUpdateFirmware_clicked()
 
 void MainWindow::on_pushButtonVerifyFirmware_clicked()
 {
+    /* retrieve last used folder */
+    QSettings settings;
+    QString path = settings.value("LastFwFolder", QDir::currentPath()).toString();
+
     QString fileName = QFileDialog::getOpenFileName(this,
                                                     tr("Open FCD firmware"),
-                                                    QDir::currentPath(),
+                                                    path,
                                                     tr("FCD firmware files (*.bin)"));
 
     if (!fileName.isNull())
     {
+        /* store selected folder */
+        QFileInfo fileInfo(fileName);
+        settings.setValue("LastFwFolder", fileInfo.absolutePath());
+
         QFile qf(fileName);
         qint64 qn64size = qf.size();
         char *buf=new char[qn64size];
