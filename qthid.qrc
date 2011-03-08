@@ -6,5 +6,6 @@
         <file>images/save.png</file>
         <file>images/open.png</file>
         <file>images/fw.png</file>
+        <file>images/iq.png</file>
     </qresource>
 </RCC>
