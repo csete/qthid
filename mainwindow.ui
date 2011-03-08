@@ -747,6 +747,10 @@
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionAbout">
+   <property name="icon">
+    <iconset resource="qthid.qrc">
+     <normaloff>:/qthid/images/info.png</normaloff>:/qthid/images/info.png</iconset>
+   </property>
    <property name="text">
     <string>About</string>
    </property>
@@ -763,8 +767,15 @@
    </property>
   </action>
   <action name="actionQuit">
+   <property name="icon">
+    <iconset resource="qthid.qrc">
+     <normaloff>:/qthid/images/quit.png</normaloff>:/qthid/images/quit.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
    </property>
   </action>
  </widget>
