@@ -116,6 +116,10 @@ private slots:
     void enableControls();
 
     /* actions */
+    void on_actionLoad_triggered();
+    void on_actionSave_triggered();
+    void on_actionBalance_triggered();
+    void on_actionFirmware_triggered();
     void on_actionAbout_triggered();
     void on_actionAboutQt_triggered();
 };

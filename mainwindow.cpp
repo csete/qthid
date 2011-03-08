@@ -982,39 +982,6 @@ void MainWindow::on_spinBoxCorr_valueChanged(int n)
 }
 
 
-/** \brief Action: About Qthid
-  *
-  * This slot is called when the user activates the
-  *   Help|About menu item (or Qthid|About on Mac)
-  */
-void MainWindow::on_actionAbout_triggered()
-{
-    QMessageBox::about(this, tr("About Qthid"),
-                       tr("<p>Qthid is a simple controller application for the Funcube Dongle "
-                          "software defined radio receiver for 64 MHz - 1.7 GHz.</p>"
-                          "<p>Qthid can "
-                          "be used to upload new firmware and to set various parameters "
-                          "such as frequency, gain, filters, etc.</p>"
-                          "<p>Qthid is written using the Qt toolkit (see About Qt) and is avaialble "
-                          "for Linux, Mac and Windows. You can download the latest version from the "
-                          "<a href='http://www.oz9aec.net/index.php/funcube-dongle/qthid-fcd-controller'>Qthid website</a>."
-                          "</p>"
-                          "<p>"
-                          "<a href='http://funcubedongle.com/'>Funcube Dongle website</a><br/>"
-                          "<a href='http://funcube.org.uk/'>Information about Funcube</a>"
-                          "</p>"));
-}
-
-/** \brief Action: About Qt
-  *
-  * This slot is called when the user activates the
-  *   Help|About Qt menu item (or Qthid|About Qt on Mac)
-  */
-void MainWindow::on_actionAboutQt_triggered()
-{
-    QMessageBox::aboutQt(this, tr("About Qt"));
-}
-
 void MainWindow::on_comboBoxLNAGain_activated(int index)
 {
     quint8 u8Write = _acs[0].pacis[index].u8Val;
@@ -1181,4 +1148,66 @@ void MainWindow::on_doubleSpinBoxGain_valueChanged(double value)
     iqinfo.gain = static_cast<signed short>(value*32768.0);
 
     fcdAppSetParam(FCD_CMD_APP_SET_IQ_CORR, iqinfo.auc, 4);
+}
+
+
+/** \brief Action: Load FCD settigns from file. */
+void MainWindow::on_actionLoad_triggered()
+{
+    qDebug() << "MainWindow::on_actionLoad_triggered() not implemented";
+}
+
+
+/** \brief Action: Save FCD settings to file. */
+void MainWindow::on_actionSave_triggered()
+{
+    qDebug() << "MainWindow::on_actionSave_triggered() not implemented";
+}
+
+
+/** \brief Action: Open I/Q balance calibrator. */
+void MainWindow::on_actionBalance_triggered()
+{
+    qDebug() << "MainWindow::on_actionBalance_triggered() not implemented";
+}
+
+
+/** \brief Action: Open firmware tools. */
+void MainWindow::on_actionFirmware_triggered()
+{
+    qDebug() << "MainWindow::on_actionFirmware_triggered() not implemented";
+}
+
+
+/** \brief Action: About Qthid
+  *
+  * This slot is called when the user activates the
+  *   Help|About menu item (or Qthid|About on Mac)
+  */
+void MainWindow::on_actionAbout_triggered()
+{
+    QMessageBox::about(this, tr("About Qthid"),
+                       tr("<p>Qthid is a simple controller application for the Funcube Dongle "
+                          "software defined radio receiver for 64 MHz - 1.7 GHz.</p>"
+                          "<p>Qthid can "
+                          "be used to upload new firmware and to set various parameters "
+                          "such as frequency, gain, filters, etc.</p>"
+                          "<p>Qthid is written using the Qt toolkit (see About Qt) and is avaialble "
+                          "for Linux, Mac and Windows. You can download the latest version from the "
+                          "<a href='http://www.oz9aec.net/index.php/funcube-dongle/qthid-fcd-controller'>Qthid website</a>."
+                          "</p>"
+                          "<p>"
+                          "<a href='http://funcubedongle.com/'>Funcube Dongle website</a><br/>"
+                          "<a href='http://funcube.org.uk/'>Information about Funcube</a>"
+                          "</p>"));
+}
+
+/** \brief Action: About Qt
+  *
+  * This slot is called when the user activates the
+  *   Help|About Qt menu item (or Qthid|About Qt on Mac)
+  */
+void MainWindow::on_actionAboutQt_triggered()
+{
+    QMessageBox::aboutQt(this, tr("About Qt"));
 }

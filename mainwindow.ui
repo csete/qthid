@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1106</width>
-    <height>431</height>
+    <height>478</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -723,18 +723,29 @@
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>File</string>
+     <string>&amp;File</string>
     </property>
+    <addaction name="actionLoad"/>
+    <addaction name="actionSave"/>
+    <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
-     <string>Help</string>
+     <string>&amp;Help</string>
     </property>
     <addaction name="actionAbout"/>
     <addaction name="actionAboutQt"/>
    </widget>
+   <widget class="QMenu" name="menu_Tools">
+    <property name="title">
+     <string>&amp;Tools</string>
+    </property>
+    <addaction name="actionFirmware"/>
+    <addaction name="actionBalance"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menu_Tools"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -744,6 +755,11 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionLoad"/>
+   <addaction name="actionSave"/>
+   <addaction name="separator"/>
+   <addaction name="actionBalance"/>
+   <addaction name="actionFirmware"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionAbout">
@@ -776,6 +792,69 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionLoad">
+   <property name="icon">
+    <iconset resource="qthid.qrc">
+     <normaloff>:/qthid/images/open.png</normaloff>:/qthid/images/open.png</iconset>
+   </property>
+   <property name="text">
+    <string>Load</string>
+   </property>
+   <property name="toolTip">
+    <string>Load FCD settings from file</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="qthid.qrc">
+     <normaloff>:/qthid/images/save.png</normaloff>:/qthid/images/save.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save</string>
+   </property>
+   <property name="toolTip">
+    <string>Save FCD settings to file</string>
+   </property>
+  </action>
+  <action name="actionBalance">
+   <property name="icon">
+    <iconset resource="qthid.qrc">
+     <normaloff>:/qthid/images/iq.png</normaloff>:/qthid/images/iq.png</iconset>
+   </property>
+   <property name="text">
+    <string>IQ Balance</string>
+   </property>
+   <property name="toolTip">
+    <string>Open I/Q calibration window</string>
+   </property>
+  </action>
+  <action name="actionFirmware">
+   <property name="icon">
+    <iconset resource="qthid.qrc">
+     <normaloff>:/qthid/images/fw.png</normaloff>:/qthid/images/fw.png</iconset>
+   </property>
+   <property name="text">
+    <string>Firmware</string>
+   </property>
+   <property name="toolTip">
+    <string>Open firmware tools</string>
+   </property>
+  </action>
+  <action name="actionHelp">
+   <property name="icon">
+    <iconset resource="qthid.qrc">
+     <normaloff>:/qthid/images/help.png</normaloff>:/qthid/images/help.png</iconset>
+   </property>
+   <property name="text">
+    <string>What's This?</string>
+   </property>
+   <property name="toolTip">
+    <string>Enter What's This?</string>
    </property>
   </action>
  </widget>
