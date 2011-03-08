@@ -350,7 +350,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->doubleSpinBoxDCI->setValue(settings.value("DCICorr","0.0").toDouble());
     ui->doubleSpinBoxDCQ->setValue(settings.value("DCQCorr","0.0").toDouble());
     ui->doubleSpinBoxPhase->setValue(settings.value("PhaseCorr","0.0").toDouble());
-    ui->doubleSpinBoxGain->setValue(settings.value("GaunCorr","0.0").toDouble());
+    ui->doubleSpinBoxGain->setValue(settings.value("GainCorr","0.0").toDouble());
 
 
     //ReadDevice(); /* disabled until it can properly set default values in case of error */
