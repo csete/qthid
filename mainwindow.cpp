@@ -513,7 +513,6 @@ void MainWindow::bandChange()
 
     populateCombo(ui->comboBoxRfFilter, nIdxOrg, apcis[nIdx]);
 
-    /** TODO: check FCD for filter selction **/
 }
 
 
@@ -776,6 +775,11 @@ void MainWindow::on_pushButtonVerifyFirmware_clicked()
   *
   * This slot is called when new text is entered into the frequency editor. The
   * function is also called when the UP and DOWN buttons are clicked.
+  * After the new frequency is sent to the FCD, we also check whether band and/or
+  * filter change has occurred (done automatically by FCD). If yes, we update
+  * the corresponding combo boxes.
+  *
+  * \todo Read freqeuncy from FCD and compare to desired value.
   */
 void MainWindow::on_lineEditFreq_textChanged(QString s)
 {
