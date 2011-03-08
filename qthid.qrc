@@ -2,5 +2,9 @@
     <qresource prefix="/qthid">
         <file>images/qthid.png</file>
         <file>images/rfchain.png</file>
+        <file>images/help.png</file>
+        <file>images/save.png</file>
+        <file>images/open.png</file>
+        <file>images/fw.png</file>
     </qresource>
 </RCC>
