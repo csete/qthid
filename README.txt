@@ -61,6 +61,7 @@ Not tested. It is recommended to use the "Fully functional frontend" instead.
   say OK or Finish or Done (depends on version and OS).
 - You can now build and execute the project.
 
+If you want to try the latest experimental code checkout the 'next' branch.
 
 License
 
