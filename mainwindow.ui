@@ -822,6 +822,9 @@ Hold the button down to scan.</string>
    </property>
   </action>
   <action name="actionLoad">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="qthid.qrc">
      <normaloff>:/qthid/images/open.png</normaloff>:/qthid/images/open.png</iconset>
@@ -838,7 +841,7 @@ Hold the button down to scan.</string>
   </action>
   <action name="actionSave">
    <property name="enabled">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="icon">
     <iconset resource="qthid.qrc">
@@ -855,6 +858,9 @@ Hold the button down to scan.</string>
    </property>
   </action>
   <action name="actionBalance">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="qthid.qrc">
      <normaloff>:/qthid/images/iq.png</normaloff>:/qthid/images/iq.png</iconset>
@@ -870,6 +876,9 @@ Hold the button down to scan.</string>
    </property>
   </action>
   <action name="actionFirmware">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="qthid.qrc">
      <normaloff>:/qthid/images/fw.png</normaloff>:/qthid/images/fw.png</iconset>
