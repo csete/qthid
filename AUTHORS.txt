@@ -9,4 +9,5 @@ Contributors:
 Application icon by ~DarKobra at Deviantart.
 Source: http://commons.wikimedia.org/wiki/File:Radio.svg
 
+Other icons were taken from the GNOME desktop theme and the Tango theme.
 
