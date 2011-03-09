@@ -1187,7 +1187,8 @@ void MainWindow::on_actionFirmware_triggered()
 void MainWindow::on_actionAbout_triggered()
 {
     QMessageBox::about(this, tr("About Qthid"),
-                       tr("<p>Qthid is a simple controller application for the Funcube Dongle "
+                       tr("<p>This is qthid %1</p>"
+                          "<p>Qthid is a simple controller application for the Funcube Dongle "
                           "software defined radio receiver for 64 MHz - 1.7 GHz.</p>"
                           "<p>Qthid can "
                           "be used to upload new firmware and to set various parameters "
@@ -1199,7 +1200,7 @@ void MainWindow::on_actionAbout_triggered()
                           "<p>"
                           "<a href='http://funcubedongle.com/'>Funcube Dongle website</a><br/>"
                           "<a href='http://funcube.org.uk/'>Information about Funcube</a>"
-                          "</p>"));
+                          "</p>").arg(VERSION));
 }
 
 /** \brief Action: About Qt

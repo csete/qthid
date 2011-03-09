@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2010-11-30T19:14:15
+# Qthid project file.
 #
 #-------------------------------------------------
 
@@ -24,6 +24,11 @@ CONFIG(debug, debug|release) {
     DEFINES += QT_NO_DEBUG_OUTPUT
 }
 
+# Define version string
+# Tip from: http://www.qtcentre.org/wiki/index.php?title=Version_numbering_using_QMake
+VER = $$system(git describe --abbrev=8)
+VERSTR = '\\"$${VER}\\"'          # place quotes around the version string
+DEFINES += VERSION=\"$${VERSTR}\" # create a VERSION macro containing the version string
 
 
 SOURCES +=\
