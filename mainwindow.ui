@@ -58,13 +58,23 @@
         <item row="1" column="0">
          <widget class="QPushButton" name="pushButtonDown">
           <property name="toolTip">
-           <string>Frequency down</string>
+           <string>Frequency down.
+Hold the button down to scan.</string>
           </property>
           <property name="statusTip">
            <string>Move frequency down</string>
           </property>
           <property name="text">
            <string>&lt;</string>
+          </property>
+          <property name="autoRepeat">
+           <bool>true</bool>
+          </property>
+          <property name="autoRepeatDelay">
+           <number>400</number>
+          </property>
+          <property name="autoRepeatInterval">
+           <number>150</number>
           </property>
          </widget>
         </item>
@@ -96,13 +106,23 @@
            </sizepolicy>
           </property>
           <property name="toolTip">
-           <string>Frequency up</string>
+           <string>Frequency up.
+Hold the button down to scan.</string>
           </property>
           <property name="statusTip">
            <string>Move frequency up </string>
           </property>
           <property name="text">
            <string>&gt;</string>
+          </property>
+          <property name="autoRepeat">
+           <bool>true</bool>
+          </property>
+          <property name="autoRepeatDelay">
+           <number>400</number>
+          </property>
+          <property name="autoRepeatInterval">
+           <number>150</number>
           </property>
          </widget>
         </item>
