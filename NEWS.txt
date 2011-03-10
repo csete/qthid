@@ -1,3 +1,11 @@
+Changes in version 3.0:
+
+- Implement full API in firmware 18f (thanks Mario Lorenz, DL5MLO).
+- Requires firmware 18f or later (earlier firmwares are not detected).
+- Added auto-repeat to tuning buttons (hold button down to scan).
+- Added new RF chain diagram.
+
+
 Changes in version 2.2:
 
 - Use native toolbar and status bar on Mac OS X
