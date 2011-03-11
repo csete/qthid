@@ -92,7 +92,7 @@ static void fcdClose(hid_device *phd)
 }
 
 
-/** \brief Get FCd mode.
+/** \brief Get FCD mode.
   * \return The current FCD mode.
   * \sa FCD_MODE_ENUM
   */
@@ -111,56 +111,88 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdGetMode(void)
         return FCD_MODE_NONE;
     }
 
-    // Send a BL Query Command
+    /* Send a BL Query Command */
     aucBufOut[0] = 0; // Report ID, ignored
     aucBufOut[1] = FCD_CMD_BL_QUERY;
     hid_write(phd, aucBufOut, 65);
     memset(aucBufIn, 0xCC, 65); // Clear out the response buffer
     hid_read(phd, aucBufIn, 65);
 
-    // If it's in bootloader mode, we get a sensible response, in app mode the response to this command isn't understood
-    if (aucBufIn[0]==FCD_CMD_BL_QUERY && aucBufIn[1]==1 && strncmp((char *)(aucBufIn+2),"FCDBL",5)==0)
-    {
-        fcd_mode = FCD_MODE_BL;
-    }
-    else {
-        fcd_mode = FCD_MODE_APP;
-    }
-
     fcdClose(phd);
     phd = NULL;
 
-
-#if 0
-    /** This code will be useful with FW 18f or later **/
     /* first check status bytes then check which mode */
-    if (aucBufIn[0]==FCDCMDBLQUERY && aucBufIn[1]==1) {
+    if (aucBufIn[0]==FCD_CMD_BL_QUERY && aucBufIn[1]==1) {
 
         /* In bootloader mode we have the string "FCDBL" starting at acBufIn[2] **/
         if (strncmp((char *)(aucBufIn+2), "FCDBL", 5) == 0) {
-            FCDClose(phd);
-            phd = NULL;
-            fcd_mode = FME_BL;
+            fcd_mode = FCD_MODE_BL;
         }
         /* In application mode we have "FCDAPP_18.06" where the number is the FW version */
         else if (strncmp((char *)(aucBufIn+2), "FCDAPP", 6) == 0) {
-            printf("Version: %s", (char *)(aucBufIn+8));
-            FCDClose(phd);
-            phd = NULL;
-            fcd_mode = FME_APP;
+            fcd_mode = FCD_MODE_APP;
         }
+        /* either no FCD or firmware less than 18f */
         else {
-            FCDClose(phd);
-            phd = NULL;
-            fcd_mode = FME_APP;
+            fcd_mode = FCD_MODE_NONE;
         }
     }
-#endif
-
 
     return fcd_mode;
 }
 
+
+/** \brief Get FCD firmware version as string.
+  * \param str The returned vesion number as a 0 terminated string (must be pre-allocated)
+  * \return The current FCD mode.
+  * \sa FCD_MODE_ENUM
+  */
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdGetFwVerStr(char *str)
+{
+    hid_device *phd=NULL;
+    unsigned char aucBufIn[65];
+    unsigned char aucBufOut[65];
+    FCD_MODE_ENUM fcd_mode = FCD_MODE_NONE;
+
+
+    phd = fcdOpen();
+
+    if (phd == NULL)
+    {
+        return FCD_MODE_NONE;
+    }
+
+    /* Send a BL Query Command */
+    aucBufOut[0] = 0; // Report ID, ignored
+    aucBufOut[1] = FCD_CMD_BL_QUERY;
+    hid_write(phd, aucBufOut, 65);
+    memset(aucBufIn, 0xCC, 65); // Clear out the response buffer
+    hid_read(phd, aucBufIn, 65);
+
+    fcdClose(phd);
+    phd = NULL;
+
+    /* first check status bytes then check which mode */
+    if (aucBufIn[0]==FCD_CMD_BL_QUERY && aucBufIn[1]==1) {
+
+        /* In bootloader mode we have the string "FCDBL" starting at acBufIn[2] **/
+        if (strncmp((char *)(aucBufIn+2), "FCDBL", 5) == 0) {
+            fcd_mode = FCD_MODE_BL;
+        }
+        /* In application mode we have "FCDAPP_18.06" where the number is the FW version */
+        else if (strncmp((char *)(aucBufIn+2), "FCDAPP", 6) == 0) {
+            strncpy(str, (char *)(aucBufIn+9), 5);
+            str[5] = 0;
+            fcd_mode = FCD_MODE_APP;
+        }
+        /* either no FCD or firmware less than 18f */
+        else {
+            fcd_mode = FCD_MODE_NONE;
+        }
+    }
+
+    return fcd_mode;
+}
 
 /** \brief Reset FCD to bootloader mode.
   * \return FCD_MODE_NONE
