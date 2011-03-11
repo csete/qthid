@@ -14,11 +14,13 @@ Qthid uses the HIDAPI cross platform library by Signal 11 Software
 (http://www.signal11.us/oss/hidapi/). All the required files are bundled with 
 qthid and no installation of the library is required.
 
-The current version 2.1 can be used to change frequency and to upgrade the
-firmware that ships in the FCD (18b) to the latest one (18f). This limitation
-is intentional since the full API is only available since firmware 18f. The
-next version of qthid will support the full API but it will only work with
-firmware 18f or later.
+The current version 3.0 implements the full API available with the 18f firmware.
+It should cover all the functionality provided by the "fully functional windows
+frontend". Note that the majority of this full API is only available suince
+firmware 18f and qthid 3.0 wil lnot wiork with earlier firmware. The application
+will simply fail to detect any FCd with earlier firmwares.
+
+You can use qthid 2.2 to upgrade your firmware to 18f or later.
 
 
 2. INSTALLATION AND USAGE
@@ -43,13 +45,14 @@ Qthid should now detect your FCD when you plug it in.
 
 2.2 Mac OS X (10.6+)
 
-The Mac OS X bundle contains all the necessary Qt libraries and no additional installation
-or configuration is required. Unlinke Linux, the Funcube Dongle will just work.
+The Mac OS X bundle contains all the necessary Qt libraries and no additional
+installation or configuration is required. Unlike Linux, the Funcube Dongle will
+just work.
 
 
 2.3 Windows
 
-Not tested. It is recommended to use the "Fully functional frontend" instead.
+Not tested. Feedback is welcome.
 
 
 2.4 Building from source
@@ -61,9 +64,12 @@ Not tested. It is recommended to use the "Fully functional frontend" instead.
   say OK or Finish or Done (depends on version and OS).
 - You can now build and execute the project.
 
-If you want to try the latest experimental code checkout the 'next' branch.
+If you want to try the latest experimental code checkout the 'next' branch, but
+check first that it is indeed ahead of the master branch. You can do that on the
+network chart: https://github.com/csete/qthid/network
 
-License
+
+3. License
 
 Qthid is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
