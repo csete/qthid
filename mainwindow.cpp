@@ -561,7 +561,6 @@ void MainWindow::enableControls()
                 ui->fcdStatusLine->setPalette(p);
             }
             fcdGetFwVerStr(fwVer);
-            qDebug() << "FW:" << fwVer;
             ui->fcdStatusLine->setText(tr("FCD is active (%1)").arg(QString(fwVer)));
 
             u8=0;
