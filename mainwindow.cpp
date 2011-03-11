@@ -544,6 +544,7 @@ void MainWindow::enableControls()
 {
     FCD_MODE_ENUM fme;
     quint8 u8;
+    char fwVer[6];
 
 
     /* clear status string */
@@ -559,7 +560,9 @@ void MainWindow::enableControls()
                 p.setColor(QPalette::Base, QColor(0,255,0));//green color
                 ui->fcdStatusLine->setPalette(p);
             }
-            ui->fcdStatusLine->setText(tr("FCD is active"));
+            fcdGetFwVerStr(fwVer);
+            qDebug() << "FW:" << fwVer;
+            ui->fcdStatusLine->setText(tr("FCD is active (%1)").arg(QString(fwVer)));
 
             u8=0;
             fcdAppGetParam(FCD_CMD_APP_GET_PLL_LOCK, &u8, 1);
