@@ -19,16 +19,16 @@ macx {
 # disable debug messages in release
 CONFIG(debug, debug|release) {
     # Define version string (see below for releases)
-    # Tip from: http://www.qtcentre.org/wiki/index.php?title=Version_numbering_using_QMake
     VER = $$system(git describe --abbrev=8)
-    VERSTR = '\\"$${VER}\\"'          # place quotes around the version string
-    DEFINES += VERSION=\"$${VERSTR}\" # create a VERSION macro containing the version string
 } else {
     DEFINES += QT_NO_DEBUG
     DEFINES += QT_NO_DEBUG_OUTPUT
-    DEFINES += VERSION=\"3.0\"
+    VER = 3.0
 }
 
+# Tip from: http://www.qtcentre.org/wiki/index.php?title=Version_numbering_using_QMake
+VERSTR = '\\"$${VER}\\"'          # place quotes around the version string
+DEFINES += VERSION=\"$${VERSTR}\" # create a VERSION macro containing the version string
 
 SOURCES +=\
         mainwindow.cpp \
