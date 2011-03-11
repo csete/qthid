@@ -559,7 +559,7 @@ void MainWindow::enableControls()
                 p.setColor(QPalette::Base, QColor(0,255,0));//green color
                 ui->fcdStatusLine->setPalette(p);
             }
-            ui->fcdStatusLine->setText("FCD is active");
+            ui->fcdStatusLine->setText(tr("FCD is active"));
 
             u8=0;
             fcdAppGetParam(FCD_CMD_APP_GET_PLL_LOCK, &u8, 1);
@@ -576,7 +576,7 @@ void MainWindow::enableControls()
                 p.setColor(QPalette::Base, QColor(255,191,0));//amber color
                 ui->fcdStatusLine->setPalette(p);
             }
-            ui->fcdStatusLine->setText("FCD bootloader");
+            ui->fcdStatusLine->setText(tr("FCD bootloader"));
             break;
 
         case FCD_MODE_NONE:
@@ -585,7 +585,7 @@ void MainWindow::enableControls()
                 p.setColor(QPalette::Base, QColor(255,0,0));//red color
                 ui->fcdStatusLine->setPalette(p);
             }
-            ui->fcdStatusLine->setText("No FCD detected");
+            ui->fcdStatusLine->setText(tr("No FCD detected"));
             break;
     }
 
