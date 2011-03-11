@@ -863,6 +863,7 @@ void MainWindow::on_lineEditFreq_textChanged(QString s)
     fme = fcdAppGetParam(FCD_CMD_APP_GET_RF_FILTER, &u8, 1);
     if (fme == FCD_MODE_APP) {
         if (u8 != ui->comboBoxRfFilter->currentIndex()) {
+            ui->statusBar->showMessage(tr("RF filter change detected (%1)").arg(u8), 4000);
             qDebug() << "RF filter change detected:" << u8;
             ui->comboBoxRfFilter->setCurrentIndex(u8);
         }
@@ -872,6 +873,7 @@ void MainWindow::on_lineEditFreq_textChanged(QString s)
     fme = fcdAppGetParam(FCD_CMD_APP_GET_BIAS_CURRENT, &u8, 1);
     if (fme == FCD_MODE_APP) {
         if (u8 != ui->comboBoxBiasCurrent->currentIndex()) {
+            ui->statusBar->showMessage(tr("Bias current change detected (%1)").arg(u8), 4000);
             qDebug() << "Bias current change detected:" << u8;
             ui->comboBoxBiasCurrent->setCurrentIndex(u8);
         }
