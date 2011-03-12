@@ -1,3 +1,9 @@
+Changes in version 3.1:
+
+- Change default value of IQ gain correction from 0.0 to 1.0.
+- Various fixes for windows build using latest SDK (7.0).
+
+
 Changes in version 3.0:
 
 - Implement full API in firmware 18f (thanks Mario Lorenz, DL5MLO).

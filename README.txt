@@ -52,7 +52,8 @@ just work.
 
 2.3 Windows
 
-Not tested. Feedback is welcome.
+The windows package is self containing and does not require and Qt libs to be
+installed separately. It is known to work on Windows XP and 7. No luck on Vista.
 
 
 2.4 Building from source
