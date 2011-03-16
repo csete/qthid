@@ -14,9 +14,9 @@ Qthid uses the HIDAPI cross platform library by Signal 11 Software
 (http://www.signal11.us/oss/hidapi/). All the required files are bundled with 
 qthid and no installation of the library is required.
 
-The current version 3.0 implements the full API available with the 18f firmware.
+The current version 3.1 implements the full API available with the 18f firmware.
 It should cover all the functionality provided by the "fully functional windows
-frontend". Note that the majority of this full API is only available suince
+frontend". Note that the majority of this full API is only available since
 firmware 18f and qthid 3.0 wil lnot wiork with earlier firmware. The application
 will simply fail to detect any FCd with earlier firmwares.
 
@@ -53,14 +53,15 @@ just work.
 2.3 Windows
 
 The windows package is self containing and does not require and Qt libs to be
-installed separately. It is known to work on Windows XP and 7. No luck on Vista.
+installed separately. It is known to work on Windows XP, Vista and 7.
 
 
 2.4 Building from source
 
 - Install Qt Creator 2.0.1 or newer and Qt SDK 4.7. On recent linux it is normally
   sufficient to select Qt Creator and the required Qt libraries will be installed as
-  dependencies.
+  dependencies. On Mac and Windows you need to download the full Qt SDK. On Windows
+  you also need the MS Windows SDK.
 - Open the qthid.pro file in Qt Creator. It will say something about setting up a target;
   say OK or Finish or Done (depends on version and OS).
 - You can now build and execute the project.

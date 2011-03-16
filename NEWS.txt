@@ -1,5 +1,7 @@
 Changes in version 3.1:
 
+- Allow user to force band selection to be different from the one chosen by
+  the FCD (temporary workaround for a FW 18f bug occurring at 861 MHz).
 - Change default value of IQ gain correction from 0.0 to 1.0.
 - Various fixes for windows build using latest SDK (7.0).
 
