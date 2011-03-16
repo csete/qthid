@@ -582,7 +582,16 @@ Hold the button down to scan.</string>
        <widget class="QComboBox" name="comboBoxLNAGain"/>
       </item>
       <item row="1" column="1">
-       <widget class="QComboBox" name="comboBoxRfFilter"/>
+       <widget class="QComboBox" name="comboBoxRfFilter">
+        <property name="toolTip">
+         <string>RF filter. Filter bank depends on current band selection.
+This is selected automatically by the Funcube Dongle whenever
+the frequency changes but you can force it to use a specific filter.</string>
+        </property>
+        <property name="statusTip">
+         <string>Choose a different RF filter</string>
+        </property>
+       </widget>
       </item>
       <item row="1" column="2">
        <widget class="QComboBox" name="comboBoxMixerGain"/>
@@ -654,7 +663,16 @@ Hold the button down to scan.</string>
         <item row="1" column="1">
          <widget class="QComboBox" name="comboBoxBand">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
+          </property>
+          <property name="toolTip">
+           <string>Frequency band. Determines available RF filters.
+The frequency band is updated automatically by the Funcube Dongle
+whenever the frequency changes, but you can also force the dongle to
+a specific band.</string>
+          </property>
+          <property name="statusTip">
+           <string>Choose a different frequency band</string>
           </property>
          </widget>
         </item>

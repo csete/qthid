@@ -433,8 +433,11 @@ void MainWindow::enableCombos(bool enabled)
     }
 
     /* Band selection happens automatically; ensure band selector is disabled */
-    if (enabled)
-        ui->comboBoxBand->setEnabled(false);
+    /** Leave combo enabled to allow forcing band selection as a workaround
+        for band selection bug in FW 18f: http://uk.groups.yahoo.com/group/funcube/message/1139
+    **/
+    //if (enabled)
+    //    ui->comboBoxBand->setEnabled(false);
 }
 
 
