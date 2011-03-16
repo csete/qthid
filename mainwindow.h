@@ -91,6 +91,7 @@ private slots:
     void on_pushButtonBLReset_clicked();
     void on_pushButtonAppReset_clicked();
     void on_comboBoxLNAGain_activated(int index);
+    void on_comboBoxBand_activated(int index);
     void on_comboBoxRfFilter_activated(int index);
     void on_comboBoxMixerGain_activated(int index);
     void on_comboBoxMixerFilter_activated(int index);

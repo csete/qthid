@@ -1001,6 +1001,29 @@ void MainWindow::on_comboBoxLNAEnhance_activated(int index)
     fcdAppSetParam(_acs[1].u8CommandSet, &u8Write, 1);
 }
 
+void MainWindow::on_comboBoxBand_activated(int index)
+{
+    quint8 u8Write = _acs[2].pacis[index].u8Val;
+    fcdAppSetParam(_acs[2].u8CommandSet, &u8Write, 1);
+
+    /* trigger bandChange() to update RF filter combo */
+    bandChange();
+
+    /* select filter chosen by FCD */
+    FCD_MODE_ENUM fme;
+    quint8 u8;
+
+    fme = fcdAppGetParam(FCD_CMD_APP_GET_RF_FILTER, &u8, 1);
+    if (fme == FCD_MODE_APP) {
+        if (u8 != ui->comboBoxRfFilter->currentIndex()) {
+            ui->statusBar->showMessage(tr("RF filter change detected (%1)").arg(u8), 4000);
+            qDebug() << "RF filter change detected:" << u8;
+            ui->comboBoxRfFilter->setCurrentIndex(u8);
+        }
+    }
+
+}
+
 void MainWindow::on_comboBoxRfFilter_activated(int index)
 {
     quint8 u8Write = _acs[3].pacis[index].u8Val;
