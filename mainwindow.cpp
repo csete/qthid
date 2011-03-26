@@ -1161,7 +1161,7 @@ void MainWindow::on_doubleSpinBoxPhase_valueChanged(double value)
     iqinfo.phase = static_cast<signed short>(value*32768.0);
     iqinfo.gain = static_cast<signed short>(ui->doubleSpinBoxGain->value()*32768.0);
 
-    fcdAppSetParam(FCD_CMD_APP_SET_DC_CORR, iqinfo.auc, 4);
+    fcdAppSetParam(FCD_CMD_APP_SET_IQ_CORR, iqinfo.auc, 4);
 }
 
 void MainWindow::on_doubleSpinBoxGain_valueChanged(double value)
