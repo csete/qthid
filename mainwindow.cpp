@@ -649,6 +649,132 @@ void MainWindow::enableControls()
     prevMode = fme;
 }
 
+
+/** \brief Frequency entry text changed.
+  * \param s New frequency string.
+  *
+  * This slot is called when new text is entered into the frequency editor. The
+  * function is also called when the UP and DOWN buttons are clicked.
+  * After the new frequency is sent to the FCD, we also check whether band and/or
+  * filter change has occurred (done automatically by FCD). If yes, we update
+  * the corresponding combo boxes.
+  *
+  * \todo Read freqeuncy from FCD and compare to desired value.
+  */
+void MainWindow::on_lineEditFreq_textChanged(QString s)
+{
+    FCD_MODE_ENUM fme;
+    double d = StrToDouble(s);
+    int nCursor = ui->lineEditFreq->cursorPosition();
+    QString s2 = QLocale(QLocale()).toString(d,'f',0);
+
+    nCursor -= s.mid(0,nCursor).count(QLocale().groupSeparator());
+    nCursor += s2.mid(0,nCursor).count(QLocale().groupSeparator());
+
+    ui->lineEditFreq->setText(s2);
+    ui->lineEditFreq->setCursorPosition(nCursor);
+    if (d<50000000.0 || d>2100000000.0)
+    {
+        QPalette p = ui->lineEditFreq->palette();
+        p.setColor(QPalette::Base, QColor(255,0,0));//red color
+        ui->lineEditFreq->setPalette(p);
+    }
+    else
+    {
+        QPalette p = ui->lineEditFreq->palette();
+        p.setColor(QPalette::Base, QColor(0,255,0));//green color
+        ui->lineEditFreq->setPalette(p);
+    }
+
+    d *= 1.0 + ui->spinBoxCorr->value()/1000000.0;
+
+    fme = fcdAppSetFreqkHz((int)(d/1000.0));
+    if (fme != FCD_MODE_APP) {
+        qWarning() << "Failed to set frequency";
+        ui->statusBar->showMessage(tr("Failed to set frequency"), 3000);
+    }
+
+    /** TODO **/
+    //quint8 readVal[4];
+    //quint32 freq = 0;
+    //fcdAppGetParam(FCD_CMD_APP_GET_FREQ_HZ, readVal,4);
+    //freq += readVal[0];
+    //freq += readVal[1] << 8;
+    //freq += readVal[2] << 16;
+    //freq += readVal[3] << 24;
+    //qDebug() << readVal[0] << readVal[1] << readVal[2] << readVal[3] << " / " << freq;
+
+
+    /* band changes occur automatically in FCD when we change frequency */
+    quint8 u8;
+
+    /* read band selection form FCD */
+    fme = fcdAppGetParam(FCD_CMD_APP_GET_BAND, &u8, 1);
+    if (fme == FCD_MODE_APP) {
+        if (u8 != ui->comboBoxBand->currentIndex()) {
+            qDebug() << "Band change detected:" << u8;
+            ui->comboBoxBand->setCurrentIndex(u8);
+            bandChange();
+        }
+    }
+    /* else we ignore it */
+
+    /* filter */
+    fme = fcdAppGetParam(FCD_CMD_APP_GET_RF_FILTER, &u8, 1);
+    if (fme == FCD_MODE_APP) {
+        if (u8 != ui->comboBoxRfFilter->currentIndex()) {
+            ui->statusBar->showMessage(tr("RF filter change detected (%1)").arg(u8), 4000);
+            qDebug() << "RF filter change detected:" << u8;
+            ui->comboBoxRfFilter->setCurrentIndex(u8);
+        }
+    }
+
+    /* bias current */
+    fme = fcdAppGetParam(FCD_CMD_APP_GET_BIAS_CURRENT, &u8, 1);
+    if (fme == FCD_MODE_APP) {
+        if (u8 != ui->comboBoxBiasCurrent->currentIndex()) {
+            ui->statusBar->showMessage(tr("Bias current change detected (%1)").arg(u8), 4000);
+            qDebug() << "Bias current change detected:" << u8;
+            ui->comboBoxBiasCurrent->setCurrentIndex(u8);
+        }
+    }
+
+}
+
+
+/** \brief Frequency step entry text changed.
+  * \param s New frequency step.
+  *
+  * This slot is called when new text is entered into the frequency step
+  * editor.
+  */
+void MainWindow::on_lineEditStep_textChanged(QString s)
+{
+    double d = StrToDouble(s);
+    int nCursor = ui->lineEditStep->cursorPosition();
+    QString s2 = QLocale(QLocale()).toString(d,'f',0);
+
+    nCursor -= s.mid(0,nCursor).count(QLocale().groupSeparator());
+    nCursor += s2.mid(0,nCursor).count(QLocale().groupSeparator());
+
+    ui->lineEditStep->setText(s2);
+    ui->lineEditStep->setCursorPosition(nCursor);
+    if (d<1.0 || d>1000000000.0)
+    {
+        QPalette p = ui->lineEditStep->palette();
+        p.setColor(QPalette::Base, QColor(255,0,0));//red color
+        ui->lineEditStep->setPalette(p);
+    }
+    else
+    {
+        QPalette p = ui->lineEditStep->palette();
+        p.setColor(QPalette::Base, QColor(0,255,0));//green color
+        ui->lineEditStep->setPalette(p);
+    }
+}
+
+
+
 void MainWindow::on_pushButtonAppReset_clicked()
 {
     /* stop timeout while FCD is reconfiguring */
@@ -808,128 +934,6 @@ void MainWindow::on_pushButtonVerifyFirmware_clicked()
 }
 
 
-/** \brief Frequency entry text changed.
-  * \param s New frequency string.
-  *
-  * This slot is called when new text is entered into the frequency editor. The
-  * function is also called when the UP and DOWN buttons are clicked.
-  * After the new frequency is sent to the FCD, we also check whether band and/or
-  * filter change has occurred (done automatically by FCD). If yes, we update
-  * the corresponding combo boxes.
-  *
-  * \todo Read freqeuncy from FCD and compare to desired value.
-  */
-void MainWindow::on_lineEditFreq_textChanged(QString s)
-{
-    FCD_MODE_ENUM fme;
-    double d = StrToDouble(s);
-    int nCursor = ui->lineEditFreq->cursorPosition();
-    QString s2 = QLocale(QLocale()).toString(d,'f',0);
-
-    nCursor -= s.mid(0,nCursor).count(QLocale().groupSeparator());
-    nCursor += s2.mid(0,nCursor).count(QLocale().groupSeparator());
-
-    ui->lineEditFreq->setText(s2);
-    ui->lineEditFreq->setCursorPosition(nCursor);
-    if (d<50000000.0 || d>2100000000.0)
-    {
-        QPalette p = ui->lineEditFreq->palette();
-        p.setColor(QPalette::Base, QColor(255,0,0));//red color
-        ui->lineEditFreq->setPalette(p);
-    }
-    else
-    {
-        QPalette p = ui->lineEditFreq->palette();
-        p.setColor(QPalette::Base, QColor(0,255,0));//green color
-        ui->lineEditFreq->setPalette(p);
-    }
-
-    d *= 1.0 + ui->spinBoxCorr->value()/1000000.0;
-
-    fme = fcdAppSetFreqkHz((int)(d/1000.0));
-    if (fme != FCD_MODE_APP) {
-        qWarning() << "Failed to set frequency";
-        ui->statusBar->showMessage(tr("Failed to set frequency"), 3000);
-    }
-
-    /** TODO **/
-    //quint8 readVal[4];
-    //quint32 freq = 0;
-    //fcdAppGetParam(FCD_CMD_APP_GET_FREQ_HZ, readVal,4);
-    //freq += readVal[0];
-    //freq += readVal[1] << 8;
-    //freq += readVal[2] << 16;
-    //freq += readVal[3] << 24;
-    //qDebug() << readVal[0] << readVal[1] << readVal[2] << readVal[3] << " / " << freq;
-
-
-    /* band changes occur automatically in FCD when we change frequency */
-    quint8 u8;
-
-    /* read band selection form FCD */
-    fme = fcdAppGetParam(FCD_CMD_APP_GET_BAND, &u8, 1);
-    if (fme == FCD_MODE_APP) {
-        if (u8 != ui->comboBoxBand->currentIndex()) {
-            qDebug() << "Band change detected:" << u8;
-            ui->comboBoxBand->setCurrentIndex(u8);
-            bandChange();
-        }
-    }
-    /* else we ignore it */
-
-    /* filter */
-    fme = fcdAppGetParam(FCD_CMD_APP_GET_RF_FILTER, &u8, 1);
-    if (fme == FCD_MODE_APP) {
-        if (u8 != ui->comboBoxRfFilter->currentIndex()) {
-            ui->statusBar->showMessage(tr("RF filter change detected (%1)").arg(u8), 4000);
-            qDebug() << "RF filter change detected:" << u8;
-            ui->comboBoxRfFilter->setCurrentIndex(u8);
-        }
-    }
-
-    /* bias current */
-    fme = fcdAppGetParam(FCD_CMD_APP_GET_BIAS_CURRENT, &u8, 1);
-    if (fme == FCD_MODE_APP) {
-        if (u8 != ui->comboBoxBiasCurrent->currentIndex()) {
-            ui->statusBar->showMessage(tr("Bias current change detected (%1)").arg(u8), 4000);
-            qDebug() << "Bias current change detected:" << u8;
-            ui->comboBoxBiasCurrent->setCurrentIndex(u8);
-        }
-    }
-
-}
-
-
-/** \brief Frequency step entry text changed.
-  * \param s New frequency step.
-  *
-  * This slot is called when new text is entered into the frequency step
-  * editor.
-  */
-void MainWindow::on_lineEditStep_textChanged(QString s)
-{
-    double d = StrToDouble(s);
-    int nCursor = ui->lineEditStep->cursorPosition();
-    QString s2 = QLocale(QLocale()).toString(d,'f',0);
-
-    nCursor -= s.mid(0,nCursor).count(QLocale().groupSeparator());
-    nCursor += s2.mid(0,nCursor).count(QLocale().groupSeparator());
-
-    ui->lineEditStep->setText(s2);
-    ui->lineEditStep->setCursorPosition(nCursor);
-    if (d<1.0 || d>1000000000.0)
-    {
-        QPalette p = ui->lineEditStep->palette();
-        p.setColor(QPalette::Base, QColor(255,0,0));//red color
-        ui->lineEditStep->setPalette(p);
-    }
-    else
-    {
-        QPalette p = ui->lineEditStep->palette();
-        p.setColor(QPalette::Base, QColor(0,255,0));//green color
-        ui->lineEditStep->setPalette(p);
-    }
-}
 
 
 /** \brief Frequency up button clicked.
@@ -1004,6 +1008,27 @@ void MainWindow::on_pushButtonBiasT_toggled(bool isOn)
 }
 
 
+/** \brief Load defaults.
+  *
+  * This slot is called when the user clicks on the Default button.
+  * It resets the combo boxes to their default values and writes these values
+  * to the FCD.
+  */
+void MainWindow::on_pushButtonDefaults_clicked()
+{
+    COMBO_STRUCT *pcs=_acs;
+
+    while (pcs->pacis!=NULL)
+    {
+        quint8 u8Write = pcs->pacis[pcs->nIdxDefault].u8Val;
+        fcdAppSetParam(pcs->u8CommandSet, &u8Write, 1);
+        pcs++;
+    }
+
+    readDevice();
+}
+
+
 /** \brief Frequency correction changed.
   * \param n New correction value in ppm.
   *
@@ -1017,6 +1042,78 @@ void MainWindow::on_spinBoxCorr_valueChanged(int n)
     d *= 1.0 + n/1000000.0;
 
     fcdAppSetFreqkHz((int)(d/1000.0));
+}
+
+
+/** \brief In-phase DC offset correction changed. */
+void MainWindow::on_doubleSpinBoxDCI_valueChanged(double value)
+{
+    union {
+        unsigned char auc[4];
+        struct {
+            qint16 dci;
+            qint16 dcq;
+        };
+    } dcinfo;
+
+    dcinfo.dci = static_cast<signed short>(value*32768.0);
+    dcinfo.dcq = static_cast<signed short>(ui->doubleSpinBoxDCQ->value()*32768.0);
+
+    fcdAppSetParam(FCD_CMD_APP_SET_DC_CORR, dcinfo.auc, 4);
+}
+
+
+/** \brief Quadrature DC offset correction changed. */
+void MainWindow::on_doubleSpinBoxDCQ_valueChanged(double value)
+{
+    union {
+        unsigned char auc[4];
+        struct {
+            qint16 dci;
+            qint16 dcq;
+        };
+    } dcinfo;
+
+    dcinfo.dci = static_cast<signed short>(ui->doubleSpinBoxDCI->value()*32768.0);
+    dcinfo.dcq = static_cast<signed short>(value*32768.0);
+
+    fcdAppSetParam(FCD_CMD_APP_SET_DC_CORR, dcinfo.auc, 4);
+}
+
+
+/** \brief IQ correction phase changed. */
+void MainWindow::on_doubleSpinBoxPhase_valueChanged(double value)
+{
+    union {
+        unsigned char auc[4];
+        struct {
+            qint16 phase;
+            qint16 gain;
+        };
+    } iqinfo;
+
+    iqinfo.phase = static_cast<signed short>(value*32768.0);
+    iqinfo.gain = static_cast<signed short>(ui->doubleSpinBoxGain->value()*32768.0);
+
+    fcdAppSetParam(FCD_CMD_APP_SET_IQ_CORR, iqinfo.auc, 4);
+}
+
+
+/** \brief IQ correction gain changed. */
+void MainWindow::on_doubleSpinBoxGain_valueChanged(double value)
+{
+    union {
+        unsigned char auc[4];
+        struct {
+            qint16 phase;
+            qint16 gain;
+        };
+    } iqinfo;
+
+    iqinfo.phase = static_cast<signed short>(ui->doubleSpinBoxPhase->value()*32768.0);
+    iqinfo.gain = static_cast<signed short>(value*32768.0);
+
+    fcdAppSetParam(FCD_CMD_APP_SET_IQ_CORR, iqinfo.auc, 4);
 }
 
 
@@ -1133,84 +1230,6 @@ void MainWindow::on_comboBoxIFGain6_activated(int index)
     fcdAppSetParam(_acs[15].u8CommandSet,&u8Write,1);
 }
 
-void MainWindow::on_pushButtonDefaults_clicked()
-{
-    COMBO_STRUCT *pcs=_acs;
-
-    while (pcs->pacis!=NULL)
-    {
-        quint8 u8Write = pcs->pacis[pcs->nIdxDefault].u8Val;
-        fcdAppSetParam(pcs->u8CommandSet, &u8Write, 1);
-        pcs++;
-    }
-
-    readDevice();
-}
-
-void MainWindow::on_doubleSpinBoxDCI_valueChanged(double value)
-{
-    union {
-        unsigned char auc[4];
-        struct {
-            qint16 dci;
-            qint16 dcq;
-        };
-    } dcinfo;
-
-    dcinfo.dci = static_cast<signed short>(value*32768.0);
-    dcinfo.dcq = static_cast<signed short>(ui->doubleSpinBoxDCQ->value()*32768.0);
-
-    fcdAppSetParam(FCD_CMD_APP_SET_DC_CORR, dcinfo.auc, 4);
-}
-
-void MainWindow::on_doubleSpinBoxDCQ_valueChanged(double value)
-{
-    union {
-        unsigned char auc[4];
-        struct {
-            qint16 dci;
-            qint16 dcq;
-        };
-    } dcinfo;
-
-    dcinfo.dci = static_cast<signed short>(ui->doubleSpinBoxDCI->value()*32768.0);
-    dcinfo.dcq = static_cast<signed short>(value*32768.0);
-
-    fcdAppSetParam(FCD_CMD_APP_SET_DC_CORR, dcinfo.auc, 4);
-}
-
-void MainWindow::on_doubleSpinBoxPhase_valueChanged(double value)
-{
-    union {
-        unsigned char auc[4];
-        struct {
-            qint16 phase;
-            qint16 gain;
-        };
-    } iqinfo;
-
-    iqinfo.phase = static_cast<signed short>(value*32768.0);
-    iqinfo.gain = static_cast<signed short>(ui->doubleSpinBoxGain->value()*32768.0);
-
-    fcdAppSetParam(FCD_CMD_APP_SET_IQ_CORR, iqinfo.auc, 4);
-}
-
-void MainWindow::on_doubleSpinBoxGain_valueChanged(double value)
-{
-    union {
-        unsigned char auc[4];
-        struct {
-            qint16 phase;
-            qint16 gain;
-        };
-    } iqinfo;
-
-    iqinfo.phase = static_cast<signed short>(ui->doubleSpinBoxPhase->value()*32768.0);
-    iqinfo.gain = static_cast<signed short>(value*32768.0);
-
-    fcdAppSetParam(FCD_CMD_APP_SET_IQ_CORR, iqinfo.auc, 4);
-}
-
 
 /** \brief Action: Load FCD settigns from file. */
 void MainWindow::on_actionLoad_triggered()
@@ -1226,7 +1245,7 @@ void MainWindow::on_actionSave_triggered()
 }
 
 
-/** \brief Action: Open I/Q balance calibrator. */
+/** \brief Action: Open I/Q correction settings. */
 void MainWindow::on_actionBalance_triggered()
 {
     qDebug() << "MainWindow::on_actionBalance_triggered() not implemented";
