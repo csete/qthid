@@ -85,6 +85,7 @@ private slots:
     void on_pushButtonDown_clicked();
     void on_lineEditStep_textChanged(QString );
     void on_pushButtonUp_clicked();
+    void on_pushButtonBiasT_toggled(bool isOn);
     void on_lineEditFreq_textChanged(QString );
     void on_pushButtonVerifyFirmware_clicked();
     void on_pushButtonUpdateFirmware_clicked();

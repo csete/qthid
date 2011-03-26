@@ -444,19 +444,30 @@ void MainWindow::enableCombos(bool enabled)
 
 
 /** \brief Read all parameters from FCD.
-  * \note "All" refers to the combo box settings and we should probably fix that.
+  * \note "All" refers to the combo box settings and the bias tee button.
   */
 void MainWindow::readDevice()
 {
     COMBO_STRUCT *pcs=_acs;
+    quint8 u8;
     FCD_MODE_ENUM fme;
     bool error = false;
 
 
+    /* bias tee button */
+    /** FIXME: FCD_CMD_APP_GET_BIAS_TEE doesn't work? **/
+    /*fme = fcdAppGetParam(FCD_CMD_APP_GET_BIAS_TEE, &u8, 1);
+    if (fme == FCD_MODE_APP) {
+        ui->pushButtonBiasT->setChecked((u8==1));
+    }
+    else {
+        qDebug() << "ERROR reading bias tee";
+        error = true;
+    }*/
+
     /* iterate through all combo boxes */
     while (pcs->pacis!=NULL)
     {
-        quint8 u8;
         const COMBO_ITEM_STRUCT *pcis = pcs->pacis;
         int nIdx=0;
 
@@ -547,7 +558,9 @@ void MainWindow::enableControls()
 {
     FCD_MODE_ENUM fme;
     quint8 u8;
-    char fwVer[6];
+    char fwVerStr[6];
+    bool convOk = false;
+    float fwVer = 0.0;
 
 
     /* clear status string */
@@ -563,15 +576,15 @@ void MainWindow::enableControls()
                 p.setColor(QPalette::Base, QColor(0,255,0));//green color
                 ui->fcdStatusLine->setPalette(p);
             }
-            fcdGetFwVerStr(fwVer);
-            ui->fcdStatusLine->setText(tr("FCD is active (%1)").arg(QString(fwVer)));
+            fcdGetFwVerStr(fwVerStr);
+            ui->fcdStatusLine->setText(tr("FCD is active (%1)").arg(QString(fwVerStr)));
+
+            /* convert version string to float */
+            fwVer = QString(fwVerStr).toFloat(&convOk);
 
             u8=0;
             fcdAppGetParam(FCD_CMD_APP_GET_PLL_LOCK, &u8, 1);
             ui->checkBoxPLLLock->setChecked(u8==1);
-
-            fcdAppGetParam(FCD_CMD_APP_GET_IF_RSSI, &u8, 1); /** FIXME: scale to dBm **/
-            ui->progressBarIFRSSI->setValue(u8);
 
             break;
 
@@ -605,6 +618,9 @@ void MainWindow::enableControls()
     ui->pushButtonUp->setEnabled(fme==FCD_MODE_APP);
     ui->pushButtonDown->setEnabled(fme==FCD_MODE_APP);
 
+    /* bias T functionality available since FW 18h */
+    ui->pushButtonBiasT->setEnabled((fme==FCD_MODE_APP) && (fwVer > 18.07));
+
     ui->spinBoxCorr->setEnabled(fme==FCD_MODE_APP);
     ui->doubleSpinBoxDCI->setEnabled(fme==FCD_MODE_APP);
     ui->doubleSpinBoxDCQ->setEnabled(fme==FCD_MODE_APP);
@@ -622,7 +638,6 @@ void MainWindow::enableControls()
 
         if (fme == FCD_MODE_APP) {
             /* if previous mode was different read settings from device */
-            /** TODO: should we read from FCD or write to FCD? **/
             readDevice();
 
             /* Set frequency since FCD does not remember anything */
@@ -970,6 +985,22 @@ void MainWindow::on_pushButtonDown_clicked()
     }
 
     ui->lineEditFreq->setText(QLocale(QLocale()).toString(dFreq,'f',0));
+}
+
+
+/** \brief Bias T button ON/OFF
+  * \param isOn Flag indicating whether the button is ON or OFF
+  *
+  * This slot is called when the user toggles the Bias T button. It is used
+  * to switch the bias tee power ON and OFF.
+  * isOn = true => power ON
+  * isOn = false => power OFF
+  */
+void MainWindow::on_pushButtonBiasT_toggled(bool isOn)
+{
+    quint8 u8Write = isOn ? 1 : 0;
+
+    fcdAppSetParam(FCD_CMD_APP_SET_BIAS_TEE, &u8Write, 1);
 }
 
 
