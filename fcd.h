@@ -50,6 +50,11 @@ typedef enum {
     FCD_MODE_APP    /*!< FCD present in aplpication mode. */
 } FCD_MODE_ENUM; // The current mode of the FCD: none inserted, in bootloader mode or in normal application mode
 
+/** \brief FCD capabilities that depend on both hardware and firmware. */
+typedef struct {
+    unsigned char hasBiasT;     /*!< Whether FCD has hardware bias tee (1=yes, 0=no) */
+    unsigned char hasCellBlock; /*!< Whether FCD has cellular blocking. */
+} FCD_CAPS_STRUCT;
 
 #ifdef __cplusplus
 extern "C" {
@@ -58,6 +63,7 @@ extern "C" {
 /* Application functions */
 EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdGetMode(void);
 EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdGetFwVerStr(char *str);
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdGetCaps(FCD_CAPS_STRUCT *fcd_caps);
 EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppReset(void);
 EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetFreqkHz(int nFreq);
 
