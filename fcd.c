@@ -197,6 +197,7 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdGetFwVerStr(char *str)
 
 /** \brief Get hardware and firmware dependent FCD capabilities.
   * \param fcd_caps Pointer to an FCD_CAPS_STRUCT
+  * \return The current FCD mode.
   *
   * This function queries the FCD and extracts the hardware and firmware dependent
   * capabilities. Currently these capabilities are:
@@ -254,6 +255,70 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdGetCaps(FCD_CAPS_STRUCT *fcd
             } else {
                 fcd_caps->hasCellBlock = 1;
             }
+
+            fcd_mode = FCD_MODE_APP;
+        }
+        /* either no FCD or firmware less than 18f */
+        else {
+            fcd_mode = FCD_MODE_NONE;
+        }
+    }
+
+    return fcd_mode;
+}
+
+
+/** \brief Get hardware and firmware dependent FCD capabilities as string.
+  * \param caps_str Pointer to a pre-allocated string buffer where the info will be copied.
+  * \return The current FCD mode.
+  *
+  * This function queries the FCD and copies the returned string into the caps_str parameter.
+  * THe return buffer must be at least 28 characters.
+  * When the FCD is in application mode, the string returned by the query command is
+  * (starting at index 2):
+  *    FCDAPP 18.08 Brd 1.0 No blk
+  * 1.0 means no bias tee, 1.1 means there is a bias tee
+  * 'No blk' means it is not cellular blocked.
+  *
+  * Ref: http://uk.groups.yahoo.com/group/FCDevelopment/message/303
+  */
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdGetCapsStr(char *caps_str)
+{
+    hid_device *phd=NULL;
+    unsigned char aucBufIn[65];
+    unsigned char aucBufOut[65];
+    FCD_MODE_ENUM fcd_mode = FCD_MODE_NONE;
+
+
+    phd = fcdOpen();
+
+    if (phd == NULL)
+    {
+        return FCD_MODE_NONE;
+    }
+
+    /* Send a BL Query Command */
+    aucBufOut[0] = 0; // Report ID, ignored
+    aucBufOut[1] = FCD_CMD_BL_QUERY;
+    hid_write(phd, aucBufOut, 65);
+    memset(aucBufIn, 0xCC, 65); // Clear out the response buffer
+    hid_read(phd, aucBufIn, 65);
+
+    fcdClose(phd);
+    phd = NULL;
+
+    /* first check status bytes then check which mode */
+    if (aucBufIn[0]==FCD_CMD_BL_QUERY && aucBufIn[1]==1) {
+
+        /* In bootloader mode we have the string "FCDBL" starting at acBufIn[2] **/
+        if (strncmp((char *)(aucBufIn+2), "FCDBL", 5) == 0) {
+            fcd_mode = FCD_MODE_BL;
+        }
+        /* In application mode we have "FCDAPP 18.08 Brd 1.0 No blk" (see API doc) */
+        else if (strncmp((char *)(aucBufIn+2), "FCDAPP", 6) == 0) {
+
+            strncpy(caps_str, (char *)(aucBufIn+2), 27);
+            caps_str[27] = 0;
 
             fcd_mode = FCD_MODE_APP;
         }
