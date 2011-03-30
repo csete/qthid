@@ -172,9 +172,6 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdGetFwVerStr(char *str)
     fcdClose(phd);
     phd = NULL;
 
-    aucBufIn[64] = 0;
-    printf("FCD: %s\n", aucBufIn);
-
     /* first check status bytes then check which mode */
     if (aucBufIn[0]==FCD_CMD_BL_QUERY && aucBufIn[1]==1) {
 
