@@ -218,6 +218,9 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdGetCaps(FCD_CAPS_STRUCT *fcd
     unsigned char aucBufOut[65];
     FCD_MODE_ENUM fcd_mode = FCD_MODE_NONE;
 
+    /* clear output parameters */
+    fcd_caps->hasBiasT = 0;
+    fcd_caps->hasCellBlock = 0;
 
     phd = fcdOpen();
 
