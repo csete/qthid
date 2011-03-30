@@ -557,6 +557,7 @@ double MainWindow::StrToDouble(QString s)
 void MainWindow::enableControls()
 {
     FCD_MODE_ENUM fme;
+    FCD_CAPS_STRUCT fcd_caps;
     quint8 u8;
     char fwVerStr[6];
     bool convOk = false;
@@ -566,7 +567,7 @@ void MainWindow::enableControls()
     /* clear status string */
     ui->fcdStatusLine->clear();
 
-    fme = fcdGetMode();
+    fme = fcdGetCaps(&fcd_caps);
 
     switch (fme)
     {
@@ -619,7 +620,7 @@ void MainWindow::enableControls()
     ui->pushButtonDown->setEnabled(fme==FCD_MODE_APP);
 
     /* bias T functionality available since FW 18h */
-    ui->pushButtonBiasT->setEnabled((fme==FCD_MODE_APP) && (fwVer > 18.07));
+    ui->pushButtonBiasT->setEnabled((fme==FCD_MODE_APP) && (fcd_caps.hasBiasT));
 
     ui->spinBoxCorr->setEnabled(fme==FCD_MODE_APP);
     ui->doubleSpinBoxDCI->setEnabled(fme==FCD_MODE_APP);
