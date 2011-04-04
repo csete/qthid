@@ -82,15 +82,25 @@ private:
 
 private slots:
     void on_spinBoxCorr_valueChanged(int );
-    void on_pushButtonDown_clicked();
+    void on_doubleSpinBoxDCI_valueChanged(double value);
+    void on_doubleSpinBoxDCQ_valueChanged(double value);
+    void on_doubleSpinBoxPhase_valueChanged(double value);
+    void on_doubleSpinBoxGain_valueChanged(double value);
+
     void on_lineEditStep_textChanged(QString );
-    void on_pushButtonUp_clicked();
     void on_lineEditFreq_textChanged(QString );
+
+    void on_pushButtonDown_clicked();
+    void on_pushButtonUp_clicked();
+    void on_pushButtonBiasT_toggled(bool isOn);
     void on_pushButtonVerifyFirmware_clicked();
     void on_pushButtonUpdateFirmware_clicked();
     void on_pushButtonBLReset_clicked();
     void on_pushButtonAppReset_clicked();
+    void on_pushButtonDefaults_clicked();
+
     void on_comboBoxLNAGain_activated(int index);
+    void on_comboBoxBand_activated(int index);
     void on_comboBoxRfFilter_activated(int index);
     void on_comboBoxMixerGain_activated(int index);
     void on_comboBoxMixerFilter_activated(int index);
@@ -105,13 +115,6 @@ private slots:
     void on_comboBoxLNAEnhance_activated(int index);
     void on_comboBoxBiasCurrent_activated(int index);
     void on_comboBoxIFGainMode_activated(int index);
-    void on_doubleSpinBoxDCI_valueChanged(double value);
-    void on_doubleSpinBoxDCQ_valueChanged(double value);
-    void on_doubleSpinBoxPhase_valueChanged(double value);
-    void on_doubleSpinBoxGain_valueChanged(double value);
-
-    void on_pushButtonDefaults_clicked();
-
 
     void enableControls();
 

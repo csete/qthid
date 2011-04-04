@@ -37,7 +37,7 @@
 #define FCD_CMD_APP_SET_FREQ_HZ      101 /*!< Send with 4 byte unsigned little endian frequency in Hz, returns wit actual frequency set in Hz */
 #define FCD_CMD_APP_GET_FREQ_HZ      102 /*!< Returns 4 byte unsigned little endian frequency in Hz. */
 
-#define FCD_CMD_APP_GET_IF_RSSI      104 /*!< Returns 1 byte unsigned IF RSSI, -35dBm ~=0, -10dBm ~=70. */
+#define FCD_CMD_APP_GET_IF_RSSI      104 /*!< Supposed to return 1 byte unsigned IF RSSI (-35dBm=0, -10dBm=70) but it is not functional. */
 #define FCD_CMD_APP_GET_PLL_LOCK     105 /*!< Returns 1 bit, true if locked. */
 
 #define FCD_CMD_APP_SET_DC_CORR      106 /*!< Send with 2 byte unsigned I DC correction followed by 2 byte unsigned Q DC correction. 32768 is the default centre value. */
@@ -61,6 +61,7 @@
 #define FCD_CMD_APP_SET_IF_GAIN4     123
 #define FCD_CMD_APP_SET_IF_GAIN5     124
 #define FCD_CMD_APP_SET_IF_GAIN6     125
+#define FCD_CMD_APP_SET_BIAS_TEE     126 /*!< Bias T for ext LNA. Send with one byte: 1=ON, 0=OFF. */
 
 #define FCD_CMD_APP_GET_LNA_GAIN     150 // Retrieve a 1 byte value, see enums for reference
 #define FCD_CMD_APP_GET_LNA_ENHANCE  151
@@ -78,6 +79,7 @@
 #define FCD_CMD_APP_GET_IF_GAIN4     163
 #define FCD_CMD_APP_GET_IF_GAIN5     164
 #define FCD_CMD_APP_GET_IF_GAIN6     165
+#define FCD_CMD_APP_GET_BIAS_TEE     166 /*!< Bias T. 1=ON, 0=OFF. */
 
 #define FCD_CMD_APP_SEND_I2C_BYTE    200
 #define FCD_CMD_APP_RECV_I2C_BYTE    201
