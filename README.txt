@@ -61,6 +61,9 @@ installed separately. It is known to work on Windows XP and 7. No luck on Vista.
 - Install Qt Creator 2.0.1 or newer and Qt SDK 4.7. On recent linux it is normally
   sufficient to select Qt Creator and the required Qt libraries will be installed as
   dependencies.
+- On linux you also need to install the libusb-1.0-dev package using the package manager
+  (the name may be different depending on distribution but it should have libusb-1.0 and
+  dev int he name).
 - Open the qthid.pro file in Qt Creator. It will say something about setting up a target;
   say OK or Finish or Done (depends on version and OS).
 - You can now build and execute the project.
