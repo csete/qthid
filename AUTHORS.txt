@@ -6,6 +6,7 @@ Contributors:
 - Mario Lorenz DL5MLO
 - Andrew Elwell
 
+The frequency controller was taken from Cutesdr by Moe Wheatley.
 
 Application icon by ~DarKobra at Deviantart.
 Source: http://commons.wikimedia.org/wiki/File:Radio.svg

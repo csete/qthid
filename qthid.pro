@@ -33,7 +33,8 @@ DEFINES += VERSION=\"$${VERSTR}\" # create a VERSION macro containing the versio
 SOURCES +=\
         mainwindow.cpp \
     main.cpp \
-    fcd.c
+    fcd.c \
+    freqctrl.cpp
 
 mac: SOURCES += hidmac.c
 win32: SOURCES += hidwin.cpp
@@ -41,7 +42,8 @@ linux-g++: SOURCES +=hid-libusb.c
 
 HEADERS  += mainwindow.h \
     hidapi.h \
-    fcd.h fcdhidcmd.h
+    fcd.h fcdhidcmd.h \
+    freqctrl.h
 
 FORMS    += mainwindow.ui
 
