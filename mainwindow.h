@@ -79,6 +79,8 @@ private:
     void readDevice();
     void bandChange();
 
+public slots:
+    void setNewFrequency(qint64 freq);
 
 private slots:
     void on_spinBoxCorr_valueChanged(int );
@@ -87,11 +89,6 @@ private slots:
     void on_doubleSpinBoxPhase_valueChanged(double value);
     void on_doubleSpinBoxGain_valueChanged(double value);
 
-    void on_lineEditStep_textChanged(QString );
-    void on_lineEditFreq_textChanged(QString );
-
-    void on_pushButtonDown_clicked();
-    void on_pushButtonUp_clicked();
     void on_pushButtonBiasT_toggled(bool isOn);
     void on_pushButtonVerifyFirmware_clicked();
     void on_pushButtonUpdateFirmware_clicked();

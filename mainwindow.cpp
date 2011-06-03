@@ -24,6 +24,7 @@
 #include <QtDebug>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "freqctrl.h"
 #include "hidapi.h"
 #include "fcd.h"
 #include "fcdhidcmd.h"
@@ -343,8 +344,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     populateCombos();
 
-    ui->lineEditFreq->setText(settings.value("Frequency","97,300.000").toString());
-    ui->lineEditStep->setText(settings.value("Step","25,000").toString());
+    /* frequency controller */
+    ui->freqCtrl->Setup(10, 50e6, 2e9, 1, UNITS_MHZ);
+    ui->freqCtrl->SetFrequency(settings.value("Frequency", 144800000).toInt());
     ui->spinBoxCorr->setValue(settings.value("Correction","-120").toInt());
 
     ui->doubleSpinBoxDCI->setValue(settings.value("DCICorr","0.0").toDouble());
@@ -360,6 +362,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     setUnifiedTitleAndToolBarOnMac(true);
 
+    /* connect signals & slots */
+    connect(ui->freqCtrl, SIGNAL(NewFrequency(qint64)), this, SLOT(setNewFrequency(qint64)));
+
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(enableControls()));
     timer->start(1000);
@@ -372,8 +377,7 @@ MainWindow::~MainWindow()
     timer->stop();
     delete timer;
 
-    settings.setValue("Frequency",ui->lineEditFreq->text());
-    settings.setValue("Step",ui->lineEditStep->text());
+    settings.setValue("Frequency",ui->freqCtrl->GetFrequency());
     settings.setValue("Correction",ui->spinBoxCorr->value());
     settings.setValue("DCICorr",ui->doubleSpinBoxDCI->value());
     settings.setValue("DCQCorr",ui->doubleSpinBoxDCQ->value());
@@ -613,11 +617,12 @@ void MainWindow::enableControls()
     ui->pushButtonBLReset->setEnabled(fme==FCD_MODE_BL);
     ui->pushButtonAppReset->setEnabled(fme==FCD_MODE_APP);
 
-    ui->lineEditFreq->setEnabled(fme==FCD_MODE_APP);
-    ui->lineEditStep->setEnabled(fme==FCD_MODE_APP);
+    //ui->lineEditFreq->setEnabled(fme==FCD_MODE_APP);
+    //ui->lineEditStep->setEnabled(fme==FCD_MODE_APP);
+    ui->freqCtrl->setEnabled(fme==FCD_MODE_APP);
 
-    ui->pushButtonUp->setEnabled(fme==FCD_MODE_APP);
-    ui->pushButtonDown->setEnabled(fme==FCD_MODE_APP);
+    //ui->pushButtonUp->setEnabled(fme==FCD_MODE_APP);
+    //ui->pushButtonDown->setEnabled(fme==FCD_MODE_APP);
 
     /* bias T functionality available since FW 18h */
     ui->pushButtonBiasT->setEnabled((fme==FCD_MODE_APP) && (fcd_caps.hasBiasT));
@@ -642,7 +647,7 @@ void MainWindow::enableControls()
             readDevice();
 
             /* Set frequency since FCD does not remember anything */
-            on_lineEditFreq_textChanged(ui->lineEditFreq->text());
+            setNewFrequency(ui->freqCtrl->GetFrequency());
         }
     }
 
@@ -651,43 +656,19 @@ void MainWindow::enableControls()
 }
 
 
-/** \brief Frequency entry text changed.
-  * \param s New frequency string.
-  *
-  * This slot is called when new text is entered into the frequency editor. The
-  * function is also called when the UP and DOWN buttons are clicked.
-  * After the new frequency is sent to the FCD, we also check whether band and/or
-  * filter change has occurred (done automatically by FCD). If yes, we update
-  * the corresponding combo boxes.
-  *
-  * \todo Read freqeuncy from FCD and compare to desired value.
-  */
-void MainWindow::on_lineEditFreq_textChanged(QString s)
+/*! \brief Slot for receiving frequency change signals.
+ *  \param[in] freq The new frequency.
+ *
+ * This slot is connected to the CFreqCtrl::NewFrequency() signal and is used
+ * to set new RF frequency.
+ */
+void MainWindow::setNewFrequency(qint64 freq)
 {
     FCD_MODE_ENUM fme;
-    double d = StrToDouble(s);
-    int nCursor = ui->lineEditFreq->cursorPosition();
-    QString s2 = QLocale(QLocale()).toString(d,'f',0);
-
-    nCursor -= s.mid(0,nCursor).count(QLocale().groupSeparator());
-    nCursor += s2.mid(0,nCursor).count(QLocale().groupSeparator());
-
-    ui->lineEditFreq->setText(s2);
-    ui->lineEditFreq->setCursorPosition(nCursor);
-    if (d<50000000.0 || d>2100000000.0)
-    {
-        QPalette p = ui->lineEditFreq->palette();
-        p.setColor(QPalette::Base, QColor(255,0,0));//red color
-        ui->lineEditFreq->setPalette(p);
-    }
-    else
-    {
-        QPalette p = ui->lineEditFreq->palette();
-        p.setColor(QPalette::Base, QColor(0,255,0));//green color
-        ui->lineEditFreq->setPalette(p);
-    }
+    double d = (double) freq;
 
     d *= 1.0 + ui->spinBoxCorr->value()/1000000.0;
+
 
     fme = fcdAppSetFreqkHz((int)(d/1000.0));
     if (fme != FCD_MODE_APP) {
@@ -740,38 +721,6 @@ void MainWindow::on_lineEditFreq_textChanged(QString s)
         }
     }
 
-}
-
-
-/** \brief Frequency step entry text changed.
-  * \param s New frequency step.
-  *
-  * This slot is called when new text is entered into the frequency step
-  * editor.
-  */
-void MainWindow::on_lineEditStep_textChanged(QString s)
-{
-    double d = StrToDouble(s);
-    int nCursor = ui->lineEditStep->cursorPosition();
-    QString s2 = QLocale(QLocale()).toString(d,'f',0);
-
-    nCursor -= s.mid(0,nCursor).count(QLocale().groupSeparator());
-    nCursor += s2.mid(0,nCursor).count(QLocale().groupSeparator());
-
-    ui->lineEditStep->setText(s2);
-    ui->lineEditStep->setCursorPosition(nCursor);
-    if (d<1.0 || d>1000000000.0)
-    {
-        QPalette p = ui->lineEditStep->palette();
-        p.setColor(QPalette::Base, QColor(255,0,0));//red color
-        ui->lineEditStep->setPalette(p);
-    }
-    else
-    {
-        QPalette p = ui->lineEditStep->palette();
-        p.setColor(QPalette::Base, QColor(0,255,0));//green color
-        ui->lineEditStep->setPalette(p);
-    }
 }
 
 
@@ -937,62 +886,6 @@ void MainWindow::on_pushButtonVerifyFirmware_clicked()
 
 
 
-/** \brief Frequency up button clicked.
-  *
-  * This slot is called when the frequency UP button is clicked.
-  * It increments the current frequency with the step and calls the
-  * textChanged() slot of the frequency editor, which in turn will also set
-  * the frequency of the FCD.
-  */
-void MainWindow::on_pushButtonUp_clicked()
-{
-    double dStep = StrToDouble(ui->lineEditStep->text());
-    double dFreq = StrToDouble(ui->lineEditFreq->text());
-
-    dFreq += dStep;
-
-    if (dFreq<0.0)
-    {
-        dFreq = 0.0;
-    }
-
-    if (dFreq>2000000000.0)
-    {
-        dFreq = 2000000000.0;
-    }
-
-    ui->lineEditFreq->setText(QLocale(QLocale()).toString(dFreq,'f',0));
-}
-
-
-/** \brief Frequency down button clicked.
-  *
-  * This slot is called when the frequency DOWN button is clicked.
-  * It increments the current frequency with the step and calls the
-  * textChanged() slot of the frequency editor, which in turn will also set
-  * the frequency of the FCD.
-  */
-void MainWindow::on_pushButtonDown_clicked()
-{
-    double dStep = StrToDouble(ui->lineEditStep->text());
-    double dFreq = StrToDouble(ui->lineEditFreq->text());
-
-    dFreq -= dStep;
-
-    if (dFreq<0.0)
-    {
-        dFreq = 0.0;
-    }
-
-    if (dFreq>2000000000.0)
-    {
-        dFreq = 2000000000.0;
-    }
-
-    ui->lineEditFreq->setText(QLocale(QLocale()).toString(dFreq,'f',0));
-}
-
-
 /** \brief Bias T button ON/OFF
   * \param isOn Flag indicating whether the button is ON or OFF
   *
@@ -1038,7 +931,8 @@ void MainWindow::on_pushButtonDefaults_clicked()
   */
 void MainWindow::on_spinBoxCorr_valueChanged(int n)
 {
-    double d = StrToDouble(ui->lineEditFreq->text());
+    /*** FIXME!! ***/
+    double d = (double) ui->freqCtrl->GetFrequency();
 
     d *= 1.0 + n/1000000.0;
 
