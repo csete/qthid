@@ -64,7 +64,7 @@ installed separately. It is known to work on Windows XP, Vista and 7.
   you also need the MS Windows SDK.
 - On linux you also need to install the libusb-1.0-dev package using the package manager
   (the name may be different depending on distribution but it should have libusb-1.0 and
-  dev int he name).
+  dev int he name) and the pkg-config program.
 - Open the qthid.pro file in Qt Creator. It will say something about setting up a target;
   say OK or Finish or Done (depends on version and OS).
 - You can now build and execute the project.
