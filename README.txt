@@ -35,7 +35,7 @@ Qt 4.7 has been tested, Qt 4.6 will probably also work.
 In order to use the Funcube Dongle as regular user, you need to create a udev rule.
 Create a udev file /etc/udev/rules.d/20-fcd.rules containing:
 
-  SUBSYTEMS=="usb" ATTRS{idVendor}=="04d8" ATTRS{idProduct}=="fb56" MODE:="0666" SYMLINK+="FCD"
+  SUBSYSTEMS=="usb" ATTRS{idVendor}=="04d8" ATTRS{idProduct}=="fb56" MODE:="0666" SYMLINK+="FCD"
   
 (hint: open a terminal and type: sudo gedit /etc/udev/rules.d/20-fcd.rules)
 
