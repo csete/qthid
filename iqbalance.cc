@@ -126,6 +126,20 @@ void CIqBalance::on_doubleSpinBoxGain_valueChanged(double value)
 }
 
 
+/*! \brief Revert button has been clicked.
+ *
+ * Revert I/Q correction values to the previously stored values.
+ */
+void CIqBalance::on_revertButton_clicked()
+{
+    QSettings settings;
+    ui->doubleSpinBoxDCI->setValue(settings.value("DCICorr","0.0").toDouble());
+    ui->doubleSpinBoxDCQ->setValue(settings.value("DCQCorr","0.0").toDouble());
+    ui->doubleSpinBoxPhase->setValue(settings.value("PhaseCorr","0.0").toDouble());
+    ui->doubleSpinBoxGain->setValue(settings.value("GainCorr","1.0").toDouble());
+}
+
+
 /*! \brief Reset button has been clicked. */
 void CIqBalance::on_resetButton_clicked()
 {

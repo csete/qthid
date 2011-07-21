@@ -173,6 +173,16 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
       </item>
+      <item row="2" column="1">
+       <widget class="QPushButton" name="revertButton">
+        <property name="toolTip">
+         <string>Revert to previously stored values</string>
+        </property>
+        <property name="text">
+         <string>Revert</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>

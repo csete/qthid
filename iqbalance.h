@@ -46,6 +46,7 @@ private slots:
     void on_doubleSpinBoxDCQ_valueChanged(double value);
     void on_doubleSpinBoxPhase_valueChanged(double value);
     void on_doubleSpinBoxGain_valueChanged(double value);
+    void on_revertButton_clicked();
     void on_resetButton_clicked();
 
 private:
