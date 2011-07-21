@@ -25,6 +25,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "freqctrl.h"
+#include "iqbalance.h"
 #include "hidapi.h"
 #include "fcd.h"
 #include "fcdhidcmd.h"
@@ -349,11 +350,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->freqCtrl->SetFrequency(settings.value("Frequency", 144800000).toInt());
     ui->spinBoxCorr->setValue(settings.value("Correction","-120").toInt());
 
-    ui->doubleSpinBoxDCI->setValue(settings.value("DCICorr","0.0").toDouble());
-    ui->doubleSpinBoxDCQ->setValue(settings.value("DCQCorr","0.0").toDouble());
-    ui->doubleSpinBoxPhase->setValue(settings.value("PhaseCorr","0.0").toDouble());
-    ui->doubleSpinBoxGain->setValue(settings.value("GainCorr","1.0").toDouble());
-
 
     //ReadDevice(); /* disabled until it can properly set default values in case of error */
 
@@ -379,10 +375,6 @@ MainWindow::~MainWindow()
 
     settings.setValue("Frequency",ui->freqCtrl->GetFrequency());
     settings.setValue("Correction",ui->spinBoxCorr->value());
-    settings.setValue("DCICorr",ui->doubleSpinBoxDCI->value());
-    settings.setValue("DCQCorr",ui->doubleSpinBoxDCQ->value());
-    settings.setValue("PhaseCorr",ui->doubleSpinBoxPhase->value());
-    settings.setValue("GainCorr",ui->doubleSpinBoxGain->value());
 
     delete ui;
 }
@@ -628,10 +620,6 @@ void MainWindow::enableControls()
     ui->pushButtonBiasT->setEnabled((fme==FCD_MODE_APP) && (fcd_caps.hasBiasT));
 
     ui->spinBoxCorr->setEnabled(fme==FCD_MODE_APP);
-    ui->doubleSpinBoxDCI->setEnabled(fme==FCD_MODE_APP);
-    ui->doubleSpinBoxDCQ->setEnabled(fme==FCD_MODE_APP);
-    ui->doubleSpinBoxGain->setEnabled(fme==FCD_MODE_APP);
-    ui->doubleSpinBoxPhase->setEnabled(fme==FCD_MODE_APP);
 
     ui->pushButtonDefaults->setEnabled(fme==FCD_MODE_APP);
 
@@ -940,78 +928,6 @@ void MainWindow::on_spinBoxCorr_valueChanged(int n)
 }
 
 
-/** \brief In-phase DC offset correction changed. */
-void MainWindow::on_doubleSpinBoxDCI_valueChanged(double value)
-{
-    union {
-        unsigned char auc[4];
-        struct {
-            qint16 dci;
-            qint16 dcq;
-        };
-    } dcinfo;
-
-    dcinfo.dci = static_cast<signed short>(value*32768.0);
-    dcinfo.dcq = static_cast<signed short>(ui->doubleSpinBoxDCQ->value()*32768.0);
-
-    fcdAppSetParam(FCD_CMD_APP_SET_DC_CORR, dcinfo.auc, 4);
-}
-
-
-/** \brief Quadrature DC offset correction changed. */
-void MainWindow::on_doubleSpinBoxDCQ_valueChanged(double value)
-{
-    union {
-        unsigned char auc[4];
-        struct {
-            qint16 dci;
-            qint16 dcq;
-        };
-    } dcinfo;
-
-    dcinfo.dci = static_cast<signed short>(ui->doubleSpinBoxDCI->value()*32768.0);
-    dcinfo.dcq = static_cast<signed short>(value*32768.0);
-
-    fcdAppSetParam(FCD_CMD_APP_SET_DC_CORR, dcinfo.auc, 4);
-}
-
-
-/** \brief IQ correction phase changed. */
-void MainWindow::on_doubleSpinBoxPhase_valueChanged(double value)
-{
-    union {
-        unsigned char auc[4];
-        struct {
-            qint16 phase;
-            qint16 gain;
-        };
-    } iqinfo;
-
-    iqinfo.phase = static_cast<signed short>(value*32768.0);
-    iqinfo.gain = static_cast<signed short>(ui->doubleSpinBoxGain->value()*32768.0);
-
-    fcdAppSetParam(FCD_CMD_APP_SET_IQ_CORR, iqinfo.auc, 4);
-}
-
-
-/** \brief IQ correction gain changed. */
-void MainWindow::on_doubleSpinBoxGain_valueChanged(double value)
-{
-    union {
-        unsigned char auc[4];
-        struct {
-            qint16 phase;
-            qint16 gain;
-        };
-    } iqinfo;
-
-    iqinfo.phase = static_cast<signed short>(ui->doubleSpinBoxPhase->value()*32768.0);
-    iqinfo.gain = static_cast<signed short>(value*32768.0);
-
-    fcdAppSetParam(FCD_CMD_APP_SET_IQ_CORR, iqinfo.auc, 4);
-}
-
-
 void MainWindow::on_comboBoxLNAGain_activated(int index)
 {
     quint8 u8Write = _acs[0].pacis[index].u8Val;
@@ -1140,10 +1056,14 @@ void MainWindow::on_actionSave_triggered()
 }
 
 
-/** \brief Action: Open I/Q correction settings. */
+/*! \brief Action: Open I/Q correction settings. */
 void MainWindow::on_actionBalance_triggered()
 {
-    qDebug() << "MainWindow::on_actionBalance_triggered() not implemented";
+    CIqBalance *iqDialog = new CIqBalance(this);
+
+    iqDialog->exec();
+
+    delete iqDialog;
 }
 
 

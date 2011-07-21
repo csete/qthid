@@ -84,10 +84,6 @@ public slots:
 
 private slots:
     void on_spinBoxCorr_valueChanged(int );
-    void on_doubleSpinBoxDCI_valueChanged(double value);
-    void on_doubleSpinBoxDCQ_valueChanged(double value);
-    void on_doubleSpinBoxPhase_valueChanged(double value);
-    void on_doubleSpinBoxGain_valueChanged(double value);
 
     void on_pushButtonBiasT_toggled(bool isOn);
     void on_pushButtonVerifyFirmware_clicked();
