@@ -5,6 +5,7 @@ Contributors:
 - Mike Willis G0MJW and David Barber
 - Mario Lorenz DL5MLO
 - Andrew Elwell
+- Mike K0ZAP (OSX Lion fix)
 
 
 Application icon by ~DarKobra at Deviantart.
