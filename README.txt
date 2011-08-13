@@ -35,7 +35,7 @@ Qt 4.7 has been tested, Qt 4.6 will probably also work.
 In order to use the Funcube Dongle as regular user, you need to create a udev rule.
 Create a udev file /etc/udev/rules.d/20-fcd.rules containing:
 
-  SUBSYTEMS=="usb" ATTRS{idVendor}=="04d8" ATTRS{idProduct}=="fb56" MODE:="0666" SYMLINK+="FCD"
+  SUBSYSTEMS=="usb" ATTRS{idVendor}=="04d8" ATTRS{idProduct}=="fb56" MODE:="0666" SYMLINK+="FCD"
   
 (hint: open a terminal and type: sudo gedit /etc/udev/rules.d/20-fcd.rules)
 
@@ -64,7 +64,7 @@ installed separately. It is known to work on Windows XP, Vista and 7.
   you also need the MS Windows SDK.
 - On linux you also need to install the libusb-1.0-dev package using the package manager
   (the name may be different depending on distribution but it should have libusb-1.0 and
-  dev int he name).
+  dev int he name) and the pkg-config program.
 - Open the qthid.pro file in Qt Creator. It will say something about setting up a target;
   say OK or Finish or Done (depends on version and OS).
 - You can now build and execute the project.
