@@ -23,7 +23,7 @@ CONFIG(debug, debug|release) {
 } else {
     DEFINES += QT_NO_DEBUG
     DEFINES += QT_NO_DEBUG_OUTPUT
-    VER = 3.0
+    VER = 3.1
 }
 
 # Tip from: http://www.qtcentre.org/wiki/index.php?title=Version_numbering_using_QMake
