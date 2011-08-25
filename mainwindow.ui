@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1106</width>
-    <height>478</height>
+    <width>1400</width>
+    <height>397</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -329,25 +329,15 @@ Requires FCD with S/N TBD or above.</string>
      </widget>
     </item>
     <item>
-     <widget class="QLabel" name="labelRfChain">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="pixmap">
-       <pixmap resource="qthid.qrc">:/qthid/images/rfchain.png</pixmap>
-      </property>
-     </widget>
-    </item>
-    <item>
      <layout class="QGridLayout" name="gridLayout_4">
       <item row="0" column="0">
        <widget class="QLabel" name="labelLNAGain">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text">
          <string>LNA gain</string>
         </property>
@@ -600,8 +590,8 @@ a specific band.</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1106</width>
-     <height>25</height>
+     <width>1400</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -617,6 +607,8 @@ a specific band.</string>
     <property name="title">
      <string>&amp;Help</string>
     </property>
+    <addaction name="actionDiagram"/>
+    <addaction name="separator"/>
     <addaction name="actionAbout"/>
     <addaction name="actionAboutQt"/>
    </widget>
@@ -766,6 +758,11 @@ a specific band.</string>
    </property>
    <property name="toolTip">
     <string>Enter What's This?</string>
+   </property>
+  </action>
+  <action name="actionDiagram">
+   <property name="text">
+    <string>Funcube Dongle diagram</string>
    </property>
   </action>
  </widget>

@@ -319,7 +319,8 @@ static COMBO_STRUCT _acs[] =
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    prevMode(FCD_MODE_NONE)
+    prevMode(FCD_MODE_NONE),
+    diagramDialog(0)
 {
     QSettings settings;
 
@@ -1106,4 +1107,19 @@ void MainWindow::on_actionAbout_triggered()
 void MainWindow::on_actionAboutQt_triggered()
 {
     QMessageBox::aboutQt(this, tr("About Qt"));
+}
+
+
+/*! \brief Action: Show FCD diagram. */
+void MainWindow::on_actionDiagram_triggered()
+{
+    if (!diagramDialog) {
+        diagramDialog = new FcdDiagram(this);
+    }
+
+    // FIXME: should we connect close signal and destroy dialog every time it's closed?
+
+    diagramDialog->show();
+    diagramDialog->raise();
+    diagramDialog->activateWindow();
 }

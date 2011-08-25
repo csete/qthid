@@ -26,6 +26,7 @@
 #include <QMainWindow>
 #include <QComboBox>
 #include "fcd.h"
+#include "fcddiagram.h"
 
 namespace Ui {
     class MainWindow;
@@ -70,6 +71,8 @@ private:
     Ui::MainWindow *ui;
     QTimer *timer;
     FCD_MODE_ENUM prevMode;
+
+    FcdDiagram *diagramDialog;
 
     double StrToDouble(QString s);
 
@@ -118,6 +121,7 @@ private slots:
     void on_actionFirmware_triggered();
     void on_actionAbout_triggered();
     void on_actionAboutQt_triggered();
+    void on_actionDiagram_triggered();
 };
 
 #endif // MAINWINDOW_H

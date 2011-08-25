@@ -35,7 +35,8 @@ SOURCES +=\
     main.cpp \
     fcd.c \
     freqctrl.cpp \
-    iqbalance.cc
+    iqbalance.cc \
+    fcddiagram.cpp
 
 mac: SOURCES += hidmac.c
 win32: SOURCES += hidwin.cpp
@@ -45,10 +46,13 @@ HEADERS  += mainwindow.h \
     hidapi.h \
     fcd.h fcdhidcmd.h \
     freqctrl.h \
-    iqbalance.h
+    iqbalance.h \
+    fcddiagram.h
 
-FORMS    += mainwindow.ui \
-    iqbalance.ui
+FORMS    += \
+    iqbalance.ui \
+    mainwindow.ui \
+    fcddiagram.ui
 
 mac:LIBS += /System/Library/Frameworks/CoreFoundation.framework/CoreFoundation \
     /System/Library/Frameworks/IOKit.framework/Versions/A/IOKit
