@@ -540,32 +540,6 @@ a specific band.</string>
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButtonDefaults">
-        <property name="toolTip">
-         <string>Reset FCD to default settings</string>
-        </property>
-        <property name="statusTip">
-         <string>Load defaults</string>
-        </property>
-        <property name="text">
-         <string>Defaults</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
        <widget class="QLineEdit" name="fcdStatusLine">
         <property name="sizePolicy">
          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
@@ -618,6 +592,7 @@ a specific band.</string>
     </property>
     <addaction name="actionFirmware"/>
     <addaction name="actionBalance"/>
+    <addaction name="actionDefault"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menu_Tools"/>
@@ -763,6 +738,14 @@ a specific band.</string>
   <action name="actionDiagram">
    <property name="text">
     <string>Funcube Dongle diagram</string>
+   </property>
+  </action>
+  <action name="actionDefault">
+   <property name="text">
+    <string>Reset to defaults</string>
+   </property>
+   <property name="toolTip">
+    <string>Reset all settings to their default value</string>
    </property>
   </action>
  </widget>

@@ -93,7 +93,6 @@ private slots:
     void on_pushButtonUpdateFirmware_clicked();
     void on_pushButtonBLReset_clicked();
     void on_pushButtonAppReset_clicked();
-    void on_pushButtonDefaults_clicked();
 
     void on_comboBoxLNAGain_activated(int index);
     void on_comboBoxBand_activated(int index);
@@ -119,6 +118,7 @@ private slots:
     void on_actionSave_triggered();
     void on_actionBalance_triggered();
     void on_actionFirmware_triggered();
+    void on_actionDefault_triggered();
     void on_actionAbout_triggered();
     void on_actionAboutQt_triggered();
     void on_actionDiagram_triggered();

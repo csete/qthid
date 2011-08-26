@@ -22,6 +22,7 @@
 
 #include <QtGui>
 #include <QtDebug>
+#include <QMessageBox>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "freqctrl.h"
@@ -622,7 +623,7 @@ void MainWindow::enableControls()
 
     ui->spinBoxCorr->setEnabled(fme==FCD_MODE_APP);
 
-    ui->pushButtonDefaults->setEnabled(fme==FCD_MODE_APP);
+    ui->actionDefault->setEnabled(fme==FCD_MODE_APP);
 
     enableCombos(fme==FCD_MODE_APP);
 
@@ -891,27 +892,6 @@ void MainWindow::on_pushButtonBiasT_toggled(bool isOn)
 }
 
 
-/** \brief Load defaults.
-  *
-  * This slot is called when the user clicks on the Default button.
-  * It resets the combo boxes to their default values and writes these values
-  * to the FCD.
-  */
-void MainWindow::on_pushButtonDefaults_clicked()
-{
-    COMBO_STRUCT *pcs=_acs;
-
-    while (pcs->pacis!=NULL)
-    {
-        quint8 u8Write = pcs->pacis[pcs->nIdxDefault].u8Val;
-        fcdAppSetParam(pcs->u8CommandSet, &u8Write, 1);
-        pcs++;
-    }
-
-    readDevice();
-}
-
-
 /** \brief Frequency correction changed.
   * \param n New correction value in ppm.
   *
@@ -1074,6 +1054,32 @@ void MainWindow::on_actionFirmware_triggered()
     qDebug() << "MainWindow::on_actionFirmware_triggered() not implemented";
 }
 
+
+/*! \brief Action: Reset to defaulrts. */
+void MainWindow::on_actionDefault_triggered()
+{
+     QMessageBox::StandardButton but = QMessageBox::question(this,
+                                                             tr("Reset FCD"),
+                                                             tr("Reset FCD to default settings?"),
+                                                             QMessageBox::Yes | QMessageBox::No,
+                                                             QMessageBox::No);
+    if (but == QMessageBox::No)
+        return;
+
+    // perform reset
+    COMBO_STRUCT *pcs=_acs;
+
+    while (pcs->pacis!=NULL)
+    {
+        quint8 u8Write = pcs->pacis[pcs->nIdxDefault].u8Val;
+        fcdAppSetParam(pcs->u8CommandSet, &u8Write, 1);
+        pcs++;
+    }
+
+    readDevice();
+
+    ui->statusBar->showMessage(tr("FCD has been reset"), 5000);
+}
 
 /** \brief Action: About Qthid
   *
