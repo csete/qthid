@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1400</width>
-    <height>397</height>
+    <width>1106</width>
+    <height>350</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -81,7 +81,7 @@
              <string>Frequency correction</string>
             </property>
             <property name="statusTip">
-             <string>Frequency correction</string>
+             <string/>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -137,7 +137,7 @@
 Requires FCD with S/N TBD or above.</string>
             </property>
             <property name="statusTip">
-             <string>Bias T ON/OFF</string>
+             <string/>
             </property>
             <property name="text">
              <string>Bias T</string>
@@ -237,7 +237,7 @@ Requires FCD with S/N TBD or above.</string>
             <string>Verify the firmware on the FCD</string>
            </property>
            <property name="statusTip">
-            <string>Verify the firmware</string>
+            <string/>
            </property>
            <property name="whatsThis">
             <string>Verify the firmware in the Funcube Dongle against a firmware on disk</string>
@@ -259,7 +259,7 @@ Requires FCD with S/N TBD or above.</string>
             <string>Upload new firmware</string>
            </property>
            <property name="statusTip">
-            <string>Upload new firmware</string>
+            <string/>
            </property>
            <property name="whatsThis">
             <string>Click this buttin to upload new firmware to the Funcube Dongle</string>
@@ -281,7 +281,7 @@ Requires FCD with S/N TBD or above.</string>
             <string>Switch to application mode</string>
            </property>
            <property name="statusTip">
-            <string>Switch to application mode</string>
+            <string/>
            </property>
            <property name="whatsThis">
             <string>This button switches the Funcube Dongle back to application mode</string>
@@ -303,7 +303,7 @@ Requires FCD with S/N TBD or above.</string>
             <string>Switch to bootloader mode</string>
            </property>
            <property name="statusTip">
-            <string>Switch to bootloader mode</string>
+            <string/>
            </property>
            <property name="whatsThis">
             <string>This button switches the Funcube Dongle to bootloader mode where you can upload new firmware</string>
@@ -424,7 +424,7 @@ This is selected automatically by the Funcube Dongle whenever
 the frequency changes but you can force it to use a specific filter.</string>
         </property>
         <property name="statusTip">
-         <string>Choose a different RF filter</string>
+         <string/>
         </property>
        </widget>
       </item>
@@ -507,7 +507,7 @@ whenever the frequency changes, but you can also force the dongle to
 a specific band.</string>
           </property>
           <property name="statusTip">
-           <string>Choose a different frequency band</string>
+           <string/>
           </property>
          </widget>
         </item>
@@ -590,8 +590,8 @@ a specific band.</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1400</width>
-     <height>22</height>
+     <width>1106</width>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -625,7 +625,7 @@ a specific band.</string>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <property name="toolButtonStyle">
-    <enum>Qt::ToolButtonFollowStyle</enum>
+    <enum>Qt::ToolButtonIconOnly</enum>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -691,7 +691,7 @@ a specific band.</string>
     <string>Load FCD settings from file</string>
    </property>
    <property name="statusTip">
-    <string>Load FCD settings from a file</string>
+    <string/>
    </property>
   </action>
   <action name="actionSave">
@@ -709,7 +709,7 @@ a specific band.</string>
     <string>Save FCD settings to file</string>
    </property>
    <property name="statusTip">
-    <string>Save FCD settings to a file</string>
+    <string/>
    </property>
   </action>
   <action name="actionBalance">
@@ -727,7 +727,7 @@ a specific band.</string>
     <string>Open I/Q correction window</string>
    </property>
    <property name="statusTip">
-    <string>Open I/Q calibration window</string>
+    <string/>
    </property>
   </action>
   <action name="actionFirmware">
@@ -745,7 +745,7 @@ a specific band.</string>
     <string>Open firmware tools</string>
    </property>
    <property name="statusTip">
-    <string>Open firmware tools</string>
+    <string/>
    </property>
   </action>
   <action name="actionHelp">
