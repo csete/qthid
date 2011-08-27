@@ -352,6 +352,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->freqCtrl->SetFrequency(settings.value("Frequency", 144800000).toInt());
     ui->spinBoxCorr->setValue(settings.value("Correction","-120").toInt());
 
+    /* FCD status label */
+    fcdStatus = new QLabel(tr("FCD status..."), this);
+    fcdStatus->setAlignment(Qt::AlignRight);
+    fcdStatus->setToolTip(tr("Funcube Dongle status can be No FCD, Application or Bootloader"));
+    ui->statusBar->addPermanentWidget(fcdStatus);
+
 
     //ReadDevice(); /* disabled until it can properly set default values in case of error */
 
@@ -562,21 +568,13 @@ void MainWindow::enableControls()
     float fwVer = 0.0;
 
 
-    /* clear status string */
-    ui->fcdStatusLine->clear();
-
     fme = fcdGetCaps(&fcd_caps);
 
     switch (fme)
     {
         case FCD_MODE_APP:
-            {
-                QPalette p=ui->fcdStatusLine->palette();
-                p.setColor(QPalette::Base, QColor(0,255,0));//green color
-                ui->fcdStatusLine->setPalette(p);
-            }
             fcdGetFwVerStr(fwVerStr);
-            ui->fcdStatusLine->setText(tr("FCD is active (%1)").arg(QString(fwVerStr)));
+            fcdStatus->setText(tr("FCD is active (%1)").arg(QString(fwVerStr)));
 
             /* convert version string to float */
             fwVer = QString(fwVerStr).toFloat(&convOk);
@@ -588,21 +586,11 @@ void MainWindow::enableControls()
             break;
 
         case FCD_MODE_BL:
-            {
-                QPalette p=ui->fcdStatusLine->palette();
-                p.setColor(QPalette::Base, QColor(255,191,0));//amber color
-                ui->fcdStatusLine->setPalette(p);
-            }
-            ui->fcdStatusLine->setText(tr("FCD bootloader"));
+            fcdStatus->setText(tr("FCD bootloader"));
             break;
 
         case FCD_MODE_NONE:
-            {
-                QPalette p=ui->fcdStatusLine->palette();
-                p.setColor(QPalette::Base, QColor(255,0,0));//red color
-                ui->fcdStatusLine->setPalette(p);
-            }
-            ui->fcdStatusLine->setText(tr("No FCD detected"));
+            fcdStatus->setText(tr("No FCD detected"));
             break;
     }
 
@@ -623,6 +611,7 @@ void MainWindow::enableControls()
 
     ui->spinBoxCorr->setEnabled(fme==FCD_MODE_APP);
 
+    ui->actionBalance->setEnabled(fme==FCD_MODE_APP);
     ui->actionDefault->setEnabled(fme==FCD_MODE_APP);
 
     enableCombos(fme==FCD_MODE_APP);
