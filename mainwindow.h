@@ -91,10 +91,6 @@ private slots:
     void on_spinBoxCorr_valueChanged(int );
 
     void on_pushButtonBiasT_toggled(bool isOn);
-    void on_pushButtonVerifyFirmware_clicked();
-    void on_pushButtonUpdateFirmware_clicked();
-    void on_pushButtonBLReset_clicked();
-    void on_pushButtonAppReset_clicked();
 
     void on_comboBoxLNAGain_activated(int index);
     void on_comboBoxBand_activated(int index);

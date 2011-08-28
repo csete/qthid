@@ -27,6 +27,7 @@
 #include "ui_mainwindow.h"
 #include "freqctrl.h"
 #include "iqbalance.h"
+#include "firmware.h"
 #include "hidapi.h"
 #include "fcd.h"
 #include "fcdhidcmd.h"
@@ -594,17 +595,7 @@ void MainWindow::enableControls()
             break;
     }
 
-    ui->pushButtonUpdateFirmware->setEnabled(fme==FCD_MODE_BL);
-    ui->pushButtonVerifyFirmware->setEnabled(fme==FCD_MODE_BL);
-    ui->pushButtonBLReset->setEnabled(fme==FCD_MODE_BL);
-    ui->pushButtonAppReset->setEnabled(fme==FCD_MODE_APP);
-
-    //ui->lineEditFreq->setEnabled(fme==FCD_MODE_APP);
-    //ui->lineEditStep->setEnabled(fme==FCD_MODE_APP);
     ui->freqCtrl->setEnabled(fme==FCD_MODE_APP);
-
-    //ui->pushButtonUp->setEnabled(fme==FCD_MODE_APP);
-    //ui->pushButtonDown->setEnabled(fme==FCD_MODE_APP);
 
     /* bias T functionality available since FW 18h */
     ui->pushButtonBiasT->setEnabled((fme==FCD_MODE_APP) && (fcd_caps.hasBiasT));
@@ -629,7 +620,6 @@ void MainWindow::enableControls()
             setNewFrequency(ui->freqCtrl->GetFrequency());
         }
     }
-
 
     prevMode = fme;
 }
@@ -701,168 +691,6 @@ void MainWindow::setNewFrequency(qint64 freq)
     }
 
 }
-
-
-
-void MainWindow::on_pushButtonAppReset_clicked()
-{
-    /* stop timeout while FCD is reconfiguring */
-    timer->stop();
-    fcdAppReset();
-    timer->start(1000);
-}
-
-void MainWindow::on_pushButtonBLReset_clicked()
-{
-    /* stop timeout while FCD is reconfiguring */
-    timer->stop();
-    fcdBlReset();
-    timer->start(1000);
-}
-
-void MainWindow::on_pushButtonUpdateFirmware_clicked()
-{
-    /* retrieve last used folder */
-    QSettings settings;
-    QString path = settings.value("LastFwFolder", QDir::currentPath()).toString();
-
-    /* execute modal file selector and get FW file name */
-    QString fileName = QFileDialog::getOpenFileName(this,
-                                                    tr("Open FCD firmware"),
-                                                    path,
-                                                    tr("FCD firmware files (*.bin)"));
-
-    if (!fileName.isNull())
-    {
-        /* store selected folder */
-        QFileInfo fileInfo(fileName);
-        qDebug() << "FW folder:" << fileInfo.absolutePath();
-        settings.setValue("LastFwFolder", fileInfo.absolutePath());
-
-        QFile qf(fileName);
-        qint64 qn64size = qf.size();
-        char *buf = new char[qn64size];
-
-        qDebug() << fileName;
-
-        if (buf==NULL)
-        {
-            QMessageBox::critical(this,
-                                  tr("FCD"),
-                                  tr("Unable to allocate memory for firmware image"));
-
-            return;
-        }
-
-        if (!qf.open(QIODevice::ReadOnly))
-        {
-            QMessageBox::critical(this, tr("FCD"), tr("Unable to open file"));
-            delete buf;
-
-            return;
-        }
-        else
-        {
-            if (qf.read(buf,qn64size)!=qn64size)
-            {
-                QMessageBox::critical(this, tr("FCD"), tr("Unable to read file"));
-                delete buf;
-                qf.close();
-
-                return;
-            }
-        }
-
-        qf.close();
-
-        if (fcdBlErase() != FCD_MODE_BL)
-        {
-            QMessageBox::critical(this, tr("FCD"), tr("Flash erase failed"));
-            delete buf;
-
-            return;
-        }
-
-        if (fcdBlWriteFirmware(buf,(int64_t)qn64size) != FCD_MODE_BL)
-        {
-            QMessageBox::critical(this, tr("FCD"), tr("Write firmware failed"));
-            delete buf;
-
-            return;
-        }
-
-        delete buf;
-
-        QMessageBox::information(this, tr("FCD"), tr("Firmware successfully written!"));
-    }
-}
-
-void MainWindow::on_pushButtonVerifyFirmware_clicked()
-{
-    /* retrieve last used folder */
-    QSettings settings;
-    QString path = settings.value("LastFwFolder", QDir::currentPath()).toString();
-
-    QString fileName = QFileDialog::getOpenFileName(this,
-                                                    tr("Open FCD firmware"),
-                                                    path,
-                                                    tr("FCD firmware files (*.bin)"));
-
-    if (!fileName.isNull())
-    {
-        /* store selected folder */
-        QFileInfo fileInfo(fileName);
-        settings.setValue("LastFwFolder", fileInfo.absolutePath());
-
-        QFile qf(fileName);
-        qint64 qn64size = qf.size();
-        char *buf=new char[qn64size];
-
-        qDebug() << fileName;
-
-        if (buf==NULL)
-        {
-            QMessageBox::critical(this, tr("FCD"), tr("Unable to allocate memory for firmware image"));
-            return;
-        }
-
-        if (!qf.open(QIODevice::ReadOnly))
-        {
-            QMessageBox::critical(this, tr("FCD"), tr("Unable to open file"));
-            delete buf;
-
-            return;
-        }
-        else
-        {
-            if (qf.read(buf,qn64size) != qn64size)
-            {
-                QMessageBox::critical(this, tr("FCD"), tr("Unable to read file"));
-                delete buf;
-                qf.close();
-
-                return;
-            }
-        }
-
-        qf.close();
-
-        if (fcdBlVerifyFirmware(buf,(int64_t)qn64size) != FCD_MODE_BL)
-        {
-            QMessageBox::critical(this, tr("FCD"), tr("Verify firmware failed"));
-            delete buf;
-
-            return;
-        }
-
-        delete buf;
-
-        QMessageBox::information(this, tr("FCD"), tr("Firmware successfully verified!"));
-    }
-
-}
-
-
 
 
 /** \brief Bias T button ON/OFF
@@ -1040,7 +868,21 @@ void MainWindow::on_actionBalance_triggered()
 /** \brief Action: Open firmware tools. */
 void MainWindow::on_actionFirmware_triggered()
 {
-    qDebug() << "MainWindow::on_actionFirmware_triggered() not implemented";
+    CFirmware *fwDialog = new CFirmware(this);
+
+    /* set FCD in bootloader mode */
+    timer->stop();
+    fcdAppReset();
+    timer->start(1000);
+
+    fwDialog->exec();
+
+    /* set FCD back to application mode */
+    timer->stop();
+    fcdBlReset();
+    timer->start(1000);
+
+    delete fwDialog;
 }
 
 
