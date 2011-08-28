@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DockIfGain</class>
+ <widget class="QDockWidget" name="DockIfGain">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>164</width>
+    <height>235</height>
+   </rect>
+  </property>
+  <property name="allowedAreas">
+   <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+  </property>
+  <property name="windowTitle">
+   <string>IF Gain</string>
+  </property>
+  <widget class="QWidget" name="dockWidgetContents">
+   <layout class="QFormLayout" name="formLayout">
+    <item row="0" column="0">
+     <widget class="QLabel" name="labelIFGain1">
+      <property name="text">
+       <string>IF gain 1</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QComboBox" name="comboBoxIFGain1"/>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="labelIFGain2">
+      <property name="text">
+       <string>IF gain 2</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QComboBox" name="comboBoxIFGain2"/>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="labelIFGain3">
+      <property name="text">
+       <string>IF gain 3</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QComboBox" name="comboBoxIFGain3"/>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="labelIFGain4">
+      <property name="text">
+       <string>IF gain 4</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QComboBox" name="comboBoxIFGain4"/>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="labelIFGain5">
+      <property name="text">
+       <string>IF gain 5</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QComboBox" name="comboBoxIFGain5"/>
+    </item>
+    <item row="5" column="0">
+     <widget class="QLabel" name="labelIFGain6">
+      <property name="text">
+       <string>IF gain 6</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="1">
+     <widget class="QComboBox" name="comboBoxIFGain6"/>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

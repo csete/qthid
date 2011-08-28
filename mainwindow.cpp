@@ -294,7 +294,7 @@ static const COMBO_ITEM_STRUCT _cisIFGain6[]=
 };
 
 
-/** \brief List of all combo boxes. */    /** FIXME: Review defaults */
+/** \brief List of all combo boxes. */
 static COMBO_STRUCT _acs[] =
 {
     {FCD_CMD_APP_SET_LNA_GAIN,     FCD_CMD_APP_GET_LNA_GAIN,    10, NULL, _cisLNAGain},
@@ -328,6 +328,25 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->setupUi(this);
 
+    /* create dock widgets */
+    uiDockIfGain = new DockIfGain();
+
+    /* Add dock widgets to main window. This should be done even for
+       dock widgets that are going to be hidden, otherwise they will
+       end up floating in their own top-level window and can not be
+       docked to the mainwindow.
+    */
+    addDockWidget(Qt::RightDockWidgetArea, uiDockIfGain);
+
+    /* hide dock widgets we don't want to show by default */
+    uiDockIfGain->hide();
+
+    /* Add dock widget actions to View menu. This way all signal/slot
+       connections will be established automagially.
+    */
+    ui->menu_View->addAction(uiDockIfGain->toggleViewAction());
+
+
     /* Populate Combo Box list structure */
     _acs[0].pComboBox=ui->comboBoxLNAGain;
     _acs[1].pComboBox=ui->comboBoxLNAEnhance;
@@ -336,15 +355,15 @@ MainWindow::MainWindow(QWidget *parent) :
     _acs[4].pComboBox=ui->comboBoxMixerGain;
     _acs[5].pComboBox=ui->comboBoxBiasCurrent;
     _acs[6].pComboBox=ui->comboBoxMixerFilter;
-    _acs[7].pComboBox=ui->comboBoxIFGain1;
+    _acs[7].pComboBox=uiDockIfGain->ui->comboBoxIFGain1;
     _acs[8].pComboBox=ui->comboBoxIFGainMode;
     _acs[9].pComboBox=ui->comboBoxIFRCFilter;
-    _acs[10].pComboBox=ui->comboBoxIFGain2;
-    _acs[11].pComboBox=ui->comboBoxIFGain3;
-    _acs[12].pComboBox=ui->comboBoxIFGain4;
+    _acs[10].pComboBox=uiDockIfGain->ui->comboBoxIFGain2;
+    _acs[11].pComboBox=uiDockIfGain->ui->comboBoxIFGain3;
+    _acs[12].pComboBox=uiDockIfGain->ui->comboBoxIFGain4;
     _acs[13].pComboBox=ui->comboBoxIFFilter;
-    _acs[14].pComboBox=ui->comboBoxIFGain5;
-    _acs[15].pComboBox=ui->comboBoxIFGain6;
+    _acs[14].pComboBox=uiDockIfGain->ui->comboBoxIFGain5;
+    _acs[15].pComboBox=uiDockIfGain->ui->comboBoxIFGain6;
 
     populateCombos();
 
@@ -370,6 +389,14 @@ MainWindow::MainWindow(QWidget *parent) :
     /* connect signals & slots */
     connect(ui->freqCtrl, SIGNAL(NewFrequency(qint64)), this, SLOT(setNewFrequency(qint64)));
 
+    /* if gains */
+    connect(uiDockIfGain->ui->comboBoxIFGain1, SIGNAL(activated(int)), this, SLOT(setIfGain1(int)));
+    connect(uiDockIfGain->ui->comboBoxIFGain2, SIGNAL(activated(int)), this, SLOT(setIfGain2(int)));
+    connect(uiDockIfGain->ui->comboBoxIFGain3, SIGNAL(activated(int)), this, SLOT(setIfGain3(int)));
+    connect(uiDockIfGain->ui->comboBoxIFGain4, SIGNAL(activated(int)), this, SLOT(setIfGain4(int)));
+    connect(uiDockIfGain->ui->comboBoxIFGain5, SIGNAL(activated(int)), this, SLOT(setIfGain5(int)));
+    connect(uiDockIfGain->ui->comboBoxIFGain6, SIGNAL(activated(int)), this, SLOT(setIfGain6(int)));
+
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(enableControls()));
     timer->start(1000);
@@ -381,6 +408,8 @@ MainWindow::~MainWindow()
 
     timer->stop();
     delete timer;
+
+    delete uiDockIfGain;
 
     settings.setValue("Frequency",ui->freqCtrl->GetFrequency());
     settings.setValue("Correction",ui->spinBoxCorr->value());
@@ -603,9 +632,11 @@ void MainWindow::enableControls()
     ui->spinBoxCorr->setEnabled(fme==FCD_MODE_APP);
 
     ui->actionBalance->setEnabled(fme==FCD_MODE_APP);
+    ui->actionFirmware->setEnabled(fme==FCD_MODE_APP);
     ui->actionDefault->setEnabled(fme==FCD_MODE_APP);
 
-    enableCombos(fme==FCD_MODE_APP);
+    //enableCombos(fme==FCD_MODE_APP);
+    uiDockIfGain->setEnabled(fme==FCD_MODE_APP);
 
     /* manage FCD mode transitions */
     if (fme != prevMode) {
@@ -785,7 +816,7 @@ void MainWindow::on_comboBoxMixerFilter_activated(int index)
     fcdAppSetParam(_acs[6].u8CommandSet, &u8Write, 1);
 }
 
-void MainWindow::on_comboBoxIFGain1_activated(int index)
+void MainWindow::setIfGain1(int index)
 {
     quint8 u8Write = _acs[7].pacis[index].u8Val;
     fcdAppSetParam(_acs[7].u8CommandSet, &u8Write, 1);
@@ -803,19 +834,19 @@ void MainWindow::on_comboBoxIFRCFilter_activated(int index)
     fcdAppSetParam(_acs[9].u8CommandSet, &u8Write, 1);
 }
 
-void MainWindow::on_comboBoxIFGain2_activated(int index)
+void MainWindow::setIfGain2(int index)
 {
     quint8 u8Write = _acs[10].pacis[index].u8Val;
     fcdAppSetParam(_acs[10].u8CommandSet, &u8Write, 1);
 }
 
-void MainWindow::on_comboBoxIFGain3_activated(int index)
+void MainWindow::setIfGain3(int index)
 {
     quint8 u8Write = _acs[11].pacis[index].u8Val;
     fcdAppSetParam(_acs[11].u8CommandSet, &u8Write, 1);
 }
 
-void MainWindow::on_comboBoxIFGain4_activated(int index)
+void MainWindow::setIfGain4(int index)
 {
     quint8 u8Write = _acs[12].pacis[index].u8Val;
     fcdAppSetParam(_acs[12].u8CommandSet, &u8Write, 1);
@@ -827,13 +858,13 @@ void MainWindow::on_comboBoxIFFilter_activated(int index)
     fcdAppSetParam(_acs[13].u8CommandSet, &u8Write, 1);
 }
 
-void MainWindow::on_comboBoxIFGain5_activated(int index)
+void MainWindow::setIfGain5(int index)
 {
     quint8 u8Write = _acs[14].pacis[index].u8Val;
     fcdAppSetParam(_acs[14].u8CommandSet, &u8Write, 1);
 }
 
-void MainWindow::on_comboBoxIFGain6_activated(int index)
+void MainWindow::setIfGain6(int index)
 {
     quint8 u8Write = _acs[15].pacis[index].u8Val;
     fcdAppSetParam(_acs[15].u8CommandSet,&u8Write,1);

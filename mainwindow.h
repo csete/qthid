@@ -28,6 +28,7 @@
 #include <QLabel>
 #include "fcd.h"
 #include "fcddiagram.h"
+#include "dockifgain.h"
 
 namespace Ui {
     class MainWindow;
@@ -75,6 +76,7 @@ private:
     FCD_MODE_ENUM   prevMode;  /*! Previous mode to detect FCd mode changes (bootloader/app). */
 
     FcdDiagram *diagramDialog;
+    DockIfGain *uiDockIfGain;
 
     double StrToDouble(QString s);
 
@@ -97,17 +99,25 @@ private slots:
     void on_comboBoxRfFilter_activated(int index);
     void on_comboBoxMixerGain_activated(int index);
     void on_comboBoxMixerFilter_activated(int index);
-    void on_comboBoxIFGain1_activated(int index);
+    //void on_comboBoxIFGain1_activated(int index);
     void on_comboBoxIFRCFilter_activated(int index);
-    void on_comboBoxIFGain2_activated(int index);
-    void on_comboBoxIFGain3_activated(int index);
+    //void on_comboBoxIFGain2_activated(int index);
+    //void on_comboBoxIFGain3_activated(int index);
     void on_comboBoxIFFilter_activated(int index);
-    void on_comboBoxIFGain4_activated(int index);
-    void on_comboBoxIFGain5_activated(int index);
-    void on_comboBoxIFGain6_activated(int index);
+    //void on_comboBoxIFGain4_activated(int index);
+    //void on_comboBoxIFGain5_activated(int index);
+    //void on_comboBoxIFGain6_activated(int index);
     void on_comboBoxLNAEnhance_activated(int index);
     void on_comboBoxBiasCurrent_activated(int index);
     void on_comboBoxIFGainMode_activated(int index);
+
+    /* if gain */
+    void setIfGain1(int index);
+    void setIfGain2(int index);
+    void setIfGain3(int index);
+    void setIfGain4(int index);
+    void setIfGain5(int index);
+    void setIfGain6(int index);
 
     void enableControls();
 

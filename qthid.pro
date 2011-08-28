@@ -37,7 +37,8 @@ SOURCES +=\
     freqctrl.cpp \
     iqbalance.cc \
     fcddiagram.cpp \
-    firmware.cpp
+    firmware.cpp \
+    dockifgain.cpp
 
 mac: SOURCES += hidmac.c
 win32: SOURCES += hidwin.cpp
@@ -49,13 +50,15 @@ HEADERS  += mainwindow.h \
     freqctrl.h \
     iqbalance.h \
     fcddiagram.h \
-    firmware.h
+    firmware.h \
+    dockifgain.h
 
 FORMS    += \
     iqbalance.ui \
     mainwindow.ui \
     fcddiagram.ui \
-    firmware.ui
+    firmware.ui \
+    dockifgain.ui
 
 mac:LIBS += /System/Library/Frameworks/CoreFoundation.framework/CoreFoundation \
     /System/Library/Frameworks/IOKit.framework/Versions/A/IOKit
