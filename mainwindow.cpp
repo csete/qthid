@@ -356,12 +356,12 @@ MainWindow::MainWindow(QWidget *parent) :
     _acs[5].pComboBox=ui->comboBoxBiasCurrent;
     _acs[6].pComboBox=ui->comboBoxMixerFilter;
     _acs[7].pComboBox=uiDockIfGain->ui->comboBoxIFGain1;
-    _acs[8].pComboBox=ui->comboBoxIFGainMode;
-    _acs[9].pComboBox=ui->comboBoxIFRCFilter;
+    _acs[8].pComboBox=uiDockIfGain->ui->comboBoxIFGainMode;
+    _acs[9].pComboBox=uiDockIfGain->ui->comboBoxIFRCFilter;
     _acs[10].pComboBox=uiDockIfGain->ui->comboBoxIFGain2;
     _acs[11].pComboBox=uiDockIfGain->ui->comboBoxIFGain3;
     _acs[12].pComboBox=uiDockIfGain->ui->comboBoxIFGain4;
-    _acs[13].pComboBox=ui->comboBoxIFFilter;
+    _acs[13].pComboBox=uiDockIfGain->ui->comboBoxIFFilter;
     _acs[14].pComboBox=uiDockIfGain->ui->comboBoxIFGain5;
     _acs[15].pComboBox=uiDockIfGain->ui->comboBoxIFGain6;
 
@@ -390,6 +390,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->freqCtrl, SIGNAL(NewFrequency(qint64)), this, SLOT(setNewFrequency(qint64)));
 
     /* if gains */
+    connect(uiDockIfGain->ui->comboBoxIFGainMode, SIGNAL(activated(int)), this, SLOT(setIfGainMode(int)));
+    connect(uiDockIfGain->ui->comboBoxIFRCFilter, SIGNAL(activated(int)), this, SLOT(setIfRcFilter(int)));
+    connect(uiDockIfGain->ui->comboBoxIFFilter, SIGNAL(activated(int)), this, SLOT(setIfFilter(int)));
     connect(uiDockIfGain->ui->comboBoxIFGain1, SIGNAL(activated(int)), this, SLOT(setIfGain1(int)));
     connect(uiDockIfGain->ui->comboBoxIFGain2, SIGNAL(activated(int)), this, SLOT(setIfGain2(int)));
     connect(uiDockIfGain->ui->comboBoxIFGain3, SIGNAL(activated(int)), this, SLOT(setIfGain3(int)));
@@ -816,19 +819,19 @@ void MainWindow::on_comboBoxMixerFilter_activated(int index)
     fcdAppSetParam(_acs[6].u8CommandSet, &u8Write, 1);
 }
 
+void MainWindow::setIfGainMode(int index)
+{
+    quint8 u8Write = _acs[8].pacis[index].u8Val;
+    fcdAppSetParam(_acs[8].u8CommandSet, &u8Write, 1);
+}
+
 void MainWindow::setIfGain1(int index)
 {
     quint8 u8Write = _acs[7].pacis[index].u8Val;
     fcdAppSetParam(_acs[7].u8CommandSet, &u8Write, 1);
 }
 
-void MainWindow::on_comboBoxIFGainMode_activated(int index)
-{
-    quint8 u8Write = _acs[8].pacis[index].u8Val;
-    fcdAppSetParam(_acs[8].u8CommandSet, &u8Write, 1);
-}
-
-void MainWindow::on_comboBoxIFRCFilter_activated(int index)
+void MainWindow::setIfRcFilter(int index)
 {
     quint8 u8Write = _acs[9].pacis[index].u8Val;
     fcdAppSetParam(_acs[9].u8CommandSet, &u8Write, 1);
@@ -852,7 +855,7 @@ void MainWindow::setIfGain4(int index)
     fcdAppSetParam(_acs[12].u8CommandSet, &u8Write, 1);
 }
 
-void MainWindow::on_comboBoxIFFilter_activated(int index)
+void MainWindow::setIfFilter(int index)
 {
     quint8 u8Write = _acs[13].pacis[index].u8Val;
     fcdAppSetParam(_acs[13].u8CommandSet, &u8Write, 1);
@@ -899,21 +902,30 @@ void MainWindow::on_actionBalance_triggered()
 /** \brief Action: Open firmware tools. */
 void MainWindow::on_actionFirmware_triggered()
 {
-    CFirmware *fwDialog = new CFirmware(this);
+    fwDialog = new CFirmware(this);
+    connect(fwDialog, SIGNAL(finished(int)), this, SLOT(fwDialogFinished(int)));
 
     /* set FCD in bootloader mode */
     timer->stop();
     fcdAppReset();
     timer->start(1000);
 
-    fwDialog->exec();
+    fwDialog->show();
+}
+
+
+/*! \brief Slot: Firmware dialog finished. */
+void MainWindow::fwDialogFinished(int result)
+{
+    qDebug() << "FW dialog finished. Result:" << result;
+
+    disconnect(fwDialog, SIGNAL(finished(int)), this, SLOT(fwDialogFinished(int)));
+    delete fwDialog;
 
     /* set FCD back to application mode */
     timer->stop();
     fcdBlReset();
     timer->start(1000);
-
-    delete fwDialog;
 }
 
 

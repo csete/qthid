@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>287</width>
-    <height>109</height>
+    <height>122</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,7 @@
     <normaloff>:/qthid/images/fw.png</normaloff>:/qthid/images/fw.png</iconset>
   </property>
   <property name="modal">
-   <bool>true</bool>
+   <bool>false</bool>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>

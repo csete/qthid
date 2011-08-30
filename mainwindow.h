@@ -29,11 +29,11 @@
 #include "fcd.h"
 #include "fcddiagram.h"
 #include "dockifgain.h"
+#include "firmware.h"
 
 namespace Ui {
     class MainWindow;
 }
-
 
 /** \brief Data definition for combo box items.
   * This data structure represents an item in a combo box used for
@@ -44,7 +44,6 @@ typedef struct {
     const char *pszDesc;  /*!< The display name of the item. */
     qint8 u8Val;          /*!< The numerical value of the item. */
 } COMBO_ITEM_STRUCT;
-
 
 /** \brief Data definition for a combo box.
   * This data structure represents a combo box that is used for gain and
@@ -75,8 +74,9 @@ private:
     QLabel         *fcdStatus; /*! Label showing FCD status in statusbar. */
     FCD_MODE_ENUM   prevMode;  /*! Previous mode to detect FCd mode changes (bootloader/app). */
 
-    FcdDiagram *diagramDialog;
-    DockIfGain *uiDockIfGain;
+    FcdDiagram *diagramDialog; /*! Dialog window showing FCD diagram. */
+    DockIfGain *uiDockIfGain;  /*! Dock widget with IF gain and filter controls. */
+    CFirmware  *fwDialog;      /*! Firmware tools (uplaod and verify firmware). */
 
     double StrToDouble(QString s);
 
@@ -90,7 +90,7 @@ public slots:
     void setNewFrequency(qint64 freq);
 
 private slots:
-    void on_spinBoxCorr_valueChanged(int );
+    void on_spinBoxCorr_valueChanged(int);
 
     void on_pushButtonBiasT_toggled(bool isOn);
 
@@ -100,18 +100,21 @@ private slots:
     void on_comboBoxMixerGain_activated(int index);
     void on_comboBoxMixerFilter_activated(int index);
     //void on_comboBoxIFGain1_activated(int index);
-    void on_comboBoxIFRCFilter_activated(int index);
+    //void on_comboBoxIFRCFilter_activated(int index);
     //void on_comboBoxIFGain2_activated(int index);
     //void on_comboBoxIFGain3_activated(int index);
-    void on_comboBoxIFFilter_activated(int index);
+    //void on_comboBoxIFFilter_activated(int index);
     //void on_comboBoxIFGain4_activated(int index);
     //void on_comboBoxIFGain5_activated(int index);
     //void on_comboBoxIFGain6_activated(int index);
     void on_comboBoxLNAEnhance_activated(int index);
     void on_comboBoxBiasCurrent_activated(int index);
-    void on_comboBoxIFGainMode_activated(int index);
+    //void on_comboBoxIFGainMode_activated(int index);
 
     /* if gain */
+    void setIfGainMode(int index);
+    void setIfRcFilter(int index);
+    void setIfFilter(int index);
     void setIfGain1(int index);
     void setIfGain2(int index);
     void setIfGain3(int index);
@@ -120,6 +123,7 @@ private slots:
     void setIfGain6(int index);
 
     void enableControls();
+    void fwDialogFinished(int result);
 
     /* actions */
     void on_actionLoad_triggered();

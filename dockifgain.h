@@ -27,6 +27,8 @@ namespace Ui {
     class DockIfGain;
 }
 
+
+/*! \brief Dock widgt with IF gain and filter controls. */
 class DockIfGain : public QDockWidget
 {
     Q_OBJECT

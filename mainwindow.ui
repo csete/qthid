@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>560</width>
-    <height>350</height>
+    <width>480</width>
+    <height>375</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -253,27 +253,6 @@ Requires FCD with S/N TBD or above.</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="3">
-       <widget class="QLabel" name="labelMixerFilter">
-        <property name="text">
-         <string>Mixer filter</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="4">
-       <widget class="QLabel" name="labelIFRCfilter">
-        <property name="text">
-         <string>IF RC filter</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="5">
-       <widget class="QLabel" name="labelFilter">
-        <property name="text">
-         <string>IF filter</string>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="0">
        <widget class="QComboBox" name="comboBoxLNAGain"/>
       </item>
@@ -295,16 +274,17 @@ the frequency changes but you can force it to use a specific filter.</string>
       <item row="1" column="3">
        <widget class="QComboBox" name="comboBoxMixerFilter"/>
       </item>
-      <item row="1" column="4">
-       <widget class="QComboBox" name="comboBoxIFRCFilter"/>
-      </item>
-      <item row="1" column="5">
-       <widget class="QComboBox" name="comboBoxIFFilter"/>
-      </item>
       <item row="0" column="1">
        <widget class="QLabel" name="labelRFFilter">
         <property name="text">
          <string>RF Filter</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QLabel" name="labelMixerFilter">
+        <property name="text">
+         <string>Mixer filter</string>
         </property>
        </widget>
       </item>
@@ -325,13 +305,6 @@ the frequency changes but you can force it to use a specific filter.</string>
          <widget class="QLabel" name="labelBiasCurrent">
           <property name="text">
            <string>Bias current</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="3">
-         <widget class="QLabel" name="labelIFgainmode">
-          <property name="text">
-           <string>IF gain mode</string>
           </property>
          </widget>
         </item>
@@ -356,9 +329,6 @@ a specific band.</string>
         </item>
         <item row="1" column="2">
          <widget class="QComboBox" name="comboBoxBiasCurrent"/>
-        </item>
-        <item row="1" column="3">
-         <widget class="QComboBox" name="comboBoxIFGainMode"/>
         </item>
         <item row="0" column="0">
          <widget class="QLabel" name="labelLNAEnhance">
@@ -391,8 +361,8 @@ a specific band.</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>560</width>
-     <height>25</height>
+     <width>480</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

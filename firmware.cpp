@@ -40,6 +40,7 @@ CFirmware::CFirmware(QWidget *parent) :
 
 CFirmware::~CFirmware()
 {
+    qDebug() << "Firmware dialog destroyed";
     delete ui;
 }
 
