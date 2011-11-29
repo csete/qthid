@@ -177,17 +177,48 @@ Hold the button down to scan.</string>
        </layout>
       </item>
       <item>
-       <spacer name="horizontalSpacer_5">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+       <layout class="QVBoxLayout" name="verticalLayout_7">
+        <property name="rightMargin">
+         <number>0</number>
         </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QCheckBox" name="hopCheck">
+            <property name="text">
+             <string>hop frequency every</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="hopSec">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maxLength">
+             <number>4</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_sec">
+            <property name="text">
+             <string>sec</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QPlainTextEdit" name="hopFreqList"/>
+        </item>
+       </layout>
       </item>
       <item>
        <widget class="QGroupBox" name="groupBoxFreqCorr">
@@ -776,7 +807,7 @@ a specific band.</string>
      <x>0</x>
      <y>0</y>
      <width>1106</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
