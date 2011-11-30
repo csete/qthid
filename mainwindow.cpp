@@ -1325,11 +1325,11 @@ void MainWindow::timerTimeout()
             hopIndex = 0;
         }
 
-        double d = atof(p);
+        int d = atoi(p);
 
         hopDelay = hopDelayCounter;
         hopIndex++;
-        printf("timeout, f %d is %lf\n", hopIndex, d);fflush(stdout);
+        on_lineEditFreq_textChanged(QString("%1").arg(d, 10));
     }
 }
 
