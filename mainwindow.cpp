@@ -361,8 +361,10 @@ MainWindow::MainWindow(QWidget *parent) :
     setUnifiedTitleAndToolBarOnMac(true);
 
     timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(enableControls()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(timerTimeout()));
     timer->start(1000);
+    on_hopCheck_toggled(false);
+    on_hopSec_textChanged(NULL);
 }
 
 MainWindow::~MainWindow()
@@ -1292,4 +1294,79 @@ void MainWindow::on_actionAbout_triggered()
 void MainWindow::on_actionAboutQt_triggered()
 {
     QMessageBox::aboutQt(this, tr("About Qt"));
+}
+
+void MainWindow::timerTimeout()
+{
+    enableControls();
+
+    if (!doHop)
+        return;
+    hopDelay--;
+    if (hopDelay <= 0)
+    {
+        char * text = ui->hopFreqList->toPlainText().toLatin1().data();
+        char * p = text;
+        /* skip leading newlines */
+        while (*p && (*p == 0x0a))
+               p++;
+        char * p_start = p;
+        int line = hopIndex;
+        while (line--)
+        {
+            while (*p && (*p != 0x0a))
+                p++;
+            while (*p == 0x0a)
+                p++;
+        }
+        if (!*p)
+        {
+            p = p_start;
+            hopIndex = 0;
+        }
+
+        double d = atof(p);
+
+        hopDelay = hopDelayCounter;
+        hopIndex++;
+        printf("timeout, f %d is %lf\n", hopIndex, d);fflush(stdout);
+    }
+}
+
+void MainWindow::on_hopSec_textChanged(QString s)
+{
+    double d = StrToDouble(s);
+    if (d == 0.0)
+        d = 1.0;
+    QString s2;
+    s2 = s2.number(d, 'f', 0);
+    ui->hopSec->setText(s2);
+    hopDelay = d;
+    hopDelayCounter = d;
+}
+
+void MainWindow::on_hopCheck_toggled(bool checked)
+{
+    if (checked)
+        doHop = 1;
+    else
+        doHop = 0;
+}
+
+void MainWindow::on_hopFreqList_textChanged()
+{
+    int pos = ui->hopFreqList->textCursor().position();
+
+    hopIndex = 0;
+
+    QChar ch = ui->hopFreqList->toPlainText().at(pos-1);
+    if (
+            pos &&
+            !ch.isDigit() &&
+            !(ch == 0x0a)
+            )
+    {
+        ui->hopFreqList->textCursor().deletePreviousChar();
+        return;
+    }
 }

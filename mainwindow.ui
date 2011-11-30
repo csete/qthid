@@ -202,7 +202,7 @@ Hold the button down to scan.</string>
              </sizepolicy>
             </property>
             <property name="maxLength">
-             <number>4</number>
+             <number>3</number>
             </property>
            </widget>
           </item>
@@ -216,7 +216,14 @@ Hold the button down to scan.</string>
          </layout>
         </item>
         <item>
-         <widget class="QPlainTextEdit" name="hopFreqList"/>
+         <widget class="QPlainTextEdit" name="hopFreqList">
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="lineWrapMode">
+           <enum>QPlainTextEdit::NoWrap</enum>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
