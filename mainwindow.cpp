@@ -344,6 +344,7 @@ MainWindow::MainWindow(QWidget *parent) :
     populateCombos();
 
     ui->lineEditFreq->setText(settings.value("Frequency","97,300.000").toString());
+    ui->hopFreqList->setPlainText(settings.value("HopFrequencyList","104600000").toString());
     ui->lineEditStep->setText(settings.value("Step","25,000").toString());
     ui->spinBoxCorr->setValue(settings.value("Correction","-120").toInt());
 
@@ -375,6 +376,7 @@ MainWindow::~MainWindow()
     delete timer;
 
     settings.setValue("Frequency",ui->lineEditFreq->text());
+    settings.setValue("HopFrequencyList",ui->hopFreqList->toPlainText());
     settings.setValue("Step",ui->lineEditStep->text());
     settings.setValue("Correction",ui->spinBoxCorr->value());
     settings.setValue("DCICorr",ui->doubleSpinBoxDCI->value());
@@ -1362,9 +1364,9 @@ void MainWindow::on_hopFreqList_textChanged()
 
     QChar ch = ui->hopFreqList->toPlainText().at(pos-1);
     if (
-            pos &&
+            (pos &&
             !ch.isDigit() &&
-            !(ch == 0x0a) ||
+            !(ch == 0x0a)) ||
             (x > 10)
             )
     {
