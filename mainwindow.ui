@@ -182,14 +182,37 @@ Hold the button down to scan.</string>
          <number>0</number>
         </property>
         <item>
+         <widget class="QCheckBox" name="hopCheck">
+          <property name="text">
+           <string>hop frequency</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <layout class="QHBoxLayout" name="horizontalLayout_7">
           <property name="bottomMargin">
            <number>0</number>
           </property>
           <item>
-           <widget class="QCheckBox" name="hopCheck">
+           <spacer name="horizontalSpacer_7">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>12</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_every">
             <property name="text">
-             <string>hop frequency every</string>
+             <string>every</string>
             </property>
            </widget>
           </item>
@@ -197,7 +220,7 @@ Hold the button down to scan.</string>
            <widget class="QLineEdit" name="hopSec">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Ignored" vsizetype="Fixed">
-              <horstretch>0</horstretch>
+              <horstretch>1</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
@@ -208,6 +231,12 @@ Hold the button down to scan.</string>
           </item>
           <item>
            <widget class="QLabel" name="label_sec">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>sec</string>
             </property>
@@ -217,6 +246,12 @@ Hold the button down to scan.</string>
         </item>
         <item>
          <widget class="QPlainTextEdit" name="hopFreqList">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Ignored" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="horizontalScrollBarPolicy">
            <enum>Qt::ScrollBarAlwaysOff</enum>
           </property>
@@ -226,6 +261,19 @@ Hold the button down to scan.</string>
          </widget>
         </item>
        </layout>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_5">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
       </item>
       <item>
        <widget class="QGroupBox" name="groupBoxFreqCorr">
