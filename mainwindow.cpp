@@ -1356,6 +1356,7 @@ void MainWindow::on_hopCheck_toggled(bool checked)
 void MainWindow::on_hopFreqList_textChanged()
 {
     int pos = ui->hopFreqList->textCursor().position();
+    int x   = ui->hopFreqList->textCursor().positionInBlock();
 
     hopIndex = 0;
 
@@ -1363,7 +1364,8 @@ void MainWindow::on_hopFreqList_textChanged()
     if (
             pos &&
             !ch.isDigit() &&
-            !(ch == 0x0a)
+            !(ch == 0x0a) ||
+            (x > 10)
             )
     {
         ui->hopFreqList->textCursor().deletePreviousChar();
