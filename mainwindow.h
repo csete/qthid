@@ -68,7 +68,13 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
     QTimer *timer;
+    bool doHop;
+    int hopDelay; /* in seconds */
+    int hopDelayCounter;
+    int hopIndex;
+
     FCD_MODE_ENUM prevMode;
 
     double StrToDouble(QString s);
@@ -89,6 +95,7 @@ private slots:
 
     void on_lineEditStep_textChanged(QString );
     void on_lineEditFreq_textChanged(QString );
+    void on_hopSec_textChanged(QString);
 
     void on_pushButtonDown_clicked();
     void on_pushButtonUp_clicked();
@@ -117,6 +124,7 @@ private slots:
     void on_comboBoxIFGainMode_activated(int index);
 
     void enableControls();
+    void timerTimeout();
 
     /* actions */
     void on_actionLoad_triggered();
@@ -125,6 +133,9 @@ private slots:
     void on_actionFirmware_triggered();
     void on_actionAbout_triggered();
     void on_actionAboutQt_triggered();
+
+    void on_hopCheck_toggled(bool checked);
+    void on_hopFreqList_textChanged();
 };
 
 #endif // MAINWINDOW_H

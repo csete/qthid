@@ -344,6 +344,7 @@ MainWindow::MainWindow(QWidget *parent) :
     populateCombos();
 
     ui->lineEditFreq->setText(settings.value("Frequency","97,300.000").toString());
+    ui->hopFreqList->setPlainText(settings.value("HopFrequencyList","104600000").toString());
     ui->lineEditStep->setText(settings.value("Step","25,000").toString());
     ui->spinBoxCorr->setValue(settings.value("Correction","-120").toInt());
 
@@ -361,8 +362,10 @@ MainWindow::MainWindow(QWidget *parent) :
     setUnifiedTitleAndToolBarOnMac(true);
 
     timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(enableControls()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(timerTimeout()));
     timer->start(1000);
+    on_hopCheck_toggled(false);
+    on_hopSec_textChanged(NULL);
 }
 
 MainWindow::~MainWindow()
@@ -373,6 +376,7 @@ MainWindow::~MainWindow()
     delete timer;
 
     settings.setValue("Frequency",ui->lineEditFreq->text());
+    settings.setValue("HopFrequencyList",ui->hopFreqList->toPlainText());
     settings.setValue("Step",ui->lineEditStep->text());
     settings.setValue("Correction",ui->spinBoxCorr->value());
     settings.setValue("DCICorr",ui->doubleSpinBoxDCI->value());
@@ -1292,4 +1296,81 @@ void MainWindow::on_actionAbout_triggered()
 void MainWindow::on_actionAboutQt_triggered()
 {
     QMessageBox::aboutQt(this, tr("About Qt"));
+}
+
+void MainWindow::timerTimeout()
+{
+    enableControls();
+
+    if (!doHop)
+        return;
+    hopDelay--;
+    if (hopDelay <= 0)
+    {
+        char * text = ui->hopFreqList->toPlainText().toLatin1().data();
+        char * p = text;
+        /* skip leading newlines */
+        while (*p && (*p == 0x0a))
+               p++;
+        char * p_start = p;
+        int line = hopIndex;
+        while (line--)
+        {
+            while (*p && (*p != 0x0a))
+                p++;
+            while (*p == 0x0a)
+                p++;
+        }
+        if (!*p)
+        {
+            p = p_start;
+            hopIndex = 0;
+        }
+
+        int d = atoi(p);
+
+        hopDelay = hopDelayCounter;
+        hopIndex++;
+        on_lineEditFreq_textChanged(QString("%1").arg(d, 10));
+    }
+}
+
+void MainWindow::on_hopSec_textChanged(QString s)
+{
+    double d = StrToDouble(s);
+    if (d == 0.0)
+        d = 1.0;
+    QString s2;
+    s2 = s2.number(d, 'f', 0);
+    ui->hopSec->setText(s2);
+    hopDelay = d;
+    hopDelayCounter = d;
+}
+
+void MainWindow::on_hopCheck_toggled(bool checked)
+{
+    if (checked)
+        doHop = 1;
+    else
+        doHop = 0;
+}
+
+void MainWindow::on_hopFreqList_textChanged()
+{
+    int pos = ui->hopFreqList->textCursor().position();
+    int x   = ui->hopFreqList->textCursor().positionInBlock();
+
+    hopIndex = 0;
+
+    QChar ch = ui->hopFreqList->toPlainText().at(pos-1);
+    if (
+            (pos &&
+            !ch.isDigit() &&
+            !(ch == 0x0a)) ||
+            (x > 10)
+            )
+    {
+        ui->hopFreqList->textCursor().deletePreviousChar();
+        return;
+    }
 }
