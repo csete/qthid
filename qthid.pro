@@ -31,15 +31,19 @@ VERSTR = '\\"$${VER}\\"'          # place quotes around the version string
 DEFINES += VERSION=\"$${VERSTR}\" # create a VERSION macro containing the version string
 
 SOURCES +=\
-        mainwindow.cpp \
+    mainwindow.cpp \
     main.cpp \
     fcd.c
 
 mac: SOURCES += hidmac.c
 win32: SOURCES += hidwin.cpp
-linux-g++: SOURCES +=hid-libusb.c
 
-HEADERS  += mainwindow.h \
+linux-g++|linux-g++-64 {
+    SOURCES +=hid-libusb.c
+}
+
+HEADERS  += \
+    mainwindow.h \
     hidapi.h \
     fcd.h fcdhidcmd.h
 
@@ -50,7 +54,7 @@ mac:LIBS += /System/Library/Frameworks/CoreFoundation.framework/CoreFoundation \
 win32:LIBS += "C:\\Program Files\\Microsoft SDKs\\Windows\\v7.0\\Lib\\setupapi.lib"
 
 # libusb-1.0 on Linux uses pkg-config
-linux-g++ {
+linux-g++|linux-g++-64 {
     CONFIG += link_pkgconfig
     PKGCONFIG += libusb-1.0
 }
