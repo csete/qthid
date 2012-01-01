@@ -6,9 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>189</width>
-    <height>310</height>
+    <width>200</width>
+    <height>292</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>200</width>
+    <height>127</height>
+   </size>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="qthid.qrc">
+    <normaloff>:/qthid/images/qthid.png</normaloff>:/qthid/images/qthid.png</iconset>
   </property>
   <property name="allowedAreas">
    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
@@ -17,100 +27,124 @@
    <string>IF Controls</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
-   <layout class="QFormLayout" name="formLayout">
-    <item row="0" column="0">
-     <widget class="QLabel" name="labelIFgainmode">
-      <property name="text">
-       <string>Mode</string>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QScrollArea" name="scrollArea">
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
       </property>
-     </widget>
-    </item>
-    <item row="0" column="1">
-     <widget class="QComboBox" name="comboBoxIFGainMode"/>
-    </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="labelIFGain1">
-      <property name="text">
-       <string>Gain 1</string>
+      <property name="widgetResizable">
+       <bool>true</bool>
       </property>
+      <widget class="QWidget" name="scrollAreaWidgetContents">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>162</width>
+         <height>300</height>
+        </rect>
+       </property>
+       <layout class="QFormLayout" name="formLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="labelIFgainmode">
+          <property name="text">
+           <string>Mode</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QComboBox" name="comboBoxIFGainMode"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="labelIFGain1">
+          <property name="text">
+           <string>Gain 1</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QComboBox" name="comboBoxIFGain1"/>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="labelIFRCfilter">
+          <property name="text">
+           <string>RC filter</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QComboBox" name="comboBoxIFRCFilter"/>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="labelIFGain2">
+          <property name="text">
+           <string>Gain 2</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QComboBox" name="comboBoxIFGain2"/>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="labelIFGain3">
+          <property name="text">
+           <string>Gain 3</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QComboBox" name="comboBoxIFGain3"/>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="labelIFGain4">
+          <property name="text">
+           <string>Gain 4</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="QComboBox" name="comboBoxIFGain4"/>
+        </item>
+        <item row="6" column="0">
+         <widget class="QLabel" name="labelFilter">
+          <property name="text">
+           <string>IF Filter</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1">
+         <widget class="QComboBox" name="comboBoxIFFilter"/>
+        </item>
+        <item row="7" column="0">
+         <widget class="QLabel" name="labelIFGain5">
+          <property name="text">
+           <string>Gain 5</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="1">
+         <widget class="QComboBox" name="comboBoxIFGain5"/>
+        </item>
+        <item row="8" column="0">
+         <widget class="QLabel" name="labelIFGain6">
+          <property name="text">
+           <string>Gain 6</string>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="1">
+         <widget class="QComboBox" name="comboBoxIFGain6"/>
+        </item>
+       </layout>
+      </widget>
      </widget>
-    </item>
-    <item row="1" column="1">
-     <widget class="QComboBox" name="comboBoxIFGain1"/>
-    </item>
-    <item row="2" column="0">
-     <widget class="QLabel" name="labelIFRCfilter">
-      <property name="text">
-       <string>RC filter</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="1">
-     <widget class="QComboBox" name="comboBoxIFRCFilter"/>
-    </item>
-    <item row="3" column="0">
-     <widget class="QLabel" name="labelIFGain2">
-      <property name="text">
-       <string>Gain 2</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="1">
-     <widget class="QComboBox" name="comboBoxIFGain2"/>
-    </item>
-    <item row="4" column="0">
-     <widget class="QLabel" name="labelIFGain3">
-      <property name="text">
-       <string>Gain 3</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="1">
-     <widget class="QComboBox" name="comboBoxIFGain3"/>
-    </item>
-    <item row="5" column="0">
-     <widget class="QLabel" name="labelIFGain4">
-      <property name="text">
-       <string>Gain 4</string>
-      </property>
-     </widget>
-    </item>
-    <item row="5" column="1">
-     <widget class="QComboBox" name="comboBoxIFGain4"/>
-    </item>
-    <item row="6" column="0">
-     <widget class="QLabel" name="labelFilter">
-      <property name="text">
-       <string>IF Filter</string>
-      </property>
-     </widget>
-    </item>
-    <item row="6" column="1">
-     <widget class="QComboBox" name="comboBoxIFFilter"/>
-    </item>
-    <item row="7" column="0">
-     <widget class="QLabel" name="labelIFGain5">
-      <property name="text">
-       <string>Gain 5</string>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="1">
-     <widget class="QComboBox" name="comboBoxIFGain5"/>
-    </item>
-    <item row="8" column="0">
-     <widget class="QLabel" name="labelIFGain6">
-      <property name="text">
-       <string>Gain 6</string>
-      </property>
-     </widget>
-    </item>
-    <item row="8" column="1">
-     <widget class="QComboBox" name="comboBoxIFGain6"/>
     </item>
    </layout>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="qthid.qrc"/>
+ </resources>
  <connections/>
 </ui>
