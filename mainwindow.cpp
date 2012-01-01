@@ -376,9 +376,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     /* frequency controller */
     if (lnbOffset < -50e6)
-        ui->freqCtrl->Setup(10, 0, 2200e6+lnbOffset, 1, UNITS_MHZ);
+        ui->freqCtrl->Setup(11, 0, 2200e6+lnbOffset, 1, UNITS_MHZ);
     else
-        ui->freqCtrl->Setup(10, 50e6+lnbOffset, 2200e6+lnbOffset, 1, UNITS_MHZ);
+        ui->freqCtrl->Setup(11, 50e6+lnbOffset, 2200e6+lnbOffset, 1, UNITS_MHZ);
     ui->freqCtrl->SetFrequency(settings.value("Frequency", 144800000).toInt()+lnbOffset);
 
     /* FCD status label */
@@ -796,9 +796,9 @@ void MainWindow::on_spinBoxLnb_valueChanged(double value)
 
     /* update controller limits */
     if (lnbOffset < -50e6)
-        ui->freqCtrl->Setup(10, 0, 2200e6+lnbOffset, 1, UNITS_MHZ);
+        ui->freqCtrl->Setup(11, 0, 2200e6+lnbOffset, 1, UNITS_MHZ);
     else
-        ui->freqCtrl->Setup(10, 50e6+lnbOffset, 2200e6+lnbOffset, 1, UNITS_MHZ);
+        ui->freqCtrl->Setup(11, 50e6+lnbOffset, 2200e6+lnbOffset, 1, UNITS_MHZ);
 
     /* update display frequency (changes with LNB offset) */
     ui->freqCtrl->SetFrequency(currFcdFreq + lnbOffset);
