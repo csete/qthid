@@ -78,6 +78,8 @@ private:
     DockIfGain *uiDockIfGain;  /*! Dock widget with IF gain and filter controls. */
     CFirmware  *fwDialog;      /*! Firmware tools (uplaod and verify firmware). */
 
+    qint64      lnbOffset;     /*! Frequency offset when using up- and downconverters (Hz). */
+
     double StrToDouble(QString s);
 
     void populateCombo(QComboBox *box, int nIdxDefault, const COMBO_ITEM_STRUCT *pcis);
@@ -91,6 +93,7 @@ public slots:
 
 private slots:
     void on_spinBoxCorr_valueChanged(int);
+    void on_spinBoxLnb_valueChanged(double value);
 
     void on_pushButtonBiasT_toggled(bool isOn);
 

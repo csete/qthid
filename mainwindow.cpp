@@ -367,10 +367,19 @@ MainWindow::MainWindow(QWidget *parent) :
 
     populateCombos();
 
-    /* frequency controller */
-    ui->freqCtrl->Setup(10, 50e6, 2e9, 1, UNITS_MHZ);
-    ui->freqCtrl->SetFrequency(settings.value("Frequency", 144800000).toInt());
+    /* frequency correction */
     ui->spinBoxCorr->setValue(settings.value("Correction","-120").toInt());
+
+    /* LNB ofset */
+    lnbOffset = settings.value("LnbOffset","0").toInt(); // Stored as Hz
+    ui->spinBoxLnb->setValue(lnbOffset/1.0e6);  // Shown as MHz
+
+    /* frequency controller */
+    if (lnbOffset < -50e6)
+        ui->freqCtrl->Setup(10, 0, 2200e6+lnbOffset, 1, UNITS_MHZ);
+    else
+        ui->freqCtrl->Setup(10, 50e6+lnbOffset, 2200e6+lnbOffset, 1, UNITS_MHZ);
+    ui->freqCtrl->SetFrequency(settings.value("Frequency", 144800000).toInt()+lnbOffset);
 
     /* FCD status label */
     fcdStatus = new QLabel(tr("FCD status..."), this);
@@ -414,8 +423,9 @@ MainWindow::~MainWindow()
 
     delete uiDockIfGain;
 
-    settings.setValue("Frequency",ui->freqCtrl->GetFrequency());
+    settings.setValue("Frequency",ui->freqCtrl->GetFrequency()-lnbOffset);
     settings.setValue("Correction",ui->spinBoxCorr->value());
+    settings.setValue("LnbOffset", lnbOffset);
 
     delete ui;
 }
@@ -668,10 +678,14 @@ void MainWindow::enableControls()
 void MainWindow::setNewFrequency(qint64 freq)
 {
     FCD_MODE_ENUM fme;
-    double d = (double) freq;
+    double d = (double) (freq-lnbOffset);
 
     d *= 1.0 + ui->spinBoxCorr->value()/1000000.0;
 
+    qDebug() << "Set new frequency";
+    qDebug() << "    Display:" << freq;
+    qDebug() << "    LNB_offset:" << lnbOffset;
+    qDebug() << "    FCD set:" << d;
 
     fme = fcdAppSetFreqkHz((int)(d/1000.0));
     if (fme != FCD_MODE_APP) {
@@ -752,13 +766,46 @@ void MainWindow::on_pushButtonBiasT_toggled(bool isOn)
 void MainWindow::on_spinBoxCorr_valueChanged(int n)
 {
     /*** FIXME!! ***/
-    double d = (double) ui->freqCtrl->GetFrequency();
+    double d = (double) (ui->freqCtrl->GetFrequency()-lnbOffset);
 
     d *= 1.0 + n/1000000.0;
 
     fcdAppSetFreqkHz((int)(d/1000.0));
 }
 
+/** \brief LNB frequency offset changed.
+  * \param value The new frequewncy offset in MHz.
+  *
+  * This slot is called when the value of the LNB frequency offset is changed
+  * by the user. The frequency shown on the display is calculated as the FCD
+  * frequency + the LNB offset. This means that we use positive offset for
+  * downconverters and negative offset for upconverters.
+  *
+  * When the LNB frequewncy offset is changed, the FCD frequency is kept and
+  * the displayed frequency is adjusted.
+  */
+void MainWindow::on_spinBoxLnb_valueChanged(double value)
+{
+    qint64 currDispFreq = ui->freqCtrl->GetFrequency();
+    qint64 currFcdFreq = currDispFreq - lnbOffset;
+
+    /* convert to Hz */
+    lnbOffset = (qint64)(value*1.0e6);
+
+    qDebug() << "New LNB offset:" << lnbOffset;
+
+    /* update controller limits */
+    if (lnbOffset < -50e6)
+        ui->freqCtrl->Setup(10, 0, 2200e6+lnbOffset, 1, UNITS_MHZ);
+    else
+        ui->freqCtrl->Setup(10, 50e6+lnbOffset, 2200e6+lnbOffset, 1, UNITS_MHZ);
+
+    /* update display frequency (changes with LNB offset) */
+    ui->freqCtrl->SetFrequency(currFcdFreq + lnbOffset);
+
+    /* set new FCD frequency */
+    setNewFrequency(ui->freqCtrl->GetFrequency());
+}
 
 void MainWindow::on_comboBoxLNAGain_activated(int index)
 {

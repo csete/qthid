@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>480</width>
-    <height>375</height>
+    <width>400</width>
+    <height>344</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -62,7 +62,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Correction</string>
+             <string>Correction:</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -86,24 +86,14 @@
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
+            <property name="suffix">
+             <string> ppm</string>
+            </property>
             <property name="minimum">
              <number>-500</number>
             </property>
             <property name="maximum">
              <number>500</number>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="labelCorrection_2">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>ppm</string>
             </property>
            </widget>
           </item>
@@ -119,6 +109,40 @@
              </size>
             </property>
            </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="labelLnb">
+            <property name="text">
+             <string>LNB:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="spinBoxLnb">
+            <property name="toolTip">
+             <string>Frequency offset for up- and downconverters.
+Shown frequency = FCD_freq + LNB_offset
+Use positive offset for downconverters and negative offset for upconverters.</string>
+            </property>
+            <property name="frame">
+             <bool>true</bool>
+            </property>
+            <property name="buttonSymbols">
+             <enum>QAbstractSpinBox::UpDownArrows</enum>
+            </property>
+            <property name="suffix">
+             <string> MHz</string>
+            </property>
+            <property name="decimals">
+             <number>3</number>
+            </property>
+            <property name="minimum">
+             <double>-1000.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>15000.000000000000000</double>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -361,8 +385,8 @@ a specific band.</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>480</width>
-     <height>22</height>
+     <width>400</width>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
