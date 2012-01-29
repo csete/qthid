@@ -41,7 +41,7 @@ SOURCES +=\
     dockifgain.cpp
 
 mac: SOURCES += hidmac.c
-win32: SOURCES += hidwin.cpp
+win32: SOURCES += hidwin.c
 
 linux-g++|linux-g++-64 {
     SOURCES +=hid-libusb.c
