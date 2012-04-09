@@ -24,6 +24,7 @@
 #include <QFile>
 #include <QSettings>
 #include <QMessageBox>
+
 #include "fcd.h"
 #include "firmware.h"
 #include "ui_firmware.h"
@@ -44,6 +45,12 @@ CFirmware::~CFirmware()
     delete ui;
 }
 
+void CFirmware::closeEvent(QCloseEvent *event)
+{
+    qDebug() << "fwDialog closeEvent detected";
+    event->ignore();
+    finished(42);
+}
 
 /*! \brief Select a firmware file on disk. */
 void CFirmware::on_selectButton_clicked()

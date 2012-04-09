@@ -21,6 +21,7 @@
 #define FIRMWARE_H
 
 #include <QDialog>
+#include <QCloseEvent>
 
 namespace Ui {
     class CFirmware;
@@ -35,6 +36,7 @@ class CFirmware : public QDialog
 public:
     explicit CFirmware(QWidget *parent = 0);
     ~CFirmware();
+    void closeEvent(QCloseEvent *event);
 
 private slots:
     void on_selectButton_clicked();

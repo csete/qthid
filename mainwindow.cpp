@@ -387,6 +387,8 @@ MainWindow::MainWindow(QWidget *parent) :
     fcdStatus->setToolTip(tr("Funcube Dongle status can be No FCD, Application or Bootloader"));
     ui->statusBar->addPermanentWidget(fcdStatus);
 
+    fwDialog = new CFirmware(this);
+    connect(fwDialog, SIGNAL(finished(int)), this, SLOT(fwDialogFinished(int)));
 
     //ReadDevice(); /* disabled until it can properly set default values in case of error */
 
@@ -949,8 +951,8 @@ void MainWindow::on_actionBalance_triggered()
 /** \brief Action: Open firmware tools. */
 void MainWindow::on_actionFirmware_triggered()
 {
-    fwDialog = new CFirmware(this);
-    connect(fwDialog, SIGNAL(finished(int)), this, SLOT(fwDialogFinished(int)));
+    //fwDialog = new CFirmware(this);
+    //connect(fwDialog, SIGNAL(finished(int)), this, SLOT(fwDialogFinished(int)));
 
     /* set FCD in bootloader mode */
     timer->stop();
@@ -966,8 +968,9 @@ void MainWindow::fwDialogFinished(int result)
 {
     qDebug() << "FW dialog finished. Result:" << result;
 
-    disconnect(fwDialog, SIGNAL(finished(int)), this, SLOT(fwDialogFinished(int)));
-    delete fwDialog;
+    //disconnect(fwDialog, SIGNAL(finished(int)), this, SLOT(fwDialogFinished(int)));
+    //delete fwDialog;
+    fwDialog->hide();
 
     /* set FCD back to application mode */
     timer->stop();
