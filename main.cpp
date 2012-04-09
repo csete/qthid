@@ -25,9 +25,9 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    QCoreApplication::setOrganizationName("Hanlincrest Ltd");
-    QCoreApplication::setOrganizationDomain("hanlincrest.com");
-    QCoreApplication::setApplicationName("FUNcube Dongle controller");
+    QCoreApplication::setOrganizationName("qthid");
+    QCoreApplication::setOrganizationDomain("oz9aec.net");
+    QCoreApplication::setApplicationName("qthid");
     QCoreApplication::setApplicationVersion("4.0");
 
     MainWindow win;
