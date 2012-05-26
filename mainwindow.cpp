@@ -322,6 +322,7 @@ static COMBO_STRUCT _acs[] =
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
+    prevMode(false),
     ui(new Ui::MainWindow),
     diagramDialog(0)
 {
@@ -393,6 +394,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //ReadDevice(); /* disabled until it can properly set default values in case of error */
 
+    /* create FCDE device */
+    dongle = fcd_open(NULL);
+    if (!dongle)
+    {
+        qDebug() << "FCD not found.";
+    }
+
     enableControls();
 
     setUnifiedTitleAndToolBarOnMac(true);
@@ -416,6 +424,9 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     QSettings settings;
+
+    if (dongle)
+        fcd_close(dongle);
 
     delete uiDockIfGain;
 
@@ -598,61 +609,70 @@ double MainWindow::StrToDouble(QString s)
   */
 void MainWindow::enableControls()
 {
-#if 0
-    FCD_MODE_ENUM fme;
-    FCD_CAPS_STRUCT fcd_caps;
-    quint8 u8;
-    char fwVerStr[6];
-    bool convOk = false;
-    float fwVer = 0.0;
+    char buffer[65];
+    bool hasBiasT = false;
+    bool isAppMode = false;
 
-
-    fme = fcdGetCaps(&fcd_caps);
-
-    switch (fme)
+    if (!dongle)
     {
-        case FCD_MODE_APP:
-            fcdGetFwVerStr(fwVerStr);
-            fcdStatus->setText(tr("FCD is active (%1)").arg(QString(fwVerStr)));
-
-            /* convert version string to float */
-            fwVer = QString(fwVerStr).toFloat(&convOk);
-
-            u8=0;
-            fcdAppGetParam(FCD_CMD_APP_GET_PLL_LOCK, &u8, 1);
-            ui->checkBoxPLLLock->setChecked(u8==1);
-
-            break;
-
-        case FCD_MODE_BL:
-            fcdStatus->setText(tr("FCD bootloader"));
-            break;
-
-        case FCD_MODE_NONE:
-            fcdStatus->setText(tr("No FCD detected"));
-            break;
+        fcdStatus->setText(tr("No FCD detected"));
+        return;
     }
 
-    ui->freqCtrl->setEnabled(fme==FCD_MODE_APP);
+    if (!fcd_query(dongle, &buffer[0], 65))
+    {
+        qDebug() << __FUNCTION__ << "FCD query failed";
+        return;
+    }
+
+    QString fcdString(buffer);
+    qDebug() << "FCD query returned:" << fcdString;
+
+    if (fcdString.contains("FCDBL"))
+    {
+        fcdStatus->setText(tr("FCD bootloader"));
+    }
+    else if (fcdString.contains("FCDAPP"))
+    {
+        /*
+         * When the FCD is in application mode, the string returned by the query command is:
+         *   FCDAPP 18.08 Brd 1.0 No blk
+         * 1.0 means no bias tee, 1.1 means there is a bias tee
+         * 'No blk' means it is not cellular blocked.
+         *
+         * Ref: http://uk.groups.yahoo.com/group/FCDevelopment/message/303
+         */
+        QStringList list = fcdString.split(" ");
+        fcdStatus->setText(tr("FCD is active (FW: %1)").arg(list[1]));
+        isAppMode = true;
+        hasBiasT = (list[3] == "1.0");
+
+        // check PLL lock  FIXME: not avaialble in libfcd
+        //u8=0;
+        //fcdAppGetParam(FCD_CMD_APP_GET_PLL_LOCK, &u8, 1);
+        //ui->checkBoxPLLLock->setChecked(u8==1);
+        qDebug() << __FUNCTION__ << "FIXME: check PLL lock not implemented";
+    }
+
+    ui->freqCtrl->setEnabled(isAppMode);
 
     /* bias T functionality available since FW 18h */
-    ui->pushButtonBiasT->setEnabled((fme==FCD_MODE_APP) && (fcd_caps.hasBiasT));
+    ui->pushButtonBiasT->setEnabled((isAppMode) && (hasBiasT));
 
-    ui->spinBoxCorr->setEnabled(fme==FCD_MODE_APP);
+    ui->spinBoxCorr->setEnabled(isAppMode);
 
-    ui->actionBalance->setEnabled(fme==FCD_MODE_APP);
-    ui->actionFirmware->setEnabled(fme==FCD_MODE_APP);
-    ui->actionDefault->setEnabled(fme==FCD_MODE_APP);
+    ui->actionBalance->setEnabled(isAppMode);
+    ui->actionFirmware->setEnabled(isAppMode);
+    ui->actionDefault->setEnabled(isAppMode);
 
-    //enableCombos(fme==FCD_MODE_APP);
-    uiDockIfGain->setEnabled(fme==FCD_MODE_APP);
+    uiDockIfGain->setEnabled(isAppMode);
 
     /* manage FCD mode transitions */
-    if (fme != prevMode) {
-        qDebug() << "FCD mode change:" << prevMode << "->" << fme;
+    if (isAppMode != prevMode) {
+        qDebug() << "FCD mode change:" << prevMode << "->" << isAppMode;
         ui->statusBar->showMessage(tr("FCD mode change detected"), 2000);
 
-        if (fme == FCD_MODE_APP) {
+        if (isAppMode) {
             /* if previous mode was different read settings from device */
             readDevice();
 
@@ -661,9 +681,7 @@ void MainWindow::enableControls()
         }
     }
 
-    prevMode = fme;
-#endif
-    qDebug() << "FIXME: Not implemented!";
+    prevMode = isAppMode;
 }
 
 
@@ -677,6 +695,11 @@ void MainWindow::setNewFrequency(qint64 freq)
 {
     double d = (double) (freq-lnbOffset);
 
+    if (!dongle)
+    {
+        return;
+    }
+
     d *= 1.0 + ui->spinBoxCorr->value()/1000000.0;
 
     qDebug() << "Set new frequency";
@@ -684,31 +707,25 @@ void MainWindow::setNewFrequency(qint64 freq)
     qDebug() << "    LNB_offset:" << lnbOffset;
     qDebug() << "    FCD set:" << d;
 
-#if 0
-    fme = fcdAppSetFreqkHz((int)(d/1000.0));
-    if (fme != FCD_MODE_APP) {
+    if (fcd_set_frequency_Hz(dongle, (unsigned int)(d/1000.0)))
+    {
         qWarning() << "Failed to set frequency";
         ui->statusBar->showMessage(tr("Failed to set frequency"), 3000);
+
+        return;
     }
 
-    /** TODO **/
-    //quint8 readVal[4];
-    //quint32 freq = 0;
-    //fcdAppGetParam(FCD_CMD_APP_GET_FREQ_HZ, readVal,4);
-    //freq += readVal[0];
-    //freq += readVal[1] << 8;
-    //freq += readVal[2] << 16;
-    //freq += readVal[3] << 24;
-    //qDebug() << readVal[0] << readVal[1] << readVal[2] << readVal[3] << " / " << freq;
+    /** TODO: Read back frequency **/
 
 
     /* band changes occur automatically in FCD when we change frequency */
     quint8 u8;
 
     /* read band selection form FCD */
-    fme = fcdAppGetParam(FCD_CMD_APP_GET_BAND, &u8, 1);
-    if (fme == FCD_MODE_APP) {
-        if (u8 != ui->comboBoxBand->currentIndex()) {
+    if (fcd_get_value(dongle, FCD_VALUE_BAND, &u8) == 0)
+    {
+        if (u8 != ui->comboBoxBand->currentIndex())
+        {
             qDebug() << "Band change detected:" << u8;
             ui->comboBoxBand->setCurrentIndex(u8);
             bandChange();
@@ -717,26 +734,25 @@ void MainWindow::setNewFrequency(qint64 freq)
     /* else we ignore it */
 
     /* filter */
-    fme = fcdAppGetParam(FCD_CMD_APP_GET_RF_FILTER, &u8, 1);
-    if (fme == FCD_MODE_APP) {
-        if (u8 != ui->comboBoxRfFilter->currentIndex()) {
-            ui->statusBar->showMessage(tr("RF filter change detected (%1)").arg(u8), 4000);
+    if (fcd_get_value(dongle, FCD_VALUE_RF_FILTER, &u8) == 0)
+    {
+        if (u8 != ui->comboBoxRfFilter->currentIndex())
+        {
             qDebug() << "RF filter change detected:" << u8;
             ui->comboBoxRfFilter->setCurrentIndex(u8);
         }
     }
 
     /* bias current */
-    fme = fcdAppGetParam(FCD_CMD_APP_GET_BIAS_CURRENT, &u8, 1);
-    if (fme == FCD_MODE_APP) {
-        if (u8 != ui->comboBoxBiasCurrent->currentIndex()) {
-            ui->statusBar->showMessage(tr("Bias current change detected (%1)").arg(u8), 4000);
+    if (fcd_get_value(dongle, FCD_VALUE_BIAS_CURRENT, &u8) == 0)
+    {
+        if (u8 != ui->comboBoxBiasCurrent->currentIndex())
+        {
             qDebug() << "Bias current change detected:" << u8;
             ui->comboBoxBiasCurrent->setCurrentIndex(u8);
         }
     }
-#endif
-    qDebug() << "FIXME: Not implemented!";
+
 }
 
 
