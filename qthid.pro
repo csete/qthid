@@ -33,24 +33,15 @@ DEFINES += VERSION=\"$${VERSTR}\" # create a VERSION macro containing the versio
 SOURCES +=\
     mainwindow.cpp \
     main.cpp \
-    fcd.c \
     freqctrl.cpp \
     iqbalance.cc \
     fcddiagram.cpp \
     firmware.cpp \
     dockifgain.cpp
 
-mac: SOURCES += hidmac.c
-win32: SOURCES += hidwin.c
-
-linux-g++|linux-g++-64 {
-    SOURCES +=hid-libusb.c
-}
 
 HEADERS  += \
     mainwindow.h \
-    hidapi.h \
-    fcd.h fcdhidcmd.h \
     freqctrl.h \
     iqbalance.h \
     fcddiagram.h \
@@ -64,14 +55,11 @@ FORMS    += \
     firmware.ui \
     dockifgain.ui
 
-mac:LIBS += /System/Library/Frameworks/CoreFoundation.framework/CoreFoundation \
-    /System/Library/Frameworks/IOKit.framework/Versions/A/IOKit
-win32:LIBS += "C:\\Program Files\\Microsoft SDKs\\Windows\\v7.0\\Lib\\setupapi.lib"
-
-# libusb-1.0 on Linux uses pkg-config
+# libfcd on Linux uses pkg-config
+## FIXME for Mac and Windows
 linux-g++|linux-g++-64 {
     CONFIG += link_pkgconfig
-    PKGCONFIG += libusb-1.0
+    PKGCONFIG += libfcd
 }
 
 RESOURCES += \

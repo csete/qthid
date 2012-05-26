@@ -1,7 +1,7 @@
 /***************************************************************************
  *  This file is part of Qthid.
  *
- *  CopyRight (C) 2011  Alexandru Csete, OZ9AEC
+ *  CopyRight (C) 2011-2012  Alexandru Csete, OZ9AEC
  *
  *  Qthid is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -24,10 +24,10 @@
 #include <QFile>
 #include <QSettings>
 #include <QMessageBox>
-
-#include "fcd.h"
+#include <fcd.h>
 #include "firmware.h"
 #include "ui_firmware.h"
+
 
 CFirmware::CFirmware(QWidget *parent) :
     QDialog(parent),
@@ -122,7 +122,7 @@ void CFirmware::on_uploadButton_clicked()
     QCoreApplication::processEvents();  // FIXME: neither works
 
     // FIXME: progress bar
-
+#if 0
     // Erase old firmware then write the new one
     if (fcdBlErase() != FCD_MODE_BL)
     {
@@ -139,6 +139,8 @@ void CFirmware::on_uploadButton_clicked()
             ui->statusLabel->setText(tr("Firmware upload successful"));
         }
     }
+#endif
+    qDebug() << "FIXME: Not implemented!";
 
     ui->lineEdit->setEnabled(true);
     ui->selectButton->setEnabled(true);
@@ -191,7 +193,7 @@ void CFirmware::on_verifyButton_clicked()
     // process pending GUI events before we commit the block loop
     //qApp->processEvents();
     QCoreApplication::processEvents();  // FIXME: neither works
-
+#if 0
     // execute verification
     // FIXME: progress bar
     if (fcdBlVerifyFirmware(buf,(int64_t)qn64size) != FCD_MODE_BL)
@@ -202,6 +204,8 @@ void CFirmware::on_verifyButton_clicked()
     {
         ui->statusLabel->setText(tr("Firmware successfully verified"));
     }
+#endif
+    qDebug() << "FIXME: Not implemented!";
 
     ui->lineEdit->setEnabled(true);
     ui->selectButton->setEnabled(true);

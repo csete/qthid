@@ -1,7 +1,7 @@
 /***************************************************************************
  *  This file is part of Qthid.
  *
- *  CopyRight (C) 2011  Alexandru Csete, OZ9AEC
+ *  CopyRight (C) 2011-2012  Alexandru Csete, OZ9AEC
  *
  *  Qthid is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,10 +19,10 @@
  ***************************************************************************/
 #include <QSettings>
 #include <QDebug>
+#include <fcd.h>
+#include <fcd_tuner.h>
 #include "iqbalance.h"
 #include "ui_iqbalance.h"
-#include "fcd.h"
-#include "fcdhidcmd.h"
 
 
 CIqBalance::CIqBalance(QWidget *parent) :
@@ -68,7 +68,8 @@ void CIqBalance::on_doubleSpinBoxDCI_valueChanged(double value)
     dcinfo.dci = static_cast<signed short>(value*32768.0);
     dcinfo.dcq = static_cast<signed short>(ui->doubleSpinBoxDCQ->value()*32768.0);
 
-    fcdAppSetParam(FCD_CMD_APP_SET_DC_CORR, dcinfo.auc, 4);
+    //fcdAppSetParam(FCD_CMD_APP_SET_DC_CORR, dcinfo.auc, 4);
+    qDebug() << "FIXME: Not implemented!";
 }
 
 
@@ -86,7 +87,8 @@ void CIqBalance::on_doubleSpinBoxDCQ_valueChanged(double value)
     dcinfo.dci = static_cast<signed short>(ui->doubleSpinBoxDCI->value()*32768.0);
     dcinfo.dcq = static_cast<signed short>(value*32768.0);
 
-    fcdAppSetParam(FCD_CMD_APP_SET_DC_CORR, dcinfo.auc, 4);
+    //fcdAppSetParam(FCD_CMD_APP_SET_DC_CORR, dcinfo.auc, 4);
+    qDebug() << "FIXME: Not implemented!";
 }
 
 
@@ -104,7 +106,8 @@ void CIqBalance::on_doubleSpinBoxPhase_valueChanged(double value)
     iqinfo.phase = static_cast<signed short>(value*32768.0);
     iqinfo.gain = static_cast<signed short>(ui->doubleSpinBoxGain->value()*32768.0);
 
-    fcdAppSetParam(FCD_CMD_APP_SET_IQ_CORR, iqinfo.auc, 4);
+    //fcdAppSetParam(FCD_CMD_APP_SET_IQ_CORR, iqinfo.auc, 4);
+    qDebug() << "FIXME: Not implemented!";
 }
 
 
@@ -122,7 +125,8 @@ void CIqBalance::on_doubleSpinBoxGain_valueChanged(double value)
     iqinfo.phase = static_cast<signed short>(ui->doubleSpinBoxPhase->value()*32768.0);
     iqinfo.gain = static_cast<signed short>(value*32768.0);
 
-    fcdAppSetParam(FCD_CMD_APP_SET_IQ_CORR, iqinfo.auc, 4);
+    //fcdAppSetParam(FCD_CMD_APP_SET_IQ_CORR, iqinfo.auc, 4);
+    qDebug() << "FIXME: Not implemented!";
 }
 
 

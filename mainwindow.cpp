@@ -23,296 +23,298 @@
 #include <QtGui>
 #include <QtDebug>
 #include <QMessageBox>
+#include <fcd.h>
+#include <fcd_tuner.h>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "freqctrl.h"
 #include "iqbalance.h"
 #include "firmware.h"
-#include "hidapi.h"
-#include "fcd.h"
-#include "fcdhidcmd.h"
 
 
 /** \brief LNA gain options */
 static const COMBO_ITEM_STRUCT _cisLNAGain[]=
 {
-    {QT_TR_NOOP("-5.0dB"),TLGE_N5_0DB},
-    {QT_TR_NOOP("-2.5dB"),TLGE_N2_5DB},
-    {QT_TR_NOOP("+0.0dB"),TLGE_P0_0DB},
-    {QT_TR_NOOP("+2.5dB"),TLGE_P2_5DB},
-    {QT_TR_NOOP("+5,0dB"),TLGE_P5_0DB},
-    {QT_TR_NOOP("+7.5dB"),TLGE_P7_5DB},
-    {QT_TR_NOOP("+10.0dB"),TLGE_P10_0DB},
-    {QT_TR_NOOP("+12.5dB"),TLGE_P12_5DB},
-    {QT_TR_NOOP("+15.0dB"),TLGE_P15_0DB},
-    {QT_TR_NOOP("+17.5dB"),TLGE_P17_5DB},
-    {QT_TR_NOOP("+20.0dB"),TLGE_P20_0DB},
-    {QT_TR_NOOP("+25.0dB"),TLGE_P25_0DB},
-    {QT_TR_NOOP("+30.0dB"),TLGE_P30_0DB},
+    {QT_TR_NOOP("-5.0dB"), FCD_TLGE_N5_0DB},
+    {QT_TR_NOOP("-2.5dB"), FCD_TLGE_N2_5DB},
+    {QT_TR_NOOP("+0.0dB"), FCD_TLGE_P0_0DB},
+    {QT_TR_NOOP("+2.5dB"), FCD_TLGE_P2_5DB},
+    {QT_TR_NOOP("+5,0dB"), FCD_TLGE_P5_0DB},
+    {QT_TR_NOOP("+7.5dB"), FCD_TLGE_P7_5DB},
+    {QT_TR_NOOP("+10.0dB"), FCD_TLGE_P10_0DB},
+    {QT_TR_NOOP("+12.5dB"), FCD_TLGE_P12_5DB},
+    {QT_TR_NOOP("+15.0dB"), FCD_TLGE_P15_0DB},
+    {QT_TR_NOOP("+17.5dB"), FCD_TLGE_P17_5DB},
+    {QT_TR_NOOP("+20.0dB"), FCD_TLGE_P20_0DB},
+    {QT_TR_NOOP("+25.0dB"), FCD_TLGE_P25_0DB},
+    {QT_TR_NOOP("+30.0dB"), FCD_TLGE_P30_0DB},
     {NULL,0}
 };
 
 /** \brief LNA enhance options */
 static const COMBO_ITEM_STRUCT _cisLNAEnhance[]=
 {
-        {QT_TR_NOOP("Off"),TLEE_OFF},
-        {QT_TR_NOOP("0"),TLEE_0},
-        {QT_TR_NOOP("1"),TLEE_1},
-        {QT_TR_NOOP("2"),TLEE_2},
-        {QT_TR_NOOP("3"),TLEE_3},
+        {QT_TR_NOOP("Off"), FCD_TLEE_OFF},
+        {QT_TR_NOOP("0"), FCD_TLEE_0},
+        {QT_TR_NOOP("1"), FCD_TLEE_1},
+        {QT_TR_NOOP("2"), FCD_TLEE_2},
+        {QT_TR_NOOP("3"), FCD_TLEE_3},
         {NULL,0}
 };
 
 /** \brief Band selector options */
 static const COMBO_ITEM_STRUCT _cisBand[]=
 {
-        {QT_TR_NOOP("VHF II"),TBE_VHF2},
-        {QT_TR_NOOP("VHF III"),TBE_VHF3},
-        {QT_TR_NOOP("UHF"),TBE_UHF},
-        {QT_TR_NOOP("L band"),TBE_LBAND},
+        {QT_TR_NOOP("VHF II"), FCD_TBE_VHF2},
+        {QT_TR_NOOP("VHF III"), FCD_TBE_VHF3},
+        {QT_TR_NOOP("UHF"), FCD_TBE_UHF},
+        {QT_TR_NOOP("L band"), FCD_TBE_LBAND},
         {NULL,0}
 };
 
 /** \brief RF filter band 0 options */
 static const COMBO_ITEM_STRUCT _cisRFFilter0[]=
 {
-        {QT_TR_NOOP("268MHz LPF"),TRFE_LPF268MHZ},
-        {QT_TR_NOOP("299MHz LPF"),TRFE_LPF299MHZ},
+        {QT_TR_NOOP("268MHz LPF"), FCD_TRFE_LPF268MHZ},
+        {QT_TR_NOOP("299MHz LPF"), FCD_TRFE_LPF299MHZ},
         {NULL,0}
 };
 
 /** \brief RF filter band 1 options */
 static const COMBO_ITEM_STRUCT _cisRFFilter1[]=
 {
-        {QT_TR_NOOP("509MHz LPF"),TRFE_LPF509MHZ},
-        {QT_TR_NOOP("656MHz LPF"),TRFE_LPF656MHZ},
+        {QT_TR_NOOP("509MHz LPF"), FCD_TRFE_LPF509MHZ},
+        {QT_TR_NOOP("656MHz LPF"), FCD_TRFE_LPF656MHZ},
         {NULL,0}
 };
 
 /** \brief RF filter band 2 options */
 static const COMBO_ITEM_STRUCT _cisRFFilter2[]=
 {
-        {QT_TR_NOOP("360MHz BPF"),TRFE_BPF360MHZ},
-        {QT_TR_NOOP("380MHz BPF"),TRFE_BPF380MHZ},
-        {QT_TR_NOOP("405MHz BPF"),TRFE_BPF405MHZ},
-        {QT_TR_NOOP("425MHz BPF"),TRFE_BPF425MHZ},
-        {QT_TR_NOOP("450MHz BPF"),TRFE_BPF450MHZ},
-        {QT_TR_NOOP("475MHz BPF"),TRFE_BPF475MHZ},
-        {QT_TR_NOOP("505MHz BPF"),TRFE_BPF505MHZ},
-        {QT_TR_NOOP("540MHz BPF"),TRFE_BPF540MHZ},
-        {QT_TR_NOOP("575MHz BPF"),TRFE_BPF575MHZ},
-        {QT_TR_NOOP("615MHz BPF"),TRFE_BPF615MHZ},
-        {QT_TR_NOOP("670MHz BPF"),TRFE_BPF670MHZ},
-        {QT_TR_NOOP("720MHz BPF"),TRFE_BPF720MHZ},
-        {QT_TR_NOOP("760MHz BPF"),TRFE_BPF760MHZ},
-        {QT_TR_NOOP("840MHz BPF"),TRFE_BPF840MHZ},
-        {QT_TR_NOOP("890MHz BPF"),TRFE_BPF890MHZ},
-        {QT_TR_NOOP("970MHz BPF"),TRFE_BPF970MHZ},
+        {QT_TR_NOOP("360MHz BPF"), FCD_TRFE_BPF360MHZ},
+        {QT_TR_NOOP("380MHz BPF"), FCD_TRFE_BPF380MHZ},
+        {QT_TR_NOOP("405MHz BPF"), FCD_TRFE_BPF405MHZ},
+        {QT_TR_NOOP("425MHz BPF"), FCD_TRFE_BPF425MHZ},
+        {QT_TR_NOOP("450MHz BPF"), FCD_TRFE_BPF450MHZ},
+        {QT_TR_NOOP("475MHz BPF"), FCD_TRFE_BPF475MHZ},
+        {QT_TR_NOOP("505MHz BPF"), FCD_TRFE_BPF505MHZ},
+        {QT_TR_NOOP("540MHz BPF"), FCD_TRFE_BPF540MHZ},
+        {QT_TR_NOOP("575MHz BPF"), FCD_TRFE_BPF575MHZ},
+        {QT_TR_NOOP("615MHz BPF"), FCD_TRFE_BPF615MHZ},
+        {QT_TR_NOOP("670MHz BPF"), FCD_TRFE_BPF670MHZ},
+        {QT_TR_NOOP("720MHz BPF"), FCD_TRFE_BPF720MHZ},
+        {QT_TR_NOOP("760MHz BPF"), FCD_TRFE_BPF760MHZ},
+        {QT_TR_NOOP("840MHz BPF"), FCD_TRFE_BPF840MHZ},
+        {QT_TR_NOOP("890MHz BPF"), FCD_TRFE_BPF890MHZ},
+        {QT_TR_NOOP("970MHz BPF"), FCD_TRFE_BPF970MHZ},
         {NULL,0}
 };
 
 /** \brief RF filter band 3 options */
 static const COMBO_ITEM_STRUCT _cisRFFilter3[]=
 {
-        {QT_TR_NOOP("1300MHz BPF"),TRFE_BPF1300MHZ},
-        {QT_TR_NOOP("1320MHz BPF"),TRFE_BPF1320MHZ},
-        {QT_TR_NOOP("1360MHz BPF"),TRFE_BPF1360MHZ},
-        {QT_TR_NOOP("1410MHz BPF"),TRFE_BPF1410MHZ},
-        {QT_TR_NOOP("1445MHz BPF"),TRFE_BPF1445MHZ},
-        {QT_TR_NOOP("1460MHz BPF"),TRFE_BPF1460MHZ},
-        {QT_TR_NOOP("1490MHz BPF"),TRFE_BPF1490MHZ},
-        {QT_TR_NOOP("1530MHz BPF"),TRFE_BPF1530MHZ},
-        {QT_TR_NOOP("1560MHz BPF"),TRFE_BPF1560MHZ},
-        {QT_TR_NOOP("1590MHz BPF"),TRFE_BPF1590MHZ},
-        {QT_TR_NOOP("1640MHz BPF"),TRFE_BPF1640MHZ},
-        {QT_TR_NOOP("1660MHz BPF"),TRFE_BPF1660MHZ},
-        {QT_TR_NOOP("1680MHz BPF"),TRFE_BPF1680MHZ},
-        {QT_TR_NOOP("1700MHz BPF"),TRFE_BPF1700MHZ},
-        {QT_TR_NOOP("1720MHz BPF"),TRFE_BPF1720MHZ},
-        {QT_TR_NOOP("1750MHz BPF"),TRFE_BPF1750MHZ},
+        {QT_TR_NOOP("1300MHz BPF"), FCD_TRFE_BPF1300MHZ},
+        {QT_TR_NOOP("1320MHz BPF"), FCD_TRFE_BPF1320MHZ},
+        {QT_TR_NOOP("1360MHz BPF"), FCD_TRFE_BPF1360MHZ},
+        {QT_TR_NOOP("1410MHz BPF"), FCD_TRFE_BPF1410MHZ},
+        {QT_TR_NOOP("1445MHz BPF"), FCD_TRFE_BPF1445MHZ},
+        {QT_TR_NOOP("1460MHz BPF"), FCD_TRFE_BPF1460MHZ},
+        {QT_TR_NOOP("1490MHz BPF"), FCD_TRFE_BPF1490MHZ},
+        {QT_TR_NOOP("1530MHz BPF"), FCD_TRFE_BPF1530MHZ},
+        {QT_TR_NOOP("1560MHz BPF"), FCD_TRFE_BPF1560MHZ},
+        {QT_TR_NOOP("1590MHz BPF"), FCD_TRFE_BPF1590MHZ},
+        {QT_TR_NOOP("1640MHz BPF"), FCD_TRFE_BPF1640MHZ},
+        {QT_TR_NOOP("1660MHz BPF"), FCD_TRFE_BPF1660MHZ},
+        {QT_TR_NOOP("1680MHz BPF"), FCD_TRFE_BPF1680MHZ},
+        {QT_TR_NOOP("1700MHz BPF"), FCD_TRFE_BPF1700MHZ},
+        {QT_TR_NOOP("1720MHz BPF"), FCD_TRFE_BPF1720MHZ},
+        {QT_TR_NOOP("1750MHz BPF"), FCD_TRFE_BPF1750MHZ},
         {NULL,0}
 };
 
 /** \brief Mixer gain options */
 static const COMBO_ITEM_STRUCT _cisMixerGain[]=
 {
-        {QT_TR_NOOP("4dB"),TMGE_P4_0DB},
-        {QT_TR_NOOP("12dB"),TMGE_P12_0DB},
+        {QT_TR_NOOP("4dB"), FCD_TMGE_P4_0DB},
+        {QT_TR_NOOP("12dB"), FCD_TMGE_P12_0DB},
         {NULL,0}
 };
 
 /** \brief Bias options */
 static const COMBO_ITEM_STRUCT _cisBiasCurrent[]=
 {
-        {QT_TR_NOOP("00 L band"),TBCE_LBAND},
-        {QT_TR_NOOP("01"),TBCE_1},
-        {QT_TR_NOOP("10"),TBCE_2},
-        {QT_TR_NOOP("11 V/U band"),TBCE_VUBAND},
+        {QT_TR_NOOP("00 L band"), FCD_TBCE_LBAND},
+        {QT_TR_NOOP("01"), FCD_TBCE_1},
+        {QT_TR_NOOP("10"), FCD_TBCE_2},
+        {QT_TR_NOOP("11 V/U band"), FCD_TBCE_VUBAND},
         {NULL,0}
 };
 
 /** \brief Mixer filter options */
 static const COMBO_ITEM_STRUCT _cisMixerFilter[]=
 {
-        {QT_TR_NOOP("1.9MHz"),TMFE_1_9MHZ},
-        {QT_TR_NOOP("2.3MHz"),TMFE_2_3MHZ},
-        {QT_TR_NOOP("2.7MHz"),TMFE_2_7MHZ},
-        {QT_TR_NOOP("3.0MHz"),TMFE_3_0MHZ},
-        {QT_TR_NOOP("3.4MHz"),TMFE_3_4MHZ},
-        {QT_TR_NOOP("3.8MHz"),TMFE_3_8MHZ},
-        {QT_TR_NOOP("4.2MHz"),TMFE_4_2MHZ},
-        {QT_TR_NOOP("4.6MHz"),TMFE_4_6MHZ},
-        {QT_TR_NOOP("27MHz"),TMFE_27_0MHZ},
+        {QT_TR_NOOP("1.9MHz"), FCD_TMFE_1_9MHZ},
+        {QT_TR_NOOP("2.3MHz"), FCD_TMFE_2_3MHZ},
+        {QT_TR_NOOP("2.7MHz"), FCD_TMFE_2_7MHZ},
+        {QT_TR_NOOP("3.0MHz"), FCD_TMFE_3_0MHZ},
+        {QT_TR_NOOP("3.4MHz"), FCD_TMFE_3_4MHZ},
+        {QT_TR_NOOP("3.8MHz"), FCD_TMFE_3_8MHZ},
+        {QT_TR_NOOP("4.2MHz"), FCD_TMFE_4_2MHZ},
+        {QT_TR_NOOP("4.6MHz"), FCD_TMFE_4_6MHZ},
+        {QT_TR_NOOP("27MHz"), FCD_TMFE_27_0MHZ},
         {NULL,0}
 };
 
 /** \brief IF gain 1 options */
 static const COMBO_ITEM_STRUCT _cisIFGain1[]=
 {
-        {QT_TR_NOOP("-3dB"),TIG1E_N3_0DB},
-        {QT_TR_NOOP("+6dB"),TIG1E_P6_0DB},
+        {QT_TR_NOOP("-3dB"), FCD_TIG1E_N3_0DB},
+        {QT_TR_NOOP("+6dB"), FCD_TIG1E_P6_0DB},
         {NULL,0}
 };
 
 /** \brief IF gain mode options */
 static const COMBO_ITEM_STRUCT _cisIFGainMode[]=
 {
-        {QT_TR_NOOP("Linearity"),TIGME_LINEARITY},
-        {QT_TR_NOOP("Sensitivity"),TIGME_SENSITIVITY},
+        {QT_TR_NOOP("Linearity"), FCD_TIGME_LINEARITY},
+        {QT_TR_NOOP("Sensitivity"), FCD_TIGME_SENSITIVITY},
         {NULL,0}
 };
 
 /** \brief IF RC filter options */
 static const COMBO_ITEM_STRUCT _cisIFRCFilter[]=
 {
-        {QT_TR_NOOP("1.0MHz"),TIRFE_1_0MHZ},
-        {QT_TR_NOOP("1.2MHz"),TIRFE_1_2MHZ},
-        {QT_TR_NOOP("1.8MHz"),TIRFE_1_8MHZ},
-        {QT_TR_NOOP("2.6MHz"),TIRFE_2_6MHZ},
-        {QT_TR_NOOP("3.4MHz"),TIRFE_3_4MHZ},
-        {QT_TR_NOOP("4.4MHz"),TIRFE_4_4MHZ},
-        {QT_TR_NOOP("5.3MHz"),TIRFE_5_3MHZ},
-        {QT_TR_NOOP("6.4MHz"),TIRFE_6_4MHZ},
-        {QT_TR_NOOP("7.7MHz"),TIRFE_7_7MHZ},
-        {QT_TR_NOOP("9.0MHz"),TIRFE_9_0MHZ},
-        {QT_TR_NOOP("10.6MHz"),TIRFE_10_6MHZ},
-        {QT_TR_NOOP("12.4MHz"),TIRFE_12_4MHZ},
-        {QT_TR_NOOP("14.7MHz"),TIRFE_14_7MHZ},
-        {QT_TR_NOOP("17.6MHz"),TIRFE_17_6MHZ},
-        {QT_TR_NOOP("21.0MHz"),TIRFE_21_0MHZ},
-        {QT_TR_NOOP("21.4MHz"),TIRFE_21_4MHZ},
+        {QT_TR_NOOP("1.0MHz"), FCD_TIRFE_1_0MHZ},
+        {QT_TR_NOOP("1.2MHz"), FCD_TIRFE_1_2MHZ},
+        {QT_TR_NOOP("1.8MHz"), FCD_TIRFE_1_8MHZ},
+        {QT_TR_NOOP("2.6MHz"), FCD_TIRFE_2_6MHZ},
+        {QT_TR_NOOP("3.4MHz"), FCD_TIRFE_3_4MHZ},
+        {QT_TR_NOOP("4.4MHz"), FCD_TIRFE_4_4MHZ},
+        {QT_TR_NOOP("5.3MHz"), FCD_TIRFE_5_3MHZ},
+        {QT_TR_NOOP("6.4MHz"), FCD_TIRFE_6_4MHZ},
+        {QT_TR_NOOP("7.7MHz"), FCD_TIRFE_7_7MHZ},
+        {QT_TR_NOOP("9.0MHz"), FCD_TIRFE_9_0MHZ},
+        {QT_TR_NOOP("10.6MHz"), FCD_TIRFE_10_6MHZ},
+        {QT_TR_NOOP("12.4MHz"), FCD_TIRFE_12_4MHZ},
+        {QT_TR_NOOP("14.7MHz"), FCD_TIRFE_14_7MHZ},
+        {QT_TR_NOOP("17.6MHz"), FCD_TIRFE_17_6MHZ},
+        {QT_TR_NOOP("21.0MHz"), FCD_TIRFE_21_0MHZ},
+        {QT_TR_NOOP("21.4MHz"), FCD_TIRFE_21_4MHZ},
         {NULL,0}
 };
 
 /** \brief IF gain 2 options */
 static const COMBO_ITEM_STRUCT _cisIFGain2[]=
 {
-        {QT_TR_NOOP("0dB"),TIG2E_P0_0DB},
-        {QT_TR_NOOP("+3dB"),TIG2E_P3_0DB},
-        {QT_TR_NOOP("+6dB"),TIG2E_P6_0DB},
-        {QT_TR_NOOP("+9dB"),TIG2E_P9_0DB},
+        {QT_TR_NOOP("0dB"), FCD_TIG2E_P0_0DB},
+        {QT_TR_NOOP("+3dB"), FCD_TIG2E_P3_0DB},
+        {QT_TR_NOOP("+6dB"), FCD_TIG2E_P6_0DB},
+        {QT_TR_NOOP("+9dB"), FCD_TIG2E_P9_0DB},
         {NULL,0}
 };
 
 /** \brief IF gain 3 options */
 static const COMBO_ITEM_STRUCT _cisIFGain3[]=
 {
-        {QT_TR_NOOP("0dB"),TIG3E_P0_0DB},
-        {QT_TR_NOOP("+3dB"),TIG3E_P3_0DB},
-        {QT_TR_NOOP("+6dB"),TIG3E_P6_0DB},
-        {QT_TR_NOOP("+9dB"),TIG3E_P9_0DB},
+        {QT_TR_NOOP("0dB"), FCD_TIG3E_P0_0DB},
+        {QT_TR_NOOP("+3dB"), FCD_TIG3E_P3_0DB},
+        {QT_TR_NOOP("+6dB"), FCD_TIG3E_P6_0DB},
+        {QT_TR_NOOP("+9dB"), FCD_TIG3E_P9_0DB},
         {NULL,0}
 };
 
 /** \brief IF gain 4 options */
 static const COMBO_ITEM_STRUCT _cisIFGain4[]=
 {
-        {QT_TR_NOOP("0dB"),TIG4E_P0_0DB},
-        {QT_TR_NOOP("+1dB"),TIG4E_P1_0DB},
-        {QT_TR_NOOP("+2dB"),TIG4E_P2_0DB},
+        {QT_TR_NOOP("0dB"), FCD_TIG4E_P0_0DB},
+        {QT_TR_NOOP("+1dB"), FCD_TIG4E_P1_0DB},
+        {QT_TR_NOOP("+2dB"), FCD_TIG4E_P2_0DB},
         {NULL,0}
 };
 
 /** \brief IF filter options */
 static const COMBO_ITEM_STRUCT _cisIFFilter[]=
 {
-        {QT_TR_NOOP("2.15MHz"),TIFE_2_15MHZ},
-        {QT_TR_NOOP("2.20MHz"),TIFE_2_20MHZ},
-        {QT_TR_NOOP("2.24MHz"),TIFE_2_24MHZ},
-        {QT_TR_NOOP("2.28MHz"),TIFE_2_28MHZ},
-        {QT_TR_NOOP("2.30MHz"),TIFE_2_30MHZ},
-        {QT_TR_NOOP("2.40MHz"),TIFE_2_40MHZ},
-        {QT_TR_NOOP("2.45MHz"),TIFE_2_45MHZ},
-        {QT_TR_NOOP("2.50MHz"),TIFE_2_50MHZ},
-        {QT_TR_NOOP("2.55MHz"),TIFE_2_55MHZ},
-        {QT_TR_NOOP("2.60MHz"),TIFE_2_60MHZ},
-        {QT_TR_NOOP("2.70MHz"),TIFE_2_70MHZ},
-        {QT_TR_NOOP("2.75MHz"),TIFE_2_75MHZ},
-        {QT_TR_NOOP("2.80MHz"),TIFE_2_80MHZ},
-        {QT_TR_NOOP("2.90MHz"),TIFE_2_90MHZ},
-        {QT_TR_NOOP("2.95MHz"),TIFE_2_95MHZ},
-        {QT_TR_NOOP("3.00MHz"),TIFE_3_00MHZ},
-        {QT_TR_NOOP("3.10MHz"),TIFE_3_10MHZ},
-        {QT_TR_NOOP("3.20MHz"),TIFE_3_20MHZ},
-        {QT_TR_NOOP("3.30MHz"),TIFE_3_30MHZ},
-        {QT_TR_NOOP("3.40MHz"),TIFE_3_40MHZ},
-        {QT_TR_NOOP("3.60MHz"),TIFE_3_60MHZ},
-        {QT_TR_NOOP("3.70MHz"),TIFE_3_70MHZ},
-        {QT_TR_NOOP("3.80MHz"),TIFE_3_80MHZ},
-        {QT_TR_NOOP("3.90MHz"),TIFE_3_90MHZ},
-        {QT_TR_NOOP("4.10MHz"),TIFE_4_10MHZ},
-        {QT_TR_NOOP("4.30MHz"),TIFE_4_30MHZ},
-        {QT_TR_NOOP("4.40MHz"),TIFE_4_40MHZ},
-        {QT_TR_NOOP("4.60MHz"),TIFE_4_60MHZ},
-        {QT_TR_NOOP("4.80MHz"),TIFE_4_80MHZ},
-        {QT_TR_NOOP("5.00MHz"),TIFE_5_00MHZ},
-        {QT_TR_NOOP("5.30MHz"),TIFE_5_30MHZ},
-        {QT_TR_NOOP("5.50MHz"),TIFE_5_50MHZ},
+        {QT_TR_NOOP("2.15MHz"), FCD_TIFE_2_15MHZ},
+        {QT_TR_NOOP("2.20MHz"), FCD_TIFE_2_20MHZ},
+        {QT_TR_NOOP("2.24MHz"), FCD_TIFE_2_24MHZ},
+        {QT_TR_NOOP("2.28MHz"), FCD_TIFE_2_28MHZ},
+        {QT_TR_NOOP("2.30MHz"), FCD_TIFE_2_30MHZ},
+        {QT_TR_NOOP("2.40MHz"), FCD_TIFE_2_40MHZ},
+        {QT_TR_NOOP("2.45MHz"), FCD_TIFE_2_45MHZ},
+        {QT_TR_NOOP("2.50MHz"), FCD_TIFE_2_50MHZ},
+        {QT_TR_NOOP("2.55MHz"), FCD_TIFE_2_55MHZ},
+        {QT_TR_NOOP("2.60MHz"), FCD_TIFE_2_60MHZ},
+        {QT_TR_NOOP("2.70MHz"), FCD_TIFE_2_70MHZ},
+        {QT_TR_NOOP("2.75MHz"), FCD_TIFE_2_75MHZ},
+        {QT_TR_NOOP("2.80MHz"), FCD_TIFE_2_80MHZ},
+        {QT_TR_NOOP("2.90MHz"), FCD_TIFE_2_90MHZ},
+        {QT_TR_NOOP("2.95MHz"), FCD_TIFE_2_95MHZ},
+        {QT_TR_NOOP("3.00MHz"), FCD_TIFE_3_00MHZ},
+        {QT_TR_NOOP("3.10MHz"), FCD_TIFE_3_10MHZ},
+        {QT_TR_NOOP("3.20MHz"), FCD_TIFE_3_20MHZ},
+        {QT_TR_NOOP("3.30MHz"), FCD_TIFE_3_30MHZ},
+        {QT_TR_NOOP("3.40MHz"), FCD_TIFE_3_40MHZ},
+        {QT_TR_NOOP("3.60MHz"), FCD_TIFE_3_60MHZ},
+        {QT_TR_NOOP("3.70MHz"), FCD_TIFE_3_70MHZ},
+        {QT_TR_NOOP("3.80MHz"), FCD_TIFE_3_80MHZ},
+        {QT_TR_NOOP("3.90MHz"), FCD_TIFE_3_90MHZ},
+        {QT_TR_NOOP("4.10MHz"), FCD_TIFE_4_10MHZ},
+        {QT_TR_NOOP("4.30MHz"), FCD_TIFE_4_30MHZ},
+        {QT_TR_NOOP("4.40MHz"), FCD_TIFE_4_40MHZ},
+        {QT_TR_NOOP("4.60MHz"), FCD_TIFE_4_60MHZ},
+        {QT_TR_NOOP("4.80MHz"), FCD_TIFE_4_80MHZ},
+        {QT_TR_NOOP("5.00MHz"), FCD_TIFE_5_00MHZ},
+        {QT_TR_NOOP("5.30MHz"), FCD_TIFE_5_30MHZ},
+        {QT_TR_NOOP("5.50MHz"), FCD_TIFE_5_50MHZ},
         {NULL,0}
 };
 
 /** \brief IF gain 5 options */
 static const COMBO_ITEM_STRUCT _cisIFGain5[]=
 {
-        {QT_TR_NOOP("+3dB"),TIG5E_P3_0DB},
-        {QT_TR_NOOP("+6dB"),TIG5E_P6_0DB},
-        {QT_TR_NOOP("+9dB"),TIG5E_P9_0DB},
-        {QT_TR_NOOP("+12dB"),TIG5E_P12_0DB},
-        {QT_TR_NOOP("+15dB"),TIG5E_P15_0DB},
+        {QT_TR_NOOP("+3dB"), FCD_TIG5E_P3_0DB},
+        {QT_TR_NOOP("+6dB"), FCD_TIG5E_P6_0DB},
+        {QT_TR_NOOP("+9dB"), FCD_TIG5E_P9_0DB},
+        {QT_TR_NOOP("+12dB"), FCD_TIG5E_P12_0DB},
+        {QT_TR_NOOP("+15dB"), FCD_TIG5E_P15_0DB},
         {NULL,0}
 };
 
 /** \brief IF gain 6 options */
 static const COMBO_ITEM_STRUCT _cisIFGain6[]=
 {
-        {QT_TR_NOOP("+3dB"),TIG6E_P3_0DB},
-        {QT_TR_NOOP("+6dB"),TIG6E_P6_0DB},
-        {QT_TR_NOOP("+9dB"),TIG6E_P9_0DB},
-        {QT_TR_NOOP("+12dB"),TIG6E_P12_0DB},
-        {QT_TR_NOOP("+15dB"),TIG6E_P15_0DB},
+        {QT_TR_NOOP("+3dB"), FCD_TIG6E_P3_0DB},
+        {QT_TR_NOOP("+6dB"), FCD_TIG6E_P6_0DB},
+        {QT_TR_NOOP("+9dB"), FCD_TIG6E_P9_0DB},
+        {QT_TR_NOOP("+12dB"), FCD_TIG6E_P12_0DB},
+        {QT_TR_NOOP("+15dB"), FCD_TIG6E_P15_0DB},
         {NULL,0}
 };
 
 
-/** \brief List of all combo boxes. */
+/** \brief List of all combo boxes.
+ *
+ * FIXME: Used to have separate SET/GET but with libfcd we only need one.
+ */
 static COMBO_STRUCT _acs[] =
 {
-    {FCD_CMD_APP_SET_LNA_GAIN,     FCD_CMD_APP_GET_LNA_GAIN,    10, NULL, _cisLNAGain},
-    {FCD_CMD_APP_SET_LNA_ENHANCE,  FCD_CMD_APP_GET_LNA_ENHANCE,  0, NULL, _cisLNAEnhance},
-    {FCD_CMD_APP_SET_BAND,         FCD_CMD_APP_GET_BAND,         0, NULL, _cisBand},
-    {FCD_CMD_APP_SET_RF_FILTER,    FCD_CMD_APP_GET_RF_FILTER,    0, NULL, _cisRFFilter1},
-    {FCD_CMD_APP_SET_MIXER_GAIN,   FCD_CMD_APP_GET_MIXER_GAIN,   1, NULL, _cisMixerGain},
-    {FCD_CMD_APP_SET_BIAS_CURRENT, FCD_CMD_APP_GET_BIAS_CURRENT, 3, NULL, _cisBiasCurrent},
-    {FCD_CMD_APP_SET_MIXER_FILTER, FCD_CMD_APP_GET_MIXER_FILTER, 0, NULL, _cisMixerFilter},
-    {FCD_CMD_APP_SET_IF_GAIN1,     FCD_CMD_APP_GET_IF_GAIN1,     1, NULL, _cisIFGain1},
-    {FCD_CMD_APP_SET_IF_GAIN_MODE, FCD_CMD_APP_GET_IF_GAIN_MODE, 0, NULL, _cisIFGainMode},
-    {FCD_CMD_APP_SET_IF_RC_FILTER, FCD_CMD_APP_GET_IF_RC_FILTER, 0, NULL, _cisIFRCFilter},
-    {FCD_CMD_APP_SET_IF_GAIN2,     FCD_CMD_APP_GET_IF_GAIN2,     0, NULL, _cisIFGain2},
-    {FCD_CMD_APP_SET_IF_GAIN3,     FCD_CMD_APP_GET_IF_GAIN3,     0, NULL, _cisIFGain3},
-    {FCD_CMD_APP_SET_IF_GAIN4,     FCD_CMD_APP_GET_IF_GAIN4,     0, NULL, _cisIFGain4},
-    {FCD_CMD_APP_SET_IF_FILTER,    FCD_CMD_APP_GET_IF_FILTER,    0, NULL, _cisIFFilter},
-    {FCD_CMD_APP_SET_IF_GAIN5,     FCD_CMD_APP_GET_IF_GAIN5,     0, NULL, _cisIFGain5},
-    {FCD_CMD_APP_SET_IF_GAIN6,     FCD_CMD_APP_GET_IF_GAIN6,     0, NULL, _cisIFGain6},
+    {FCD_VALUE_LNA_GAIN,     FCD_VALUE_LNA_GAIN,    10, NULL, _cisLNAGain},
+    {FCD_VALUE_LNA_ENHANCE,  FCD_VALUE_LNA_ENHANCE,  0, NULL, _cisLNAEnhance},
+    {FCD_VALUE_BAND,         FCD_VALUE_BAND,         0, NULL, _cisBand},
+    {FCD_VALUE_RF_FILTER,    FCD_VALUE_RF_FILTER,    0, NULL, _cisRFFilter1},
+    {FCD_VALUE_MIXER_GAIN,   FCD_VALUE_MIXER_GAIN,   1, NULL, _cisMixerGain},
+    {FCD_VALUE_BIAS_CURRENT, FCD_VALUE_BIAS_CURRENT, 3, NULL, _cisBiasCurrent},
+    {FCD_VALUE_MIXER_FILTER, FCD_VALUE_MIXER_FILTER, 0, NULL, _cisMixerFilter},
+    {FCD_VALUE_IF_GAIN1,     FCD_VALUE_IF_GAIN1,     1, NULL, _cisIFGain1},
+    {FCD_VALUE_IF_GAIN_MODE, FCD_VALUE_IF_GAIN_MODE, 0, NULL, _cisIFGainMode},
+    {FCD_VALUE_IF_RC_FILTER, FCD_VALUE_IF_RC_FILTER, 0, NULL, _cisIFRCFilter},
+    {FCD_VALUE_IF_GAIN2,     FCD_VALUE_IF_GAIN2,     0, NULL, _cisIFGain2},
+    {FCD_VALUE_IF_GAIN3,     FCD_VALUE_IF_GAIN3,     0, NULL, _cisIFGain3},
+    {FCD_VALUE_IF_GAIN4,     FCD_VALUE_IF_GAIN4,     0, NULL, _cisIFGain4},
+    {FCD_VALUE_IF_FILTER,    FCD_VALUE_IF_FILTER,    0, NULL, _cisIFFilter},
+    {FCD_VALUE_IF_GAIN5,     FCD_VALUE_IF_GAIN5,     0, NULL, _cisIFGain5},
+    {FCD_VALUE_IF_GAIN6,     FCD_VALUE_IF_GAIN6,     0, NULL, _cisIFGain6},
     {0, 0, 0, NULL, NULL}
 };
 
@@ -321,7 +323,6 @@ static COMBO_STRUCT _acs[] =
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    prevMode(FCD_MODE_NONE),
     diagramDialog(0)
 {
     QSettings settings;
@@ -394,7 +395,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     enableControls();
 
-
     setUnifiedTitleAndToolBarOnMac(true);
 
     /* connect signals & slots */
@@ -411,17 +411,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(uiDockIfGain->ui->comboBoxIFGain5, SIGNAL(activated(int)), this, SLOT(setIfGain5(int)));
     connect(uiDockIfGain->ui->comboBoxIFGain6, SIGNAL(activated(int)), this, SLOT(setIfGain6(int)));
 
-    timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(enableControls()));
-    timer->start(1000);
 }
 
 MainWindow::~MainWindow()
 {
     QSettings settings;
-
-    timer->stop();
-    delete timer;
 
     delete uiDockIfGain;
 
@@ -490,8 +484,6 @@ void MainWindow::enableCombos(bool enabled)
 }
 
 
-
-
 /** \brief Read all parameters from FCD.
   * \note "All" refers to the combo box settings and the bias tee button.
   */
@@ -499,10 +491,9 @@ void MainWindow::readDevice()
 {
     COMBO_STRUCT *pcs=_acs;
     quint8 u8;
-    FCD_MODE_ENUM fme;
     bool error = false;
 
-
+#if 0
     /* bias tee button */
     /** FIXME: FCD_CMD_APP_GET_BIAS_TEE doesn't work? **/
     /*fme = fcdAppGetParam(FCD_CMD_APP_GET_BIAS_TEE, &u8, 1);
@@ -558,6 +549,8 @@ void MainWindow::readDevice()
         qDebug() << "Successfully read settings from FCD";
         ui->statusBar->showMessage(tr("Successfully read settings from FCD"), 4000);
     }
+#endif
+    qDebug() << "FIXME: Not implemenbted!";
 }
 
 
@@ -605,6 +598,7 @@ double MainWindow::StrToDouble(QString s)
   */
 void MainWindow::enableControls()
 {
+#if 0
     FCD_MODE_ENUM fme;
     FCD_CAPS_STRUCT fcd_caps;
     quint8 u8;
@@ -668,6 +662,8 @@ void MainWindow::enableControls()
     }
 
     prevMode = fme;
+#endif
+    qDebug() << "FIXME: Not implemented!";
 }
 
 
@@ -679,7 +675,6 @@ void MainWindow::enableControls()
  */
 void MainWindow::setNewFrequency(qint64 freq)
 {
-    FCD_MODE_ENUM fme;
     double d = (double) (freq-lnbOffset);
 
     d *= 1.0 + ui->spinBoxCorr->value()/1000000.0;
@@ -689,6 +684,7 @@ void MainWindow::setNewFrequency(qint64 freq)
     qDebug() << "    LNB_offset:" << lnbOffset;
     qDebug() << "    FCD set:" << d;
 
+#if 0
     fme = fcdAppSetFreqkHz((int)(d/1000.0));
     if (fme != FCD_MODE_APP) {
         qWarning() << "Failed to set frequency";
@@ -739,7 +735,8 @@ void MainWindow::setNewFrequency(qint64 freq)
             ui->comboBoxBiasCurrent->setCurrentIndex(u8);
         }
     }
-
+#endif
+    qDebug() << "FIXME: Not implemented!";
 }
 
 
@@ -754,8 +751,10 @@ void MainWindow::setNewFrequency(qint64 freq)
 void MainWindow::on_pushButtonBiasT_toggled(bool isOn)
 {
     quint8 u8Write = isOn ? 1 : 0;
-
+#if 0
     fcdAppSetParam(FCD_CMD_APP_SET_BIAS_TEE, &u8Write, 1);
+#endif
+    qDebug() << "FIXME: Not implemented!";
 }
 
 
@@ -771,8 +770,10 @@ void MainWindow::on_spinBoxCorr_valueChanged(int n)
     double d = (double) (ui->freqCtrl->GetFrequency()-lnbOffset);
 
     d *= 1.0 + n/1000000.0;
-
+#if 0
     fcdAppSetFreqkHz((int)(d/1000.0));
+#endif
+    qDebug() << "FIXME: Not implemented!";
 }
 
 /** \brief LNB frequency offset changed.
@@ -804,25 +805,30 @@ void MainWindow::on_spinBoxLnb_valueChanged(double value)
 
     /* update display frequency (changes with LNB offset) */
     ui->freqCtrl->SetFrequency(currFcdFreq + lnbOffset);
-
+#if 0
     /* set new FCD frequency */
     setNewFrequency(ui->freqCtrl->GetFrequency());
+#endif
+    qDebug() << "FIXME: Not implemented!";
 }
 
 void MainWindow::on_comboBoxLNAGain_activated(int index)
 {
     quint8 u8Write = _acs[0].pacis[index].u8Val;
-    fcdAppSetParam(_acs[0].u8CommandSet, &u8Write, 1);
+    //fcdAppSetParam(_acs[0].u8CommandSet, &u8Write, 1);
+    qDebug() << "FIXME: Not implemented!";
 }
 
 void MainWindow::on_comboBoxLNAEnhance_activated(int index)
 {
     quint8 u8Write = _acs[1].pacis[index].u8Val;
-    fcdAppSetParam(_acs[1].u8CommandSet, &u8Write, 1);
+    //fcdAppSetParam(_acs[1].u8CommandSet, &u8Write, 1);
+    qDebug() << "FIXME: Not implemented!";
 }
 
 void MainWindow::on_comboBoxBand_activated(int index)
 {
+#if 0
     quint8 u8Write = _acs[2].pacis[index].u8Val;
     fcdAppSetParam(_acs[2].u8CommandSet, &u8Write, 1);
 
@@ -841,85 +847,99 @@ void MainWindow::on_comboBoxBand_activated(int index)
             ui->comboBoxRfFilter->setCurrentIndex(u8);
         }
     }
-
+#endif
+    qDebug() << "FIXME: Not implemented!";
 }
 
 void MainWindow::on_comboBoxRfFilter_activated(int index)
 {
     quint8 u8Write = _acs[3].pacis[index].u8Val;
-    fcdAppSetParam(_acs[3].u8CommandSet, &u8Write, 1);
+    //fcdAppSetParam(_acs[3].u8CommandSet, &u8Write, 1);
+    qDebug() << "FIXME: Not implemented!";
 }
 
 void MainWindow::on_comboBoxMixerGain_activated(int index)
 {
     quint8 u8Write = _acs[4].pacis[index].u8Val;
-    fcdAppSetParam(_acs[4].u8CommandSet, &u8Write, 1);
+    //fcdAppSetParam(_acs[4].u8CommandSet, &u8Write, 1);
+    qDebug() << "FIXME: Not implemented!";
 }
 
 void MainWindow::on_comboBoxBiasCurrent_activated(int index)
 {
     quint8 u8Write = _acs[5].pacis[index].u8Val;
-    fcdAppSetParam(_acs[5].u8CommandSet, &u8Write, 1);
+    //fcdAppSetParam(_acs[5].u8CommandSet, &u8Write, 1);
+    qDebug() << "FIXME: Not implemented!";
 }
 
 void MainWindow::on_comboBoxMixerFilter_activated(int index)
 {
     quint8 u8Write = _acs[6].pacis[index].u8Val;
-    fcdAppSetParam(_acs[6].u8CommandSet, &u8Write, 1);
+    //fcdAppSetParam(_acs[6].u8CommandSet, &u8Write, 1);
+    qDebug() << "FIXME: Not implemented!";
 }
 
 void MainWindow::setIfGainMode(int index)
 {
     quint8 u8Write = _acs[8].pacis[index].u8Val;
-    fcdAppSetParam(_acs[8].u8CommandSet, &u8Write, 1);
+    //fcdAppSetParam(_acs[8].u8CommandSet, &u8Write, 1);
+    qDebug() << "FIXME: Not implemented!";
 }
 
 void MainWindow::setIfGain1(int index)
 {
     quint8 u8Write = _acs[7].pacis[index].u8Val;
-    fcdAppSetParam(_acs[7].u8CommandSet, &u8Write, 1);
+    //fcdAppSetParam(_acs[7].u8CommandSet, &u8Write, 1);
+    qDebug() << "FIXME: Not implemented!";
 }
 
 void MainWindow::setIfRcFilter(int index)
 {
     quint8 u8Write = _acs[9].pacis[index].u8Val;
-    fcdAppSetParam(_acs[9].u8CommandSet, &u8Write, 1);
+    //fcdAppSetParam(_acs[9].u8CommandSet, &u8Write, 1);
+    qDebug() << "FIXME: Not implemented!";
 }
 
 void MainWindow::setIfGain2(int index)
 {
     quint8 u8Write = _acs[10].pacis[index].u8Val;
-    fcdAppSetParam(_acs[10].u8CommandSet, &u8Write, 1);
+    //fcdAppSetParam(_acs[10].u8CommandSet, &u8Write, 1);
+    qDebug() << "FIXME: Not implemented!";
 }
 
 void MainWindow::setIfGain3(int index)
 {
     quint8 u8Write = _acs[11].pacis[index].u8Val;
-    fcdAppSetParam(_acs[11].u8CommandSet, &u8Write, 1);
+    //fcdAppSetParam(_acs[11].u8CommandSet, &u8Write, 1);
+    qDebug() << "FIXME: Not implemented!";
 }
 
 void MainWindow::setIfGain4(int index)
 {
     quint8 u8Write = _acs[12].pacis[index].u8Val;
-    fcdAppSetParam(_acs[12].u8CommandSet, &u8Write, 1);
+    //fcdAppSetParam(_acs[12].u8CommandSet, &u8Write, 1);
+    qDebug() << "FIXME: Not implemented!";
 }
 
 void MainWindow::setIfFilter(int index)
 {
     quint8 u8Write = _acs[13].pacis[index].u8Val;
-    fcdAppSetParam(_acs[13].u8CommandSet, &u8Write, 1);
+    //fcdAppSetParam(_acs[13].u8CommandSet, &u8Write, 1);
+    qDebug() << "FIXME: Not implemented!";
 }
 
 void MainWindow::setIfGain5(int index)
 {
     quint8 u8Write = _acs[14].pacis[index].u8Val;
-    fcdAppSetParam(_acs[14].u8CommandSet, &u8Write, 1);
+    //fcdAppSetParam(_acs[14].u8CommandSet, &u8Write, 1);
+    qDebug() << "FIXME: Not implemented!";
 }
 
 void MainWindow::setIfGain6(int index)
 {
     quint8 u8Write = _acs[15].pacis[index].u8Val;
-    fcdAppSetParam(_acs[15].u8CommandSet,&u8Write,1);
+    //fcdAppSetParam(_acs[15].u8CommandSet,&u8Write,1);
+    qDebug() << "FIXME: Not implemented!";
 }
 
 
@@ -955,11 +975,12 @@ void MainWindow::on_actionFirmware_triggered()
     //connect(fwDialog, SIGNAL(finished(int)), this, SLOT(fwDialogFinished(int)));
 
     /* set FCD in bootloader mode */
-    timer->stop();
-    fcdAppReset();
-    timer->start(1000);
+    //timer->stop();
+    //fcdAppReset();
+    //timer->start(1000);
+    qDebug() << "FIXME: Not implemented!";
 
-    fwDialog->show();
+    //fwDialog->show();
 }
 
 
@@ -970,12 +991,13 @@ void MainWindow::fwDialogFinished(int result)
 
     //disconnect(fwDialog, SIGNAL(finished(int)), this, SLOT(fwDialogFinished(int)));
     //delete fwDialog;
-    fwDialog->hide();
+    //fwDialog->hide();
 
     /* set FCD back to application mode */
-    timer->stop();
-    fcdBlReset();
-    timer->start(1000);
+    //timer->stop();
+    //fcdBlReset();
+    //timer->start(1000);
+    qDebug() << "FIXME: Not implemented!";
 }
 
 
@@ -992,7 +1014,7 @@ void MainWindow::on_actionDefault_triggered()
 
     // perform reset
     COMBO_STRUCT *pcs=_acs;
-
+#if 0
     while (pcs->pacis!=NULL)
     {
         quint8 u8Write = pcs->pacis[pcs->nIdxDefault].u8Val;
@@ -1001,7 +1023,8 @@ void MainWindow::on_actionDefault_triggered()
     }
 
     readDevice();
-
+#endif
+    qDebug() << "FIXME: Not implemented!";
     ui->statusBar->showMessage(tr("FCD has been reset"), 5000);
 }
 
