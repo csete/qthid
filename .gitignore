@@ -1,3 +1,9 @@
 qthid.pro.user*
 .DS_Store
+Makefile
+*.o
+moc_*
+ui_*
+qrc_*
+qthid
 
