@@ -17,8 +17,8 @@ qthid and no installation of the library is required.
 The current version 3.1 implements the full API available with the 18f firmware.
 It should cover all the functionality provided by the "fully functional windows
 frontend". Note that the majority of this full API is only available since
-firmware 18f and qthid 3.0 will not work with earlier firmware. The application
-will simply fail to detect any FCd with earlier firmwares.
+firmware 18f and qthid 3 will not work with earlier firmware. The application
+will simply fail to detect the FCD with earlier firmwares.
 
 You can use qthid 2.2 to upgrade your firmware to 18f or later.
 
@@ -27,19 +27,17 @@ You can use qthid 2.2 to upgrade your firmware to 18f or later.
 
 2.1 Linux
 
-You can use the precompiled binaries (32 or 64 bit) but you need the Qt runtime
+If you are using Debian testing or Ubuntu, you can install the qthid-fcd-controller package. This should set everything up and you can skip the rest of this section.
+
+Otherwise you can use the precompiled binaries (32 or 64 bit) but you need the Qt runtime
 libraries installed. On Ubuntu these are called libqtcore4 and libqtgui4 and
 their dependencies. You can simply install everything Qt version 4 (not version 3!).
 Qt 4.7 has been tested, Qt 4.6 will probably also work.
 
-In order to use the Funcube Dongle as regular user, you need to create a udev rule.
-Create a udev file /etc/udev/rules.d/20-fcd.rules containing:
-
-  SUBSYSTEMS=="usb" ATTRS{idVendor}=="04d8" ATTRS{idProduct}=="fb56" MODE:="0666" SYMLINK+="FCD"
+In order to use the Funcube Dongle as regular user, you need to create an udev rule. An example funcube-dongle.rules file is included with the package and you can simply copy that into the /lib/udev/rules.d/ directory.
   
-(hint: open a terminal and type: sudo gedit /etc/udev/rules.d/20-fcd.rules)
+(hint: open a terminal and type: sudo cp funcube-dongle.rules /lib/udev/rules.d/funcube-dongle.rules)
 
-Reload the rules using "sudo udevadm control --reload-rules"
 Qthid should now detect your FCD when you plug it in.
 
 
@@ -62,16 +60,14 @@ installed separately. It is known to work on Windows XP, Vista and 7.
   sufficient to select Qt Creator and the required Qt libraries will be installed as
   dependencies. On Mac and Windows you need to download the full Qt SDK. On Windows
   you also need the MS Windows SDK.
-- On linux you also need to install the libusb-1.0-dev package using the package manager
-  (the name may be different depending on distribution but it should have libusb-1.0 and
-  dev int he name) and the pkg-config program.
+- On linux you also need to install the libudev-dev package using the package manager
+  (the name may be different depending on distribution but it should have libudev and
+  dev int he name).
 - Open the qthid.pro file in Qt Creator. It will say something about setting up a target;
   say OK or Finish or Done (depends on version and OS).
 - You can now build and execute the project.
 
-If you want to try the latest experimental code checkout the 'next' branch, but
-check first that it is indeed ahead of the master branch. You can do that on the
-network chart: https://github.com/csete/qthid/network
+If you want to try the latest experimental code you can check it out from Github: https://github.com/csete/qthid
 
 
 3. License
