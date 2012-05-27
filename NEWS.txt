@@ -1,3 +1,11 @@
+Changes in version 3.2:
+
+- Switch to using hidraw driver on Linux 2.6.38 or later (fixes crashes
+  experienced on recent Linux with libusb-1.0.9).
+- Update HID API.
+- Reduce widow width.
+
+
 Changes in version 3.1:
 
 - Support for Mac OS X 10.7 Lion
