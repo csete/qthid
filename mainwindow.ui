@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1106</width>
-    <height>478</height>
+    <width>918</width>
+    <height>523</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -511,11 +511,23 @@ Requires FCD with S/N TBD or above.</string>
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
       <property name="text">
        <string/>
       </property>
       <property name="pixmap">
        <pixmap resource="qthid.qrc">:/qthid/images/rfchain.png</pixmap>
+      </property>
+      <property name="scaledContents">
+       <bool>false</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
       </property>
      </widget>
     </item>
@@ -559,42 +571,21 @@ Requires FCD with S/N TBD or above.</string>
       <item row="0" column="6">
        <widget class="QLabel" name="labelIFGain2">
         <property name="text">
-         <string>IF gain 2</string>
+         <string>IF gain 2,3,4</string>
         </property>
        </widget>
       </item>
       <item row="0" column="7">
-       <widget class="QLabel" name="labelIFGain3">
-        <property name="text">
-         <string>IF gain 3</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="8">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>IF gain 4</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="9">
        <widget class="QLabel" name="labelFilter">
         <property name="text">
          <string>IF filter</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="10">
+      <item row="0" column="8">
        <widget class="QLabel" name="labelIFGain5">
         <property name="text">
-         <string>IF gain 5</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="11">
-       <widget class="QLabel" name="labelIFGain6">
-        <property name="text">
-         <string>IF gain 6</string>
+         <string>IF gain 5, 6</string>
         </property>
        </widget>
       </item>
@@ -629,19 +620,10 @@ the frequency changes but you can force it to use a specific filter.</string>
        <widget class="QComboBox" name="comboBoxIFGain2"/>
       </item>
       <item row="1" column="7">
-       <widget class="QComboBox" name="comboBoxIFGain3"/>
-      </item>
-      <item row="1" column="8">
-       <widget class="QComboBox" name="comboBoxIFGain4"/>
-      </item>
-      <item row="1" column="9">
        <widget class="QComboBox" name="comboBoxIFFilter"/>
       </item>
-      <item row="1" column="10">
+      <item row="1" column="8">
        <widget class="QComboBox" name="comboBoxIFGain5"/>
-      </item>
-      <item row="1" column="11">
-       <widget class="QComboBox" name="comboBoxIFGain6"/>
       </item>
       <item row="0" column="1">
        <widget class="QLabel" name="labelRFFilter">
@@ -649,6 +631,15 @@ the frequency changes but you can force it to use a specific filter.</string>
          <string>RF Filter</string>
         </property>
        </widget>
+      </item>
+      <item row="2" column="8">
+       <widget class="QComboBox" name="comboBoxIFGain6"/>
+      </item>
+      <item row="2" column="6">
+       <widget class="QComboBox" name="comboBoxIFGain3"/>
+      </item>
+      <item row="3" column="6">
+       <widget class="QComboBox" name="comboBoxIFGain4"/>
       </item>
      </layout>
     </item>
@@ -775,7 +766,7 @@ a specific band.</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1106</width>
+     <width>918</width>
      <height>25</height>
     </rect>
    </property>
@@ -783,8 +774,6 @@ a specific band.</string>
     <property name="title">
      <string>&amp;File</string>
     </property>
-    <addaction name="actionLoad"/>
-    <addaction name="actionSave"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -795,32 +784,8 @@ a specific band.</string>
     <addaction name="actionAbout"/>
     <addaction name="actionAboutQt"/>
    </widget>
-   <widget class="QMenu" name="menu_Tools">
-    <property name="title">
-     <string>&amp;Tools</string>
-    </property>
-    <addaction name="actionFirmware"/>
-    <addaction name="actionBalance"/>
-   </widget>
    <addaction name="menuFile"/>
-   <addaction name="menu_Tools"/>
    <addaction name="menuHelp"/>
-  </widget>
-  <widget class="QToolBar" name="mainToolBar">
-   <property name="toolButtonStyle">
-    <enum>Qt::ToolButtonFollowStyle</enum>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-   <addaction name="actionLoad"/>
-   <addaction name="actionSave"/>
-   <addaction name="separator"/>
-   <addaction name="actionBalance"/>
-   <addaction name="actionFirmware"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionAbout">
