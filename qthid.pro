@@ -23,7 +23,7 @@ CONFIG(debug, debug|release) {
 } else {
     DEFINES += QT_NO_DEBUG
     DEFINES += QT_NO_DEBUG_OUTPUT
-    VER = 3.1
+    VER = 3.2
 }
 
 # Tip from: http://www.qtcentre.org/wiki/index.php?title=Version_numbering_using_QMake
@@ -36,10 +36,11 @@ SOURCES +=\
     fcd.c
 
 mac: SOURCES += hidmac.c
-win32: SOURCES += hidwin.cpp
+win32: SOURCES += hidwin.c
 
 linux-g++|linux-g++-64 {
-    SOURCES +=hid-libusb.c
+    #SOURCES +=hid-libusb.c
+    SOURCES += hidraw.c
 }
 
 HEADERS  += \
@@ -55,8 +56,9 @@ win32:LIBS += "C:\\Program Files\\Microsoft SDKs\\Windows\\v7.0\\Lib\\setupapi.l
 
 # libusb-1.0 on Linux uses pkg-config
 linux-g++|linux-g++-64 {
-    CONFIG += link_pkgconfig
-    PKGCONFIG += libusb-1.0
+    #CONFIG += link_pkgconfig
+    #PKGCONFIG += libusb-1.0
+    LIBS += -ludev
 }
 
 RESOURCES += \
@@ -72,6 +74,7 @@ win32 {
 }
 
 OTHER_FILES += AUTHORS.txt LICENSE.txt NEWS.txt README.txt \
+    funcube-dongle.rules \
     qthid.rc \
     images/qthid.ico \
     images/qthid.icns
