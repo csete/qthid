@@ -19,12 +19,11 @@ macx {
 # disable debug messages in release
 CONFIG(debug, debug|release) {
     # Define version string (see below for releases)
-    #VER = $$system(git describe --abbrev=8)
-    VER = 4.0-git
+    VER = $$system(git describe --abbrev=8)
 } else {
     DEFINES += QT_NO_DEBUG
     DEFINES += QT_NO_DEBUG_OUTPUT
-    VER = 4.0-git
+    VER = 0.0
 }
 
 # Tip from: http://www.qtcentre.org/wiki/index.php?title=Version_numbering_using_QMake
