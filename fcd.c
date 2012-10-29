@@ -325,7 +325,7 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetFreq(unsigned int uFre
     aucBufOut[2] = (unsigned char) uFreq;
     aucBufOut[3] = (unsigned char) (uFreq >> 8);
     aucBufOut[4] = (unsigned char) (uFreq >> 16);
-    aucBufOut[4] = (unsigned char) (uFreq >> 24);
+    aucBufOut[5] = (unsigned char) (uFreq >> 24);
     hid_write(phd, aucBufOut, 65);
     memset(aucBufIn, 0xCC, 65); // Clear out the response buffer
     hid_read(phd, aucBufIn, 65);
