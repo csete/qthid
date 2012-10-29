@@ -1,7 +1,7 @@
 /***************************************************************************
  *  This file is part of Qthid.
  *
- *  CopyRight (C) 2011  Alexandru Csete, OZ9AEC
+ *  Copyright (C) 2011-2012  Alexandru Csete, OZ9AEC
  *
  *  Qthid is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -80,6 +80,10 @@ void CFirmware::on_selectButton_clicked()
 
 void CFirmware::on_uploadButton_clicked()
 {
+
+    qDebug() << "FIXME:" << __func__;
+
+#if 0
     QFile qf(ui->lineEdit->text());
     qint64 qn64size = qf.size();
     char *buf=new char[qn64size];
@@ -145,12 +149,15 @@ void CFirmware::on_uploadButton_clicked()
     checkFirmwareSelection(ui->lineEdit->text());
 
     delete buf;
+#endif
 }
 
 
 /*! \brief Verify firmware in FCD. */
 void CFirmware::on_verifyButton_clicked()
 {    
+    qDebug() << "FIXME:" << __func__;
+#if 0
     QFile qf(ui->lineEdit->text());
     qint64 qn64size = qf.size();
     char *buf=new char[qn64size];
@@ -208,6 +215,7 @@ void CFirmware::on_verifyButton_clicked()
     checkFirmwareSelection(ui->lineEdit->text());
 
     delete buf;
+#endif
 }
 
 

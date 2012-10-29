@@ -72,7 +72,7 @@ typedef enum
     TIFE_6MHZ,
     TIFE_7MHZ,
     TIFE_8MHZ
-} TUNER_IF_FILTER_ENUM
+} TUNER_IF_FILTER_ENUM;
 
 
 #endif // FCDHIDCMD_H

@@ -1,9 +1,9 @@
 /***************************************************************************
  *  This file is part of Qthid.
  *
- *  Copyright (C) 2010  Howard Long, G6LVB
- *  CopyRight (C) 2011  Alexandru Csete, OZ9AEC
- *                      Mario Lorenz, DL5MLO
+ *  Copyright (C) 2010       Howard Long, G6LVB
+ *  Copyright (C) 2011       Mario Lorenz, DL5MLO
+ *  Copyright (C) 2011-2012  Alexandru Csete, OZ9AEC
  *
  *  Qthid is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -27,38 +27,11 @@
 #include <QComboBox>
 #include <QLabel>
 #include "fcd.h"
-#include "fcddiagram.h"
-#include "dockifgain.h"
 #include "firmware.h"
 
 namespace Ui {
     class MainWindow;
 }
-
-/** \brief Data definition for combo box items.
-  * This data structure represents an item in a combo box used for
-  * gain and filter parameters. Each combo box has an array of these
-  * data defining the set of options.
-  */
-typedef struct {
-    const char *pszDesc;  /*!< The display name of the item. */
-    qint8 u8Val;          /*!< The numerical value of the item. */
-} COMBO_ITEM_STRUCT;
-
-/** \brief Data definition for a combo box.
-  * This data structure represents a combo box that is used for gain and
-  * filter parameters. Each such parameter has a 'set' and 'get' command
-  * as well as a list of options (COMBO_ITEM_STRUCT[]).
-  * \sa _acs
-  */
-typedef struct {
-    quint8 u8CommandSet;   /*!< The command for setting the parameter in the FCD. */
-    quint8 u8CommandGet;   /*!< The command for retrieveing the parameter from the FCD. */
-    qint8 nIdxDefault;    /*!< Index pointing to the default value for this parameter in the pacis array. */
-    QComboBox *pComboBox; /*!< Pointer to the combo box. */
-    const COMBO_ITEM_STRUCT *pacis; /*!< Pointer to the array of items. */
-} COMBO_STRUCT;
-
 
 class MainWindow : public QMainWindow
 {
@@ -74,56 +47,21 @@ private:
     QLabel         *fcdStatus; /*! Label showing FCD status in statusbar. */
     FCD_MODE_ENUM   prevMode;  /*! Previous mode to detect FCd mode changes (bootloader/app). */
 
-    FcdDiagram *diagramDialog; /*! Dialog window showing FCD diagram. */
-    DockIfGain *uiDockIfGain;  /*! Dock widget with IF gain and filter controls. */
     CFirmware  *fwDialog;      /*! Firmware tools (uplaod and verify firmware). */
 
     qint64      lnbOffset;     /*! Frequency offset when using up- and downconverters (Hz). */
 
     double StrToDouble(QString s);
 
-    void populateCombo(QComboBox *box, int nIdxDefault, const COMBO_ITEM_STRUCT *pcis);
-    void populateCombos();
     void enableCombos(bool enabled);
     void readDevice();
-    void bandChange();
 
 public slots:
     void setNewFrequency(qint64 freq);
 
 private slots:
     void on_spinBoxCorr_valueChanged(int);
-    void on_spinBoxLnb_valueChanged(double value);
-
     void on_pushButtonBiasT_toggled(bool isOn);
-
-    void on_comboBoxLNAGain_activated(int index);
-    void on_comboBoxBand_activated(int index);
-    void on_comboBoxRfFilter_activated(int index);
-    void on_comboBoxMixerGain_activated(int index);
-    void on_comboBoxMixerFilter_activated(int index);
-    //void on_comboBoxIFGain1_activated(int index);
-    //void on_comboBoxIFRCFilter_activated(int index);
-    //void on_comboBoxIFGain2_activated(int index);
-    //void on_comboBoxIFGain3_activated(int index);
-    //void on_comboBoxIFFilter_activated(int index);
-    //void on_comboBoxIFGain4_activated(int index);
-    //void on_comboBoxIFGain5_activated(int index);
-    //void on_comboBoxIFGain6_activated(int index);
-    void on_comboBoxLNAEnhance_activated(int index);
-    void on_comboBoxBiasCurrent_activated(int index);
-    //void on_comboBoxIFGainMode_activated(int index);
-
-    /* if gain */
-    void setIfGainMode(int index);
-    void setIfRcFilter(int index);
-    void setIfFilter(int index);
-    void setIfGain1(int index);
-    void setIfGain2(int index);
-    void setIfGain3(int index);
-    void setIfGain4(int index);
-    void setIfGain5(int index);
-    void setIfGain6(int index);
 
     void enableControls();
     void fwDialogFinished(int result);
@@ -136,7 +74,6 @@ private slots:
     void on_actionDefault_triggered();
     void on_actionAbout_triggered();
     void on_actionAboutQt_triggered();
-    void on_actionDiagram_triggered();
 };
 
 #endif // MAINWINDOW_H

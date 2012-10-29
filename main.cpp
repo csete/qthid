@@ -1,8 +1,8 @@
 /***************************************************************************
  *  This file is part of Qthid.
  *
- *  Copyright (C) 2010  Howard Long, G6LVB
- *  CopyRight (C) 2011  Alexandru Csete, OZ9AEC
+ *  Copyright (C) 2010       Howard Long, G6LVB
+ *  Copyright (C) 2011-2012  Alexandru Csete, OZ9AEC
  *
  *  Qthid is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by

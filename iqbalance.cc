@@ -1,7 +1,7 @@
 /***************************************************************************
  *  This file is part of Qthid.
  *
- *  CopyRight (C) 2011  Alexandru Csete, OZ9AEC
+ *  Copyright (C) 2011-2012  Alexandru Csete, OZ9AEC
  *
  *  Qthid is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -44,10 +44,10 @@ CIqBalance::~CIqBalance()
 {
     /* store values */
     QSettings settings;
-    settings.setValue("DCICorr",ui->doubleSpinBoxDCI->value());
-    settings.setValue("DCQCorr",ui->doubleSpinBoxDCQ->value());
-    settings.setValue("PhaseCorr",ui->doubleSpinBoxPhase->value());
-    settings.setValue("GainCorr",ui->doubleSpinBoxGain->value());
+    //settings.setValue("DCICorr",ui->doubleSpinBoxDCI->value());
+    //settings.setValue("DCQCorr",ui->doubleSpinBoxDCQ->value());
+    //settings.setValue("PhaseCorr",ui->doubleSpinBoxPhase->value());
+    //settings.setValue("GainCorr",ui->doubleSpinBoxGain->value());
 
     delete ui;
 
@@ -68,7 +68,8 @@ void CIqBalance::on_doubleSpinBoxDCI_valueChanged(double value)
     dcinfo.dci = static_cast<signed short>(value*32768.0);
     dcinfo.dcq = static_cast<signed short>(ui->doubleSpinBoxDCQ->value()*32768.0);
 
-    fcdAppSetParam(FCD_CMD_APP_SET_DC_CORR, dcinfo.auc, 4);
+    qDebug() << "FIXME:" << __func__;
+    //fcdAppSetParam(FCD_CMD_APP_SET_DC_CORR, dcinfo.auc, 4);
 }
 
 
@@ -86,7 +87,8 @@ void CIqBalance::on_doubleSpinBoxDCQ_valueChanged(double value)
     dcinfo.dci = static_cast<signed short>(ui->doubleSpinBoxDCI->value()*32768.0);
     dcinfo.dcq = static_cast<signed short>(value*32768.0);
 
-    fcdAppSetParam(FCD_CMD_APP_SET_DC_CORR, dcinfo.auc, 4);
+    qDebug() << "FIXME:" << __func__;
+    //fcdAppSetParam(FCD_CMD_APP_SET_DC_CORR, dcinfo.auc, 4);
 }
 
 
@@ -104,7 +106,8 @@ void CIqBalance::on_doubleSpinBoxPhase_valueChanged(double value)
     iqinfo.phase = static_cast<signed short>(value*32768.0);
     iqinfo.gain = static_cast<signed short>(ui->doubleSpinBoxGain->value()*32768.0);
 
-    fcdAppSetParam(FCD_CMD_APP_SET_IQ_CORR, iqinfo.auc, 4);
+    qDebug() << "FIXME:" << __func__;
+    //fcdAppSetParam(FCD_CMD_APP_SET_IQ_CORR, iqinfo.auc, 4);
 }
 
 
@@ -122,7 +125,8 @@ void CIqBalance::on_doubleSpinBoxGain_valueChanged(double value)
     iqinfo.phase = static_cast<signed short>(ui->doubleSpinBoxPhase->value()*32768.0);
     iqinfo.gain = static_cast<signed short>(value*32768.0);
 
-    fcdAppSetParam(FCD_CMD_APP_SET_IQ_CORR, iqinfo.auc, 4);
+    qDebug() << "FIXME:" << __func__;
+    //fcdAppSetParam(FCD_CMD_APP_SET_IQ_CORR, iqinfo.auc, 4);
 }
 
 
@@ -133,18 +137,18 @@ void CIqBalance::on_doubleSpinBoxGain_valueChanged(double value)
 void CIqBalance::on_revertButton_clicked()
 {
     QSettings settings;
-    ui->doubleSpinBoxDCI->setValue(settings.value("DCICorr","0.0").toDouble());
-    ui->doubleSpinBoxDCQ->setValue(settings.value("DCQCorr","0.0").toDouble());
-    ui->doubleSpinBoxPhase->setValue(settings.value("PhaseCorr","0.0").toDouble());
-    ui->doubleSpinBoxGain->setValue(settings.value("GainCorr","1.0").toDouble());
+    //ui->doubleSpinBoxDCI->setValue(settings.value("DCICorr","0.0").toDouble());
+    //ui->doubleSpinBoxDCQ->setValue(settings.value("DCQCorr","0.0").toDouble());
+    //ui->doubleSpinBoxPhase->setValue(settings.value("PhaseCorr","0.0").toDouble());
+    //ui->doubleSpinBoxGain->setValue(settings.value("GainCorr","1.0").toDouble());
 }
 
 
 /*! \brief Reset button has been clicked. */
 void CIqBalance::on_resetButton_clicked()
 {
-    ui->doubleSpinBoxDCI->setValue(0.0);
-    ui->doubleSpinBoxDCQ->setValue(0.0);
-    ui->doubleSpinBoxPhase->setValue(0.0);
-    ui->doubleSpinBoxGain->setValue(1.0);
+    //ui->doubleSpinBoxDCI->setValue(0.0);
+    //ui->doubleSpinBoxDCQ->setValue(0.0);
+    //ui->doubleSpinBoxPhase->setValue(0.0);
+    //ui->doubleSpinBoxGain->setValue(1.0);
 }
