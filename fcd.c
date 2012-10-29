@@ -112,7 +112,7 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdGetMode(void)
     }
 
     /* Send a BL Query Command */
-    aucBufOut[0] = 0; // Report ID, ignored
+    aucBufOut[0] = 0; // Report ID. Ignored by HID Class firmware as only config'd for one report
     aucBufOut[1] = FCD_CMD_BL_QUERY;
     hid_write(phd, aucBufOut, 65);
     memset(aucBufIn, 0xCC, 65); // Clear out the response buffer
@@ -162,7 +162,7 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdGetFwVerStr(char *str)
     }
 
     /* Send a BL Query Command */
-    aucBufOut[0] = 0; // Report ID, ignored
+    aucBufOut[0] = 0; // Report ID. Ignored by HID Class firmware as only config'd for one report
     aucBufOut[1] = FCD_CMD_BL_QUERY;
     hid_write(phd, aucBufOut, 65);
     memset(aucBufIn, 0xCC, 65); // Clear out the response buffer
@@ -214,7 +214,7 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppReset(void)
     }
 
     // Send an App reset command
-    aucBufOut[0] = 0; // Report ID, ignored
+    aucBufOut[0] = 0; // Report ID. Ignored by HID Class firmware as only config'd for one report
     aucBufOut[1] = FCD_CMD_APP_RESET;
     hid_write(phd, aucBufOut, 65);
 
@@ -259,7 +259,7 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppReset(void)
   *
   * \sa fcdAppSetFreq
   */
-EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetFreqkHz(int nFreq)
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetFreqKhz(int nFreq)
 {
     hid_device *phd=NULL;
     unsigned char aucBufIn[65];
@@ -273,7 +273,7 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetFreqkHz(int nFreq)
     }
 
     // Send an App reset command
-    aucBufOut[0] = 0; // Report ID, ignored
+    aucBufOut[0] = 0; // Report ID. Ignored by HID Class firmware as only config'd for one report
     aucBufOut[1] = FCD_CMD_APP_SET_FREQ_KHZ;
     aucBufOut[2] = (unsigned char)nFreq;
     aucBufOut[3] = (unsigned char)(nFreq>>8);
@@ -282,16 +282,13 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetFreqkHz(int nFreq)
     memset(aucBufIn, 0xCC, 65); // Clear out the response buffer
     hid_read(phd, aucBufIn, 65);
 
-    if (aucBufIn[0]==FCD_CMD_APP_SET_FREQ_KHZ && aucBufIn[1]==1)
-    {
-        fcdClose(phd);
-        phd = NULL;
-
-        return FCD_MODE_APP;
-    }
-
     fcdClose(phd);
     phd = NULL;
+
+    if (aucBufIn[0]==FCD_CMD_APP_SET_FREQ_KHZ && aucBufIn[1]==1)
+    {
+        return FCD_MODE_APP;
+    }
 
     return FCD_MODE_BL;
 }
@@ -302,10 +299,11 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetFreqkHz(int nFreq)
   * \param rFreq The actual frequency in Hz returned by the FCD (can be NULL).
   * \return The FCD mode.
   *
-  * This function sets the frequency of the FCD with 1 kHz resolution. The parameter
-  * nFreq must already contain any necessary frequency corrention.
+  * This function sets the frequency of the FCD with 1 Hz resolution. The parameter
+  * nFreq must already contain any necessary frequency corrention. If rFreq is not NULL
+  * it will contain the actual frequency as returned by the API call.
   *
-  * \sa fcdAppSetFreq
+  * \sa fcdAppSetFreqKhz
   */
 EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetFreq(unsigned int uFreq, unsigned int *rFreq)
 {
@@ -321,7 +319,7 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetFreq(unsigned int uFre
     }
 
     // Send an App reset command
-    aucBufOut[0] = 0; // Report ID, ignored
+    aucBufOut[0] = 0; // Report ID. Ignored by HID Class firmware as only config'd for one report
     aucBufOut[1] = FCD_CMD_APP_SET_FREQ_HZ;
     aucBufOut[2] = (unsigned char) uFreq;
     aucBufOut[3] = (unsigned char) (uFreq >> 8);
@@ -331,12 +329,11 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetFreq(unsigned int uFre
     memset(aucBufIn, 0xCC, 65); // Clear out the response buffer
     hid_read(phd, aucBufIn, 65);
 
-    /** FIXME: Return actual frequency in aucBufIn[2+] ? **/
+    fcdClose(phd);
+    phd = NULL;
+
     if (aucBufIn[0]==FCD_CMD_APP_SET_FREQ_HZ && aucBufIn[1]==1)
     {
-        fcdClose(phd);
-        phd = NULL;
-
         if (rFreq != NULL)
         {
             *rFreq = 0;
@@ -349,8 +346,55 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetFreq(unsigned int uFre
         return FCD_MODE_APP;
     }
 
+    return FCD_MODE_BL;
+}
+
+/** \brief Get current FCD frequency with Hz resolution.
+  * \param rFreq The current frequency in Hz returned by the FCD.
+  * \return The FCD mode.
+  *
+  * This function reads the frequency of the FCD with 1 Hz resolution. The parameter
+  * nFreq must already contain any necessary frequency corrention.
+  *
+  * \sa fcdAppSetFreq
+  */
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppGetFreq(unsigned int *rFreq)
+{
+    hid_device *phd=NULL;
+    unsigned char aucBufIn[65];
+    unsigned char aucBufOut[65];
+
+    if (rFreq == NULL)
+    {
+        return FCD_MODE_NONE;
+    }
+
+    phd = fcdOpen();
+
+    if (phd == NULL)
+    {
+        return FCD_MODE_NONE;
+    }
+
+    aucBufOut[0] = 0; // Report ID. Ignored by HID Class firmware as only config'd for one report
+    aucBufOut[1] = FCD_CMD_APP_GET_FREQ_HZ;
+    hid_write(phd, aucBufOut, 65);
+    memset(aucBufIn, 0xCC, 65); // Clear out the response buffer
+    hid_read(phd, aucBufIn, 65);
+
     fcdClose(phd);
     phd = NULL;
+
+    if (aucBufIn[0]==FCD_CMD_APP_GET_FREQ_HZ && aucBufIn[1]==1)
+    {
+        *rFreq = 0;
+        *rFreq = (unsigned int) aucBufIn[2];
+        *rFreq += (unsigned int) (aucBufIn[3] << 8);
+        *rFreq += (unsigned int) (aucBufIn[4] << 16);
+        *rFreq += (unsigned int) (aucBufIn[5] << 24);
+
+        return FCD_MODE_APP;
+    }
 
     return FCD_MODE_BL;
 }
