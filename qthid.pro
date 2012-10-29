@@ -35,7 +35,7 @@ SOURCES +=\
     main.cpp \
     fcd.c \
     freqctrl.cpp \
-    iqbalance.cc \
+    iqbalance.cpp \
     firmware.cpp
 
 mac: SOURCES += hidmac.c
