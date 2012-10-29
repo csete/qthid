@@ -299,6 +299,7 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetFreqkHz(int nFreq)
 
 /** \brief Set FCD frequency with Hz resolution.
   * \param nFreq The new frequency in Hz.
+  * \param rFreq The actual frequency in Hz returned by the FCD (can be NULL).
   * \return The FCD mode.
   *
   * This function sets the frequency of the FCD with 1 kHz resolution. The parameter
@@ -306,7 +307,7 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetFreqkHz(int nFreq)
   *
   * \sa fcdAppSetFreq
   */
-EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetFreq(unsigned int uFreq)
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetFreq(unsigned int uFreq, unsigned int *rFreq)
 {
     hid_device *phd=NULL;
     unsigned char aucBufIn[65];
@@ -335,6 +336,15 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetFreq(unsigned int uFre
     {
         fcdClose(phd);
         phd = NULL;
+
+        if (rFreq != NULL)
+        {
+            *rFreq = 0;
+            *rFreq = (unsigned int) aucBufIn[2];
+            *rFreq += (unsigned int) (aucBufIn[3] << 8);
+            *rFreq += (unsigned int) (aucBufIn[4] << 16);
+            *rFreq += (unsigned int) (aucBufIn[5] << 24);
+        }
 
         return FCD_MODE_APP;
     }

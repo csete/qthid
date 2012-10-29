@@ -229,32 +229,25 @@ void MainWindow::enableControls()
 void MainWindow::setNewFrequency(qint64 freq)
 {
     FCD_MODE_ENUM fme;
+    unsigned int uFreq, rFreq;
     double d = (double) (freq-lnbOffset);
 
     d *= 1.0 + ui->spinBoxCorr->value()/1000000.0;
+    uFreq = (unsigned int) d;
+
+    fme = fcdAppSetFreq(uFreq, &rFreq);
 
     qDebug() << "Set new frequency";
-    qDebug() << "    Display:" << freq;
-    qDebug() << "    LNB_offset:" << lnbOffset;
-    qDebug() << "    FCD set:" << d;
+    qDebug() << "    Display:" << freq << "Hz";
+    qDebug() << " LNB offset:" << lnbOffset << "Hz";
+    qDebug() << "    FCD set:" << uFreq << "Hz";
+    qDebug() << "    FCD get:" << rFreq << "Hz";
 
-    //fme = fcdAppSetFreqkHz((int)(d/1000.0));
-    fme = fcdAppSetFreq((int)d);
-
-    if (fme != FCD_MODE_APP) {
-        qWarning() << "Failed to set frequency";
-        ui->statusBar->showMessage(tr("Failed to set frequency"), 3000);
+    if ((fme != FCD_MODE_APP) || (uFreq != rFreq))
+    {
+        ui->statusBar->showMessage(tr("Failed to set frequency"), 2000);
+        qDebug() << "Error in" << __func__ << "set:" << uFreq << "read:" << rFreq;
     }
-
-    /** TODO: Note that the fcd set freq API actually returns the frequency **/
-    //quint8 readVal[4];
-    //quint32 freq = 0;
-    //fcdAppGetParam(FCD_CMD_APP_GET_FREQ_HZ, readVal,4);
-    //freq += readVal[0];
-    //freq += readVal[1] << 8;
-    //freq += readVal[2] << 16;
-    //freq += readVal[3] << 24;
-    //qDebug() << readVal[0] << readVal[1] << readVal[2] << readVal[3] << " / " << freq;
 
     /** TODO: Check for RF filter settings **/
 
@@ -285,12 +278,20 @@ void MainWindow::on_pushButtonBiasT_toggled(bool isOn)
   */
 void MainWindow::on_spinBoxCorr_valueChanged(int n)
 {
-    /*** FIXME!! ***/
+    FCD_MODE_ENUM fme;
+    unsigned int uFreq, rFreq;
     double d = (double) (ui->freqCtrl->GetFrequency()-lnbOffset);
 
     d *= 1.0 + n/1000000.0;
+    uFreq = (unsigned int) d;
 
-    fcdAppSetFreq((int)(d));
+    fme = fcdAppSetFreq(uFreq, &rFreq);
+
+    if ((fme != FCD_MODE_APP) || (uFreq != rFreq))
+    {
+        ui->statusBar->showMessage(tr("Failed to set frequency"), 2000);
+        qDebug() << "Error in" << __func__ << "set:" << uFreq << "read:" << rFreq;
+    }
 }
 
 
