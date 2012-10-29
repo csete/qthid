@@ -67,7 +67,6 @@ linux-g++|linux-g++-64 {
 #    CONFIG += link_pkgconfig
 #    PKGCONFIG += libusb-1.0
 #    SOURCES += hid-libusb.c
-
     LIBS += -ludev
     SOURCES += hidraw.c
 }
