@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName("qthid");
     QCoreApplication::setOrganizationDomain("oz9aec.net");
     QCoreApplication::setApplicationName("qthid");
-    QCoreApplication::setApplicationVersion("4.0");
+    QCoreApplication::setApplicationVersion("4.1");
 
     MainWindow win;
     win.show();
