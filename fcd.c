@@ -398,3 +398,70 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppGetFreq(unsigned int *rFr
 
     return FCD_MODE_BL;
 }
+
+
+/** \brief Enable/disable LNA.
+  * \param enabled Whether to enable or disable the LNA.
+  * \return The FCD mode.
+  */
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetLna(char enabled)
+{
+    hid_device *phd=NULL;
+    unsigned char aucBufIn[65];
+    unsigned char aucBufOut[65];
+
+    phd = fcdOpen();
+
+    if (phd == NULL)
+    {
+        return FCD_MODE_NONE;
+    }
+
+    aucBufOut[0] = 0; // Report ID. Ignored by HID Class firmware as only config'd for one report
+    aucBufOut[1] = FCD_CMD_APP_SET_LNA_GAIN;
+    aucBufOut[2] = (unsigned char) enabled;
+    hid_write(phd, aucBufOut, 65);
+    memset(aucBufIn, 0xCC, 65); // Clear out the response buffer
+    hid_read(phd, aucBufIn, 65);
+
+    fcdClose(phd);
+    phd = NULL;
+
+    return (aucBufIn[0] == FCD_CMD_APP_SET_LNA_GAIN) ? FCD_MODE_APP : FCD_MODE_BL;
+}
+
+/** \brief Get LNA status
+  * \param enabled The current staus of the LNA.
+  * \return The FCD mode.
+  */
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppGetLna(char *enabled)
+{
+    hid_device *phd=NULL;
+    unsigned char aucBufIn[65];
+    unsigned char aucBufOut[65];
+
+    if (enabled == NULL)
+        return FCD_MODE_NONE;
+
+    phd = fcdOpen();
+    if (phd == NULL)
+        return FCD_MODE_NONE;
+
+    aucBufOut[0] = 0; // Report ID. Ignored by HID Class firmware as only config'd for one report
+    aucBufOut[1] = FCD_CMD_APP_GET_LNA_GAIN;
+    hid_write(phd, aucBufOut, 65);
+    memset(aucBufIn, 0xCC, 65); // Clear out the response buffer
+    hid_read(phd, aucBufIn, 65);
+
+    fcdClose(phd);
+    phd = NULL;
+
+    if (aucBufIn[0]==FCD_CMD_APP_GET_LNA_GAIN && aucBufIn[1]==1)
+    {
+        *enabled = aucBufIn[2];
+
+        return FCD_MODE_APP;
+    }
+
+    return FCD_MODE_BL;
+}
