@@ -157,15 +157,13 @@ double MainWindow::StrToDouble(QString s)
   */
 void MainWindow::enableControls()
 {
-    FCD_MODE_ENUM fme=FCD_MODE_APP;
+    FCD_MODE_ENUM fme = FCD_MODE_NONE;
     quint8 u8;
     char fwVerStr[6];
     bool convOk = false;
     float fwVer = 0.0;
 
-
-    qDebug() << "FIXME: Implement" << __func__;
-    //fme = fcdGetCaps(&fcd_caps);
+    fme = fcdGetMode();
 
     switch (fme)
     {
@@ -176,6 +174,7 @@ void MainWindow::enableControls()
             /* convert version string to float */
             fwVer = QString(fwVerStr).toFloat(&convOk);
 
+            /** FIXME: PLL lock **/
             u8=0;
             //fcdAppGetParam(FCD_CMD_APP_GET_PLL_LOCK, &u8, 1);
             ui->checkBoxPLLLock->setChecked(u8==1);
@@ -193,9 +192,10 @@ void MainWindow::enableControls()
 
     ui->freqCtrl->setEnabled(fme==FCD_MODE_APP);
 
-    /* bias T functionality available since FW 18h */
-    //ui->pushButtonBiasT->setEnabled((fme==FCD_MODE_APP) && (fcd_caps.hasBiasT));
+    /** FIXME bias T functionality available since FW 18h */
+    ui->pushButtonBiasT->setEnabled(false);
 
+    ui->spinBoxLnb->setEnabled(fme==FCD_MODE_APP);
     ui->spinBoxCorr->setEnabled(fme==FCD_MODE_APP);
 
     //ui->actionBalance->setEnabled(fme==FCD_MODE_APP);
