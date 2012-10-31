@@ -19,7 +19,7 @@
  *  along with Qthid.  If not, see <http://www.gnu.org/licenses/>.
  *
  ***************************************************************************/
-#ifndef FCDHIDCMD_H
+#ifndef FCD_HID_CMD_H
 #define FCD_HID_CMD_H 1
 
 
@@ -32,17 +32,17 @@
 #define FCD_CMD_APP_GET_FREQ_HZ      102 /*!< Returns 4 byte unsigned little endian frequency in Hz. */
 
 #define FCD_CMD_APP_SET_LNA_GAIN     110 /*!< Send one byte: 1=ON, 0=OFF. */
-#define FCD_CMD_APP_SET_RF_FILTER    113 /*!< Send one byte, see TUNER_RF_FILTER_ENUM. */
+#define FCD_CMD_APP_SET_RF_FILTER    113 /*!< Send one byte, see tuner_rf_filter_t enum. */
 #define FCD_CMD_APP_SET_MIXER_GAIN   114 /*!< Send one byte:1=ON, 0=OFF. */
 #define FCD_CMD_APP_SET_IF_GAIN      117 /*!< Send one byte, valid value 0 to 59 (dB). */
-#define FCD_CMD_APP_SET_IF_FILTER    122 /*!< Send one byte, see TUNER_IF_FILTER_ENUM. */
+#define FCD_CMD_APP_SET_IF_FILTER    122 /*!< Send one byte, see tuner_if_filter_t enum. */
 #define FCD_CMD_APP_SET_BIAS_TEE     126 /*!< Bias T for ext LNA. Send with one byte: 1=ON, 0=OFF. */
 
 #define FCD_CMD_APP_GET_LNA_GAIN     150 /*!< Returns one byte: 1=ON, 0=OFF. */
-#define FCD_CMD_APP_GET_RF_FILTER    153 /*!< Returns one byte, see TUNER_RF_FILTER_ENUM. */
+#define FCD_CMD_APP_GET_RF_FILTER    153 /*!< Returns one byte, see tuner_rf_filter_t enum. */
 #define FCD_CMD_APP_GET_MIXER_GAIN   154 /*!< Returns one byte: 1=ON, 0=OFF. */
 #define FCD_CMD_APP_GET_IF_GAIN      157 /*!< Returns one byte, valid value 0 to 59 (dB). */
-#define FCD_CMD_APP_GET_IF_FILTER    162 /*!< Returns one byte, see TUNER_IF_FILTER_ENUM. */
+#define FCD_CMD_APP_GET_IF_FILTER    162 /*!< Returns one byte, see tuner_if_filter_t enum. */
 #define FCD_CMD_APP_GET_BIAS_TEE     166 /*!< Returns one byte: 1=ON, 0=OFF. */
 
 #define FCD_CMD_APP_RESET            255 /*!< Reset to bootloader. */
@@ -60,7 +60,7 @@ typedef enum
     TRFE_410_875,
     TRFE_435,
     TRFE_875_2000
-} TUNER_RF_FILTER_ENUM;
+} tuner_rf_filter_t;
 
 typedef enum
 {
@@ -72,7 +72,7 @@ typedef enum
     TIFE_6MHZ,
     TIFE_7MHZ,
     TIFE_8MHZ
-} TUNER_IF_FILTER_ENUM;
+} tuner_if_filter_t;
 
 
-#endif // FCDHIDCMD_H
+#endif // FCD_HID_CMD_H
