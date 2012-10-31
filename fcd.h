@@ -41,6 +41,7 @@
 #endif
 
 #include <inttypes.h>
+#include "fcdhidcmd.h"
 
 
 /** \brief FCD mode enumeration. */
@@ -65,6 +66,21 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppGetFreq(unsigned int *rFr
 
 EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetLna(char enabled);
 EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppGetLna(char *enabled);
+
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetRfFilter(tuner_rf_filter_t filter);
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppGetRfFilter(tuner_rf_filter_t *filter);
+
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetMixerGain(char enabled);
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppGetMixerGain(char *enabled);
+
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetIfGain(unsigned char gain);
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppGetIfGain(unsigned char *gain);
+
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetIfFilter(tuner_if_filter_t filter);
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppGetIfFilter(tuner_if_filter_t *filter);
+
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetBiasTee(char enabled);
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppGetBiasTee(char *enabled);
 
 #ifdef __cplusplus
 }

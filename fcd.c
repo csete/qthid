@@ -401,7 +401,7 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppGetFreq(unsigned int *rFr
 
 
 /** \brief Enable/disable LNA.
-  * \param enabled Whether to enable or disable the LNA.
+  * \param enabled Whether to enable or disable the LNA (1=ON 0=OFF).
   * \return The FCD mode.
   */
 EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetLna(char enabled)
@@ -431,7 +431,7 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetLna(char enabled)
 }
 
 /** \brief Get LNA status
-  * \param enabled The current staus of the LNA.
+  * \param enabled The current staus of the LNA (1=ON 0=OFF).
   * \return The FCD mode.
   */
 EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppGetLna(char *enabled)
@@ -457,6 +457,358 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppGetLna(char *enabled)
     phd = NULL;
 
     if (aucBufIn[0]==FCD_CMD_APP_GET_LNA_GAIN && aucBufIn[1]==1)
+    {
+        *enabled = aucBufIn[2];
+
+        return FCD_MODE_APP;
+    }
+
+    return FCD_MODE_BL;
+}
+
+
+/** \brief Select RF filter.
+  * \param filter The new RF filter.
+  * \return The FCD mode.
+  *
+  * \note RF filter is selected by the FCD; using this function may not be very useful, except when
+  *       firmware selects wrong filter.
+  */
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetRfFilter(tuner_rf_filter_t filter)
+{
+    hid_device *phd=NULL;
+    unsigned char aucBufIn[65];
+    unsigned char aucBufOut[65];
+
+    if ((filter < TRFE_0_4) || (filter > TRFE_875_2000))
+    {
+        return FCD_MODE_NONE;
+    }
+
+    phd = fcdOpen();
+    if (phd == NULL)
+    {
+        return FCD_MODE_NONE;
+    }
+
+    aucBufOut[0] = 0; // Report ID. Ignored by HID Class firmware as only config'd for one report
+    aucBufOut[1] = FCD_CMD_APP_SET_RF_FILTER;
+    aucBufOut[2] = (unsigned char) filter;
+    hid_write(phd, aucBufOut, 65);
+    memset(aucBufIn, 0xCC, 65); // Clear out the response buffer
+    hid_read(phd, aucBufIn, 65);
+
+    fcdClose(phd);
+    phd = NULL;
+
+    return (aucBufIn[0] == FCD_CMD_APP_SET_RF_FILTER) ? FCD_MODE_APP : FCD_MODE_BL;
+}
+
+/** \brief Get RF filter selection.
+  * \param filter The current RF filter selection.
+  * \return The FCD mode.
+  */
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppGetRfFilter(tuner_rf_filter_t *filter)
+{
+    hid_device *phd=NULL;
+    unsigned char aucBufIn[65];
+    unsigned char aucBufOut[65];
+
+    if (filter == NULL)
+        return FCD_MODE_NONE;
+
+    phd = fcdOpen();
+    if (phd == NULL)
+        return FCD_MODE_NONE;
+
+    aucBufOut[0] = 0; // Report ID. Ignored by HID Class firmware as only config'd for one report
+    aucBufOut[1] = FCD_CMD_APP_GET_RF_FILTER;
+    hid_write(phd, aucBufOut, 65);
+    memset(aucBufIn, 0xCC, 65); // Clear out the response buffer
+    hid_read(phd, aucBufIn, 65);
+
+    fcdClose(phd);
+    phd = NULL;
+
+    if (aucBufIn[0]==FCD_CMD_APP_GET_RF_FILTER && aucBufIn[1]==1)
+    {
+        *filter = (tuner_rf_filter_t) aucBufIn[2];
+
+        return FCD_MODE_APP;
+    }
+
+    return FCD_MODE_BL;
+}
+
+/** \brief Enable/disable Mixer gain.
+  * \param enabled Whether to enable or disable the mixer gain (1=ON 0=OFF).
+  * \return The FCD mode.
+  */
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetMixerGain(char enabled)
+{
+    hid_device *phd=NULL;
+    unsigned char aucBufIn[65];
+    unsigned char aucBufOut[65];
+
+    phd = fcdOpen();
+
+    if (phd == NULL)
+    {
+        return FCD_MODE_NONE;
+    }
+
+    aucBufOut[0] = 0; // Report ID. Ignored by HID Class firmware as only config'd for one report
+    aucBufOut[1] = FCD_CMD_APP_SET_MIXER_GAIN;
+    aucBufOut[2] = (unsigned char) enabled;
+    hid_write(phd, aucBufOut, 65);
+    memset(aucBufIn, 0xCC, 65); // Clear out the response buffer
+    hid_read(phd, aucBufIn, 65);
+
+    fcdClose(phd);
+    phd = NULL;
+
+    return (aucBufIn[0] == FCD_CMD_APP_SET_MIXER_GAIN) ? FCD_MODE_APP : FCD_MODE_BL;
+}
+
+/** \brief Get mixer gain status
+  * \param enabled The current staus of the mixer gain (1=ON 0=OFF).
+  * \return The FCD mode.
+  */
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppGetMixerGain(char *enabled)
+{
+    hid_device *phd=NULL;
+    unsigned char aucBufIn[65];
+    unsigned char aucBufOut[65];
+
+    if (enabled == NULL)
+        return FCD_MODE_NONE;
+
+    phd = fcdOpen();
+    if (phd == NULL)
+        return FCD_MODE_NONE;
+
+    aucBufOut[0] = 0; // Report ID. Ignored by HID Class firmware as only config'd for one report
+    aucBufOut[1] = FCD_CMD_APP_GET_MIXER_GAIN;
+    hid_write(phd, aucBufOut, 65);
+    memset(aucBufIn, 0xCC, 65); // Clear out the response buffer
+    hid_read(phd, aucBufIn, 65);
+
+    fcdClose(phd);
+    phd = NULL;
+
+    if (aucBufIn[0]==FCD_CMD_APP_GET_MIXER_GAIN && aucBufIn[1]==1)
+    {
+        *enabled = aucBufIn[2];
+
+        return FCD_MODE_APP;
+    }
+
+    return FCD_MODE_BL;
+}
+
+
+/** \brief Set IF gain.
+  * \param gain The new IF gain between 0 and 59 dB.
+  * \return The FCD mode.
+  */
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetIfGain(unsigned char gain)
+{
+    hid_device *phd=NULL;
+    unsigned char aucBufIn[65];
+    unsigned char aucBufOut[65];
+
+    if (gain > 59)
+    {
+        return FCD_MODE_NONE;
+    }
+
+    phd = fcdOpen();
+    if (phd == NULL)
+    {
+        return FCD_MODE_NONE;
+    }
+
+    aucBufOut[0] = 0; // Report ID. Ignored by HID Class firmware as only config'd for one report
+    aucBufOut[1] = FCD_CMD_APP_SET_IF_GAIN;
+    aucBufOut[2] = gain;
+    hid_write(phd, aucBufOut, 65);
+    memset(aucBufIn, 0xCC, 65); // Clear out the response buffer
+    hid_read(phd, aucBufIn, 65);
+
+    fcdClose(phd);
+    phd = NULL;
+
+    return (aucBufIn[0] == FCD_CMD_APP_SET_IF_GAIN) ? FCD_MODE_APP : FCD_MODE_BL;
+}
+
+/** \brief Get IF gain.
+  * \param filter The current IF gain between 0 and 59 dB.
+  * \return The FCD mode.
+  */
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppGetIfGain(unsigned char *gain)
+{
+    hid_device *phd=NULL;
+    unsigned char aucBufIn[65];
+    unsigned char aucBufOut[65];
+
+    if (gain == NULL)
+        return FCD_MODE_NONE;
+
+    phd = fcdOpen();
+    if (phd == NULL)
+        return FCD_MODE_NONE;
+
+    aucBufOut[0] = 0; // Report ID. Ignored by HID Class firmware as only config'd for one report
+    aucBufOut[1] = FCD_CMD_APP_GET_IF_GAIN;
+    hid_write(phd, aucBufOut, 65);
+    memset(aucBufIn, 0xCC, 65); // Clear out the response buffer
+    hid_read(phd, aucBufIn, 65);
+
+    fcdClose(phd);
+    phd = NULL;
+
+    if (aucBufIn[0]==FCD_CMD_APP_GET_IF_GAIN && aucBufIn[1]==1)
+    {
+        *gain = aucBufIn[2];
+
+        return FCD_MODE_APP;
+    }
+
+    return FCD_MODE_BL;
+}
+
+
+/** \brief Select IF filter.
+  * \param filter The new IF filter.
+  * \return The FCD mode.
+  *
+  * \note IF filter is selected by the FCD; using this function may not be very useful, except when
+  *       firmware selects the wrong filter.
+  */
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetIfFilter(tuner_if_filter_t filter)
+{
+    hid_device *phd=NULL;
+    unsigned char aucBufIn[65];
+    unsigned char aucBufOut[65];
+
+    if ((filter < TIFE_200KHZ) || (filter > TIFE_8MHZ))
+    {
+        return FCD_MODE_NONE;
+    }
+
+    phd = fcdOpen();
+    if (phd == NULL)
+    {
+        return FCD_MODE_NONE;
+    }
+
+    aucBufOut[0] = 0; // Report ID. Ignored by HID Class firmware as only config'd for one report
+    aucBufOut[1] = FCD_CMD_APP_SET_IF_FILTER;
+    aucBufOut[2] = (unsigned char) filter;
+    hid_write(phd, aucBufOut, 65);
+    memset(aucBufIn, 0xCC, 65); // Clear out the response buffer
+    hid_read(phd, aucBufIn, 65);
+
+    fcdClose(phd);
+    phd = NULL;
+
+    return (aucBufIn[0] == FCD_CMD_APP_SET_IF_FILTER) ? FCD_MODE_APP : FCD_MODE_BL;
+}
+
+/** \brief Get IF filter selection.
+  * \param filter The current IF filter selection.
+  * \return The FCD mode.
+  */
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppGetIfFilter(tuner_if_filter_t *filter)
+{
+    hid_device *phd=NULL;
+    unsigned char aucBufIn[65];
+    unsigned char aucBufOut[65];
+
+    if (filter == NULL)
+        return FCD_MODE_NONE;
+
+    phd = fcdOpen();
+    if (phd == NULL)
+        return FCD_MODE_NONE;
+
+    aucBufOut[0] = 0; // Report ID. Ignored by HID Class firmware as only config'd for one report
+    aucBufOut[1] = FCD_CMD_APP_GET_IF_FILTER;
+    hid_write(phd, aucBufOut, 65);
+    memset(aucBufIn, 0xCC, 65); // Clear out the response buffer
+    hid_read(phd, aucBufIn, 65);
+
+    fcdClose(phd);
+    phd = NULL;
+
+    if (aucBufIn[0]==FCD_CMD_APP_GET_IF_FILTER && aucBufIn[1]==1)
+    {
+        *filter = (tuner_if_filter_t) aucBufIn[2];
+
+        return FCD_MODE_APP;
+    }
+
+    return FCD_MODE_BL;
+}
+
+
+/** \brief Enable/disable Bias T.
+  * \param enabled Whether to enable or disable the Bias T (1=ON 0=OFF).
+  * \return The FCD mode.
+  */
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetBiasTee(char enabled)
+{
+    hid_device *phd=NULL;
+    unsigned char aucBufIn[65];
+    unsigned char aucBufOut[65];
+
+    phd = fcdOpen();
+
+    if (phd == NULL)
+    {
+        return FCD_MODE_NONE;
+    }
+
+    aucBufOut[0] = 0; // Report ID. Ignored by HID Class firmware as only config'd for one report
+    aucBufOut[1] = FCD_CMD_APP_SET_BIAS_TEE;
+    aucBufOut[2] = (unsigned char) enabled;
+    hid_write(phd, aucBufOut, 65);
+    memset(aucBufIn, 0xCC, 65); // Clear out the response buffer
+    hid_read(phd, aucBufIn, 65);
+
+    fcdClose(phd);
+    phd = NULL;
+
+    return (aucBufIn[0] == FCD_CMD_APP_SET_BIAS_TEE) ? FCD_MODE_APP : FCD_MODE_BL;
+}
+
+/** \brief Get Bias T status
+  * \param enabled The current staus of the Bias T (1=ON 0=OFF).
+  * \return The FCD mode.
+  */
+EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppGetBiasTee(char *enabled)
+{
+    hid_device *phd=NULL;
+    unsigned char aucBufIn[65];
+    unsigned char aucBufOut[65];
+
+    if (enabled == NULL)
+        return FCD_MODE_NONE;
+
+    phd = fcdOpen();
+    if (phd == NULL)
+        return FCD_MODE_NONE;
+
+    aucBufOut[0] = 0; // Report ID. Ignored by HID Class firmware as only config'd for one report
+    aucBufOut[1] = FCD_CMD_APP_GET_BIAS_TEE;
+    hid_write(phd, aucBufOut, 65);
+    memset(aucBufIn, 0xCC, 65); // Clear out the response buffer
+    hid_read(phd, aucBufIn, 65);
+
+    fcdClose(phd);
+    phd = NULL;
+
+    if (aucBufIn[0]==FCD_CMD_APP_GET_BIAS_TEE && aucBufIn[1]==1)
     {
         *enabled = aucBufIn[2];
 
