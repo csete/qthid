@@ -177,7 +177,7 @@ void MainWindow::enableControls()
             /** FIXME: PLL lock **/
             u8=0;
             //fcdAppGetParam(FCD_CMD_APP_GET_PLL_LOCK, &u8, 1);
-            ui->checkBoxPLLLock->setChecked(u8==1);
+            //ui->checkBoxPLLLock->setChecked(u8==1);
 
             break;
 
