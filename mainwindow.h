@@ -53,15 +53,17 @@ private:
 
     double StrToDouble(QString s);
 
-    void enableCombos(bool enabled);
-    void readDevice();
+    void readDevice(quint16 flags);
 
 public slots:
     void setNewFrequency(qint64 freq);
 
 private slots:
     void on_spinBoxCorr_valueChanged(int);
-    void on_pushButtonBiasT_toggled(bool isOn);
+    void on_spinBoxLnb_valueChanged(double);
+    void on_biasTeeButton_clicked();
+    void on_lnaButton_clicked();
+    void on_mixerButton_clicked();
 
     void enableControls();
     void fwDialogFinished(int result);

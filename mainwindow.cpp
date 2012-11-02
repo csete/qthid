@@ -31,7 +31,19 @@
 #include "firmware.h"
 #include "hidapi.h"
 #include "fcd.h"
-//#include "fcdhidcmd.h"
+
+
+/* Flags used to select which settings to read so that we avoid polling all settings all the time */
+#define DEV_SET_RFF  (1 << 0)
+#define DEV_SET_LNA  (1 << 1)
+#define DEV_SET_MIX  (1 << 2)
+#define DEV_SET_IFF  (1 << 3)
+#define DEV_SET_IFG  (1 << 4)
+#define DEV_SET_BIAS (1 << 5)
+
+#define DEV_SET_ALL (DEV_SET_RFF | DEV_SET_LNA | DEV_SET_MIX | DEV_SET_IFF | DEV_SET_IFG | DEV_SET_BIAS)
+#define DEV_SET_RF (DEV_SET_RFF | DEV_SET_LNA)
+#define DEV_SET_IF (DEV_SET_IFF | DEV_SET_IFG)
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -68,12 +80,9 @@ MainWindow::MainWindow(QWidget *parent) :
     fwDialog = new CFirmware(this);
     connect(fwDialog, SIGNAL(finished(int)), this, SLOT(fwDialogFinished(int)));
 
-    //ReadDevice(); /* disabled until it can properly set default values in case of error */
+    enableControls(); // will also readDevice() due to mode change
 
-    enableControls();
-
-
-    setUnifiedTitleAndToolBarOnMac(true);
+    //setUnifiedTitleAndToolBarOnMac(true);
 
     /* connect signals & slots */
     connect(ui->freqCtrl, SIGNAL(NewFrequency(qint64)), this, SLOT(setNewFrequency(qint64)));
@@ -94,40 +103,129 @@ MainWindow::~MainWindow()
     settings.setValue("Correction",ui->spinBoxCorr->value());
     settings.setValue("LnbOffset", lnbOffset);
     /** TODO: LNA **/
-    /** TODO: MIXER **/
-    /** TODO: others? **/
+    /** TODO: mixer gain **/
+    /** TODO: Bias T **/
+    /** TODO: RF Filter **/
+    /** TODO: IF Filter **/
+    /** TODO: IF gain **/
 
     delete ui;
 }
 
-/** \brief Enable or disable combo boxes
-  * \param enabled Flag indicating whether combo boxes should be enabled or disabled
-  *
-  */
-void MainWindow::enableCombos(bool enabled)
-{
-    qDebug() << "FIXME: Implement" << __func__;
-}
 
-/** \brief Read all parameters from FCD.
-  * \note "All" refers to the combo box settings and the bias tee button.
-  */
-void MainWindow::readDevice()
+/** \brief Read all parameters from FCD and update GUI. */
+void MainWindow::readDevice(quint16 flags)
 {
-    quint8 u8;
     FCD_MODE_ENUM fme;
+    tuner_rf_filter_t rf_filt;
+    tuner_if_filter_t if_filt;
+    char enabled;
+    unsigned char value;
     bool error = false;
 
-    qDebug() << "FIXME: Implement" << __func__;
+    /* Note: No need to block toggled() signals for check-buttons since we
+       use the clicked() signals to catch actions.
+     */
+
+    /* Bias T */
+    if (flags & DEV_SET_BIAS)
+    {
+        fme = fcdAppGetBiasTee(&enabled);
+        if (fme == FCD_MODE_APP)
+        {
+            ui->biasTeeButton->setChecked(enabled ? true : false);
+        }
+        else
+        {
+            qDebug() << __func__ << ": Error reading Bias T setting.";
+            error = true;
+        }
+    }
+
+    /* LNA */
+    if (flags & DEV_SET_LNA)
+    {
+        fme = fcdAppGetLna(&enabled);
+        if (fme == FCD_MODE_APP)
+        {
+            ui->lnaButton->setChecked(enabled ? true : false);
+        }
+        else
+        {
+            qDebug() << __func__ << ": Error reading LNA setting.";
+            error = true;
+        }
+    }
+
+    /* Mixer gain */
+    if (flags & DEV_SET_MIX)
+    {
+        fme = fcdAppGetMixerGain(&enabled);
+        if (fme == FCD_MODE_APP)
+        {
+            ui->mixerButton->setChecked(enabled ? true : false);
+        }
+        else
+        {
+            qDebug() << __func__ << ": Error reading mixer setting.";
+            error = true;
+        }
+    }
+
+    /* RF filter */
+    if (flags & DEV_SET_RFF)
+    {
+        fme = fcdAppGetRfFilter(&rf_filt);
+        if (fme == FCD_MODE_APP)
+        {
+            ui->rfFilterComboBox->setCurrentIndex(rf_filt);
+        }
+        else
+        {
+            qDebug() << __func__ << ": Error reading RF filter setting.";
+            error = true;
+        }
+    }
+
+    /* IF filter */
+    if (flags & DEV_SET_IFF)
+    {
+        fme = fcdAppGetIfFilter(&if_filt);
+        if (fme == FCD_MODE_APP)
+        {
+            ui->ifFilterComboBox->setCurrentIndex(if_filt);
+        }
+        else
+        {
+            qDebug() << __func__ << ": Error reading IF filter setting.";
+            error = true;
+        }
+    }
+
+    /* IF gain */
+    if (flags & DEV_SET_IFG)
+    {
+        fme = fcdAppGetIfGain(&value);
+        if (fme == FCD_MODE_APP)
+        {
+            ui->ifGainSpinBox->setValue(value);
+        }
+        else
+        {
+            qDebug() << __func__ << ": Error reading IF gain.";
+            error = true;
+        }
+    }
 
     /* push a message to the status bar */
-    if (error) {
+    if (error)
+    {
         qDebug() << "There were errors while reading settings from FCD";
-        ui->statusBar->showMessage(tr("There were errors while reading settings from FCD"), 4000);
+        ui->statusBar->showMessage(tr("Error reading settings from FCD"), 4000);
     }
-    else {
-        qDebug() << "Successfully read settings from FCD";
-        ui->statusBar->showMessage(tr("Successfully read settings from FCD"), 4000);
+    else
+    {
+        qDebug() << "Successfully read settings from FCD; flags:" << flags;
     }
 }
 
@@ -153,12 +251,13 @@ double MainWindow::StrToDouble(QString s)
 /** \brief Eanble/disable controls depending on FCD mode.
   *
   * This function reads the FCD mode and enables or disables the UI controls accordingly.
+  * In case a mode change is detected to FCD_MODE_APP, readDevice() is called to read the
+  * settings fromt he FCD.
   * \todo Combo boxes.
   */
 void MainWindow::enableControls()
 {
     FCD_MODE_ENUM fme = FCD_MODE_NONE;
-    quint8 u8;
     char fwVerStr[6];
     bool convOk = false;
     float fwVer = 0.0;
@@ -173,12 +272,6 @@ void MainWindow::enableControls()
 
             /* convert version string to float */
             fwVer = QString(fwVerStr).toFloat(&convOk);
-
-            /** FIXME: PLL lock **/
-            u8=0;
-            //fcdAppGetParam(FCD_CMD_APP_GET_PLL_LOCK, &u8, 1);
-            //ui->checkBoxPLLLock->setChecked(u8==1);
-
             break;
 
         case FCD_MODE_BL:
@@ -192,11 +285,13 @@ void MainWindow::enableControls()
 
     ui->freqCtrl->setEnabled(fme==FCD_MODE_APP);
 
-    /** FIXME bias T functionality available since FW 18h */
-    ui->pushButtonBiasT->setEnabled(false);
+    /** Bias T functionality available since FW 18h for FCD Pro and 20.01 for Pro+ */
+    ui->biasTeeButton->setEnabled((fme == FCD_MODE_APP) && (fwVer > 18.07));
+    ui->lnaButton->setEnabled(fme == FCD_MODE_APP);
+    ui->mixerButton->setEnabled(fme == FCD_MODE_APP);
 
-    ui->spinBoxLnb->setEnabled(fme==FCD_MODE_APP);
-    ui->spinBoxCorr->setEnabled(fme==FCD_MODE_APP);
+    //ui->spinBoxLnb->setEnabled(fme == FCD_MODE_APP);
+    //ui->spinBoxCorr->setEnabled(fme == FCD_MODE_APP);
 
     //ui->actionBalance->setEnabled(fme==FCD_MODE_APP);
     //ui->actionFirmware->setEnabled(fme==FCD_MODE_APP);
@@ -205,11 +300,11 @@ void MainWindow::enableControls()
     /* manage FCD mode transitions */
     if (fme != prevMode) {
         qDebug() << "FCD mode change:" << prevMode << "->" << fme;
-        ui->statusBar->showMessage(tr("FCD mode change detected"), 2000);
+        ui->statusBar->showMessage(tr("FCD mode change detected"), 3000);
 
         if (fme == FCD_MODE_APP) {
             /* if previous mode was different read settings from device */
-            readDevice();
+            readDevice(DEV_SET_ALL);
 
             /* Set frequency since FCD does not remember anything */
             setNewFrequency(ui->freqCtrl->GetFrequency());
@@ -249,24 +344,69 @@ void MainWindow::setNewFrequency(qint64 freq)
         qDebug() << "Error in" << __func__ << "set:" << uFreq << "read:" << rFreq;
     }
 
-    /** TODO: Check for RF filter settings **/
-
+    readDevice(DEV_SET_RFF);
 }
 
 
 /** \brief Bias T button ON/OFF
-  * \param isOn Flag indicating whether the button is ON or OFF
   *
-  * This slot is called when the user toggles the Bias T button. It is used
+  * This slot is called when the user licks on the Bias T button. It is used
   * to switch the bias tee power ON and OFF.
-  * isOn = true => power ON
-  * isOn = false => power OFF
+  *   isChecked() = true => power ON
+  *   isChecked() = false => power OFF
   */
-void MainWindow::on_pushButtonBiasT_toggled(bool isOn)
+void MainWindow::on_biasTeeButton_clicked()
 {
-    quint8 u8Write = isOn ? 1 : 0;
+    char enabled = ui->biasTeeButton->isChecked();
 
-    qDebug() << "FIXME: Implement" << __func__;
+    FCD_MODE_ENUM fme = fcdAppSetBiasTee(enabled);
+
+    if (fme != FCD_MODE_APP)
+    {
+        qDebug() << __func__ << ": Failed to set bias T to" << enabled;
+        ui->statusBar->showMessage(tr("Failed to set bias T"), 5000);
+    }
+}
+
+
+/** \brief LNA button ON/OFF
+  *
+  * This slot is called when the user clicks on the LNA button. It is used
+  * to switch the LNA ON and OFF.
+  *   isChecked() = true => power ON
+  *   isChecked() = false => power OFF
+  */
+void MainWindow::on_lnaButton_clicked()
+{
+    char enabled = ui->lnaButton->isChecked();
+
+    FCD_MODE_ENUM fme = fcdAppSetLna(enabled);
+
+    if (fme != FCD_MODE_APP)
+    {
+        qDebug() << __func__ << ": Failed to set LNA to" << enabled;
+        ui->statusBar->showMessage(tr("Failed to set LNA"), 5000);
+    }
+}
+
+/** \brief Mixer gain button ON/OFF
+  *
+  * This slot is called when the user clicks on the Mixer gain button. It is used
+  * to switch the mixer gain ON and OFF.
+  *   isChecked() = true => power ON
+  *   isChecked() = false => power OFF
+  */
+void MainWindow::on_mixerButton_clicked()
+{
+    char enabled = ui->mixerButton->isChecked();
+
+    FCD_MODE_ENUM fme = fcdAppSetMixerGain(enabled);
+
+    if (fme != FCD_MODE_APP)
+    {
+        qDebug() << __func__ << ": Failed to set mixer gain to" << enabled;
+        ui->statusBar->showMessage(tr("Failed to set mixer gain"), 5000);
+    }
 }
 
 
@@ -292,6 +432,25 @@ void MainWindow::on_spinBoxCorr_valueChanged(int n)
         ui->statusBar->showMessage(tr("Failed to set frequency"), 2000);
         qDebug() << "Error in" << __func__ << "set:" << uFreq << "read:" << rFreq;
     }
+}
+
+
+/** \brief LNB LO frequency changed.
+  * \param freq_mhz The new frequency in MHz.
+  *
+  * This slot is called when the user changes the LNB LO frequency. Only the
+  * display frequency is adjusted; the FCD frequency will stay unchanged.
+  */
+void MainWindow::on_spinBoxLnb_valueChanged(double freq_mhz)
+{
+    /* calculate current RF frequency */
+    qint64 rf_freq = ui->freqCtrl->GetFrequency() - lnbOffset;
+
+    lnbOffset = qint64(freq_mhz*1e6);
+    qDebug() << "New LNB LO:" << lnbOffset << "Hz";
+
+    /* Show updated frequency in display */
+    ui->freqCtrl->SetFrequency(lnbOffset + rf_freq);
 }
 
 
@@ -338,6 +497,7 @@ void MainWindow::on_actionFirmware_triggered()
 /*! \brief Slot: Firmware dialog finished. */
 void MainWindow::fwDialogFinished(int result)
 {
+    Q_UNUSED(result);
 
     qDebug() << "FIXME: Implement" << __func__;
 
@@ -373,7 +533,7 @@ void MainWindow::on_actionDefault_triggered()
 
     //readDevice();
 
-    ui->statusBar->showMessage(tr("FCD has been reset"), 5000);
+    //ui->statusBar->showMessage(tr("FCD has been reset"), 5000);
 }
 
 /** \brief Action: About Qthid
