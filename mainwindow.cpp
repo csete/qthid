@@ -290,8 +290,8 @@ void MainWindow::enableControls()
     ui->lnaButton->setEnabled(fme == FCD_MODE_APP);
     ui->mixerButton->setEnabled(fme == FCD_MODE_APP);
 
-    //ui->spinBoxLnb->setEnabled(fme == FCD_MODE_APP);
-    //ui->spinBoxCorr->setEnabled(fme == FCD_MODE_APP);
+    ui->spinBoxLnb->setEnabled(fme == FCD_MODE_APP);
+    ui->spinBoxCorr->setEnabled(fme == FCD_MODE_APP);
 
     //ui->actionBalance->setEnabled(fme==FCD_MODE_APP);
     //ui->actionFirmware->setEnabled(fme==FCD_MODE_APP);
