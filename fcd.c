@@ -480,7 +480,7 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetRfFilter(tuner_rf_filt
     unsigned char aucBufIn[65];
     unsigned char aucBufOut[65];
 
-    if ((filter < TRFE_0_4) || (filter > TRFE_875_2000))
+    if (filter > TRFE_875_2000)
     {
         return FCD_MODE_NONE;
     }
@@ -691,7 +691,7 @@ EXTERN FCD_API_EXPORT FCD_API_CALL FCD_MODE_ENUM fcdAppSetIfFilter(tuner_if_filt
     unsigned char aucBufIn[65];
     unsigned char aucBufOut[65];
 
-    if ((filter < TIFE_200KHZ) || (filter > TIFE_8MHZ))
+    if (filter > TIFE_8MHZ)
     {
         return FCD_MODE_NONE;
     }
