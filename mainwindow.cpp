@@ -410,6 +410,25 @@ void MainWindow::on_mixerButton_clicked()
 }
 
 
+/** \brief IF gain changed
+  * \param gain The new IF gain between 0 and 59 dB.
+  */
+void MainWindow::on_ifGainSpinBox_valueChanged(int gain)
+{
+    if ((gain <= 59) && (gain >= 0))
+    {
+        unsigned char gc = (unsigned char) gain;
+
+        FCD_MODE_ENUM fme = fcdAppSetIfGain(gc);
+
+        if (fme != FCD_MODE_APP)
+        {
+            qDebug() << __func__ << ": Failed to set IF gain to" << gc << "dB.";
+            ui->statusBar->showMessage(tr("Failed to set IF gain"), 5000);
+        }
+    }
+}
+
 /** \brief Frequency correction changed.
   * \param n New correction value in ppm.
   *

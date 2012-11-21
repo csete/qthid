@@ -405,7 +405,7 @@ Requires FCD with S/N TBD or above.</string>
       <item>
        <widget class="QSpinBox" name="ifGainSpinBox">
         <property name="enabled">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="toolTip">
          <string>IF gain</string>

@@ -64,6 +64,7 @@ private slots:
     void on_biasTeeButton_clicked();
     void on_lnaButton_clicked();
     void on_mixerButton_clicked();
+    void on_ifGainSpinBox_valueChanged(int);
 
     void enableControls();
     void fwDialogFinished(int result);
