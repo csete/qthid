@@ -288,12 +288,11 @@ void MainWindow::enableControls()
     ui->biasTeeButton->setEnabled((fme == FCD_MODE_APP) && (fwVer > 18.07));
     ui->lnaButton->setEnabled(fme == FCD_MODE_APP);
     ui->mixerButton->setEnabled(fme == FCD_MODE_APP);
+    ui->ifGainSpinBox->setEnabled(fme == FCD_MODE_APP);
 
     ui->spinBoxLnb->setEnabled(fme == FCD_MODE_APP);
     ui->spinBoxCorr->setEnabled(fme == FCD_MODE_APP);
 
-    //ui->actionBalance->setEnabled(fme==FCD_MODE_APP);
-    //ui->actionFirmware->setEnabled(fme==FCD_MODE_APP);
     ui->actionDefault->setEnabled(fme==FCD_MODE_APP);
 
     /* manage FCD mode transitions */
