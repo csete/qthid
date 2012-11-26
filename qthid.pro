@@ -9,7 +9,6 @@ QT       += core gui
 TEMPLATE = app
 
 macx {
-#    TARGET = "FCD Controller"
     TARGET = Qthid
 } else {
     TARGET = qthid
@@ -35,26 +34,19 @@ SOURCES +=\
     main.cpp \
     fcd.c \
     freqctrl.cpp \
-    iqbalance.cpp \
     firmware.cpp
 
 mac: SOURCES += hidmac.c
 win32: SOURCES += hidwin.c
-
-#linux-g++|linux-g++-64 {
-#    SOURCES += hid-libusb.c
-#}
 
 HEADERS  += \
     mainwindow.h \
     hidapi.h \
     fcd.h fcdhidcmd.h \
     freqctrl.h \
-    iqbalance.h \
     firmware.h
 
 FORMS    += \
-    iqbalance.ui \
     mainwindow.ui \
     firmware.ui
 

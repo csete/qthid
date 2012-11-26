@@ -479,7 +479,6 @@ Requires FCD with S/N TBD or above.</string>
      <string>&amp;Tools</string>
     </property>
     <addaction name="actionFirmware"/>
-    <addaction name="actionBalance"/>
     <addaction name="actionDefault"/>
    </widget>
    <widget class="QMenu" name="menu_View">
@@ -560,24 +559,6 @@ Requires FCD with S/N TBD or above.</string>
    </property>
    <property name="toolTip">
     <string>Save FCD settings to file</string>
-   </property>
-   <property name="statusTip">
-    <string/>
-   </property>
-  </action>
-  <action name="actionBalance">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="qthid.qrc">
-     <normaloff>:/qthid/images/iq.png</normaloff>:/qthid/images/iq.png</iconset>
-   </property>
-   <property name="text">
-    <string>IQ Correction</string>
-   </property>
-   <property name="toolTip">
-    <string>Open I/Q correction window</string>
    </property>
    <property name="statusTip">
     <string/>

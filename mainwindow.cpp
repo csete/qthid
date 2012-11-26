@@ -27,7 +27,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "freqctrl.h"
-#include "iqbalance.h"
 #include "firmware.h"
 #include "hidapi.h"
 #include "fcd.h"
@@ -484,17 +483,6 @@ void MainWindow::on_actionLoad_triggered()
 void MainWindow::on_actionSave_triggered()
 {
     qDebug() << "MainWindow::on_actionSave_triggered() not implemented";
-}
-
-
-/*! \brief Action: Open I/Q correction settings. */
-void MainWindow::on_actionBalance_triggered()
-{
-    CIqBalance *iqDialog = new CIqBalance(this);
-
-    iqDialog->exec();
-
-    delete iqDialog;
 }
 
 
