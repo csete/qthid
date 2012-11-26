@@ -2,7 +2,7 @@
 
 Qthid is a small control application for the Funcube Dongle devices. It is an evolution of the qthid002 package by Howard Long G6LVB.
 
-This version 4.1 is a special branch to add quick support for the Funcube Dongle Pro+ (see http://www.funcubedongle.com/?page_id=1073). The original Funcube Dongle Pro is not supported by this version.
+This version 4.1 is a special version that adds support for the Funcube Dongle Pro+ (see http://www.funcubedongle.com/?page_id=1073). The original Funcube Dongle Pro is not supported by this version.
 
 Qthid uses the HIDAPI cross platform library by Signal 11 Software (http://www.signal11.us/oss/hidapi/). All the required files are bundled with qthid and no installation of the library is required.
 
@@ -25,7 +25,7 @@ The Mac OS X bundle contains all the necessary Qt libraries and no additional in
 
 2.3 Windows
 
-The windows package is self containing and does not require and Qt libs to be installed separately. It is known to work on Windows XP, Vista and 7.
+The windows package is self containing and does not require and Qt libs to be installed separately. This release has been tested on Windows 7.
 
 
 2.4 Building from source
@@ -35,6 +35,16 @@ The windows package is self containing and does not require and Qt libs to be in
 - Open the qthid.pro file in Qt Creator. It will say something about setting up a target; say OK or Finish or Done (depends on version and OS).
 - You can now build and execute the project.
 
+It is also possible to build in a terminal:
+
+$ tar xvfz qthid-X.Y.tar.gz
+$ cd qthid-X.Y
+$ mkdir build
+$ cd build
+$ qmake ../qthid.pro
+$ make
+
+You should now have a qthid binary.
 
 
 3. License

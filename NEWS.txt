@@ -1,8 +1,13 @@
+Changes in version 4.1:
+
+- Special release with Funcube Dongle Pro+ support.
+
+
 Changes in version 4.0:
 
 - New layout with IF, IQ and firmware controls hidden by default.
 - New frequency controller widget.
-- Support for up- and downconverters
+- Support for up- and downconverters.
 
 
 Changes in version 3.2:
@@ -15,7 +20,7 @@ Changes in version 3.2:
 
 Changes in version 3.1:
 
-- Support for Mac OS X 10.7 Lion
+- Support for Mac OS X 10.7 Lion.
 - Support for Bias-T with firmware 18h and later.
 - Allow user to force band selection to be different from the one chosen by
   the FCD (temporary workaround for a FW 18f bug occurring at 861 MHz).
