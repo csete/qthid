@@ -646,12 +646,13 @@ void MainWindow::enableControls()
     ui->pushButtonBiasT->setEnabled((fme==FCD_MODE_APP) && (fcd_caps.hasBiasT));
 
     ui->spinBoxCorr->setEnabled(fme==FCD_MODE_APP);
+    ui->spinBoxLnb->setEnabled(fme==FCD_MODE_APP);
 
     ui->actionBalance->setEnabled(fme==FCD_MODE_APP);
     ui->actionFirmware->setEnabled(fme==FCD_MODE_APP);
     ui->actionDefault->setEnabled(fme==FCD_MODE_APP);
 
-    //enableCombos(fme==FCD_MODE_APP);
+    enableCombos(fme==FCD_MODE_APP);
     uiDockIfGain->setEnabled(fme==FCD_MODE_APP);
 
     /* manage FCD mode transitions */
