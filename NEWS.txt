@@ -34,6 +34,11 @@ Changes in version 3.0:
 - Show firmware version in status message.
 
 
+Changes in version 2.3:
+
+- No code changes, just a Mac OS X build.
+
+
 Changes in version 2.2:
 
 - Use native toolbar and status bar on Mac OS X

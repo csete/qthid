@@ -18,8 +18,7 @@ macx {
 # disable debug messages in release
 CONFIG(debug, debug|release) {
     # Define version string (see below for releases)
-    #VER = $$system(git describe --abbrev=8)
-    VER = 4.0-git
+    VER = $$system(git describe --abbrev=8)
 } else {
     DEFINES += QT_NO_DEBUG
     DEFINES += QT_NO_DEBUG_OUTPUT
