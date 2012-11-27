@@ -317,7 +317,6 @@ static COMBO_STRUCT _acs[] =
 };
 
 
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
@@ -327,6 +326,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QSettings settings;
 
     ui->setupUi(this);
+
+    setWindowTitle(tr("Qthid %1").arg(VERSION));
 
     /* create dock widgets */
     uiDockIfGain = new DockIfGain();

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>FUNcube Dongle Controller</string>
+   <string>Qthid</string>
   </property>
   <property name="windowIcon">
    <iconset resource="qthid.qrc">
@@ -386,7 +386,7 @@ a specific band.</string>
      <x>0</x>
      <y>0</y>
      <width>400</width>
-     <height>24</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
