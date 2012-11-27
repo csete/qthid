@@ -610,8 +610,6 @@ void MainWindow::enableControls()
     FCD_CAPS_STRUCT fcd_caps;
     quint8 u8;
     char fwVerStr[6];
-    bool convOk = false;
-    float fwVer = 0.0;
 
 
     fme = fcdGetCaps(&fcd_caps);
@@ -621,9 +619,6 @@ void MainWindow::enableControls()
         case FCD_MODE_APP:
             fcdGetFwVerStr(fwVerStr);
             fcdStatus->setText(tr("FCD is active (%1)").arg(QString(fwVerStr)));
-
-            /* convert version string to float */
-            fwVer = QString(fwVerStr).toFloat(&convOk);
 
             u8=0;
             fcdAppGetParam(FCD_CMD_APP_GET_PLL_LOCK, &u8, 1);
