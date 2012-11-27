@@ -9,7 +9,6 @@ QT       += core gui
 TEMPLATE = app
 
 macx {
-#    TARGET = "FCD Controller"
     TARGET = Qthid
 } else {
     TARGET = qthid
@@ -24,7 +23,7 @@ CONFIG(debug, debug|release) {
 } else {
     DEFINES += QT_NO_DEBUG
     DEFINES += QT_NO_DEBUG_OUTPUT
-    VER = 4.0-git
+    VER = 4.0
 }
 
 # Tip from: http://www.qtcentre.org/wiki/index.php?title=Version_numbering_using_QMake
@@ -44,10 +43,6 @@ SOURCES +=\
 mac: SOURCES += hidmac.c
 win32: SOURCES += hidwin.c
 
-#linux-g++|linux-g++-64 {
-#    SOURCES += hid-libusb.c
-#}
-
 HEADERS  += \
     mainwindow.h \
     hidapi.h \
@@ -65,6 +60,7 @@ FORMS    += \
     firmware.ui \
     dockifgain.ui
 
+# Might need to be adjusted depending on which SDK is installed
 mac:LIBS += /System/Library/Frameworks/CoreFoundation.framework/CoreFoundation \
     /System/Library/Frameworks/IOKit.framework/Versions/A/IOKit
 win32:LIBS += "C:\\Program Files\\Microsoft SDKs\\Windows\\v7.0\\Lib\\setupapi.lib"
