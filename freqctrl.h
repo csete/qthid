@@ -26,6 +26,9 @@
 #include <QFrame>
 #include <QImage>
 
+#define TRUE true
+#define FALSE false
+
 enum FUNITS{UNITS_HZ, UNITS_KHZ, UNITS_MHZ, UNITS_GHZ,UNITS_SEC,UNITS_MSEC,UNITS_USEC,UNITS_NSEC };
 
 #define MAX_DIGITS 12
