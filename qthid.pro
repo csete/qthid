@@ -4,7 +4,10 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets
+QT       += core gui
+contains(QT_MAJOR_VERSION,5) {
+    QT += widgets
+}
 
 TEMPLATE = app
 
