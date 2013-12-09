@@ -59,11 +59,11 @@ win32:LIBS += "C:\\Program Files\\Microsoft SDKs\\Windows\\v7.0\\Lib\\setupapi.l
 
 # libusb-1.0 on Linux uses pkg-config
 linux-g++|linux-g++-64 {
-#    CONFIG += link_pkgconfig
-#    PKGCONFIG += libusb-1.0
-#    SOURCES += hid-libusb.c
-    LIBS += -ludev
-    SOURCES += hidraw.c
+    CONFIG += link_pkgconfig
+    PKGCONFIG += libusb-1.0
+    SOURCES += hid-libusb.c
+#    LIBS += -ludev
+#    SOURCES += hidraw.c
 }
 
 RESOURCES += \
