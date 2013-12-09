@@ -11,9 +11,9 @@ Qthid uses the HIDAPI cross platform library by Signal 11 Software (http://www.s
 
 2.1 Linux
 
-Precompiled binaries (32 or 64 bit) are avaialble for download but users are required to install the Qt runtime libraries on their own. All common Linux distrib utions have the Qt libraries packaged and they can be installed using the package manager for the platform. Qt 4.7 and 4.8 has been tested.
+Precompiled binaries (32 or 64 bit) are avaialble for download but users are required to install the Qt runtime libraries on their own. All common Linux distrib utions have the Qt libraries packaged and they can be installed using the package manager for the platform. Qt 4.7 and 4.8 has been tested. Qt 5.x should work as well.
 
-In order to use the Funcube Dongle Pro+ as regular user and udev rule is required. An example funcube-dongle.rules file is included with the package and you can simply copy that file to the /etc/udev/rules.d/ directory (hint: open a terminal and type: "sudo cp funcube-dongle.rules /etc/udev/rules.d/" without the quotes)
+In order to use the Funcube Dongle Pro+ as regular user and udev rule is required. An example funcube-dongle-proplus.rules file is included with the package and you can simply copy that file to the /etc/udev/rules.d/ directory (hint: open a terminal and type: "sudo cp funcube-dongle-proplus.rules /etc/udev/rules.d/70-funcube-dongle-proplus.rules" without the quotes)
 
 Qthid should now detect your Funcube Dongle Pro+ when you plug it in. No reboot or udev restart is necessary.
 
@@ -31,7 +31,7 @@ The windows package is self containing and does not require and Qt libs to be in
 2.4 Building from source
 
 - Install Qt Creator 2.0.1 or newer and Qt SDK 4.7. On recent linux it is normally sufficient to select Qt Creator and the required Qt libraries will be installed as dependencies. On Mac and Windows you need to download the full Qt SDK. On Windows you also need the MS Windows SDK.
-- On linux you also need to install the libudev-dev package using the package manager (the name may be different depending on distribution but it should have libudev and dev int he name).
+- On linux you also need to install the libusb-1.0-dev package using the package manager (the name may be different depending on distribution but it should have libusb and dev in the name and the version should be 1.0.x).
 - Open the qthid.pro file in Qt Creator. It will say something about setting up a target; say OK or Finish or Done (depends on version and OS).
 - You can now build and execute the project.
 
